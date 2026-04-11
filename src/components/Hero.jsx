@@ -68,7 +68,7 @@ const Hero = () => {
                     transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 >
                     <div className="image-wrapper glass-panel">
-                        <img src="/images/profile1.jpg" alt="Amit Kumar Singh" className="hero-image" />
+                        <img src={`${import.meta.env.BASE_URL}images/profile1.jpg`} alt="Amit Kumar Singh" className="hero-image" />
                         <div className="image-overlay text-gradient"></div>
                     </div>
                 </motion.div>

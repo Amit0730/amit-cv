@@ -24,7 +24,7 @@ const About = () => {
                         viewport={{ once: true, amount: 0.3 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                     >
-                        <img src="/images/profile2.jpg" alt="Amit at LPU" className="about-image" />
+                        <img src={`${import.meta.env.BASE_URL}images/profile2.jpg`} alt="Amit at LPU" className="about-image" />
                     </motion.div>
 
                     <motion.div
