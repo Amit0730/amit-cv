@@ -15,6 +15,7 @@ const Footer = () => {
                             <h3>Connect</h3>
                             <a href="https://www.linkedin.com/in/amitkumarsingh12/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
                             <a href="https://github.com/Amit0730" target="_blank" rel="noopener noreferrer">GitHub</a>
+                            <a href="https://x.com/amitKumar1466" target="_blank" rel="noopener noreferrer">X / Twitter</a>
                             <a href="https://leetcode.com/u/amitkumarsi79007/" target="_blank" rel="noopener noreferrer">LeetCode</a>
                             <a href="https://www.instagram.com/amit_kumar.x/" target="_blank" rel="noopener noreferrer">Instagram</a>
                         </div>

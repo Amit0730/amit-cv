@@ -1,6 +1,6 @@
 import Typewriter from 'typewriter-effect';
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Twitter, Instagram } from 'lucide-react';
+import { Github, Linkedin, Instagram } from 'lucide-react';
 import './Hero.css';
 
 const Hero = () => {
@@ -46,14 +46,16 @@ const Hero = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }}
                     >
-                        <a href="https://github.com/Amit-coder24" target="_blank" rel="noopener noreferrer" className="social-icon">
+                        <a href="https://github.com/Amit0730" target="_blank" rel="noopener noreferrer" className="social-icon">
                             <Github size={24} />
                         </a>
-                        <a href="https://linkedin.com/in/amit-kumar-singh-082260288/" target="_blank" rel="noopener noreferrer" className="social-icon">
+                        <a href="https://www.linkedin.com/in/amitkumarsingh12/" target="_blank" rel="noopener noreferrer" className="social-icon">
                             <Linkedin size={24} />
                         </a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="social-icon">
-                            <Twitter size={24} />
+                        <a href="https://x.com/amitKumar1466" target="_blank" rel="noopener noreferrer" className="social-icon">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                            </svg>
                         </a>
                         <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-icon">
                             <Instagram size={24} />

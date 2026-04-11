@@ -19,7 +19,8 @@
 }
 
 .hero-title {
-    font-size: 5rem;
+    font-size: clamp(2rem, 4vw, 3.8rem);
+    white-space: nowrap;
     letter-spacing: -2px;
     margin-bottom: 1rem;
 }
@@ -153,7 +154,7 @@
 
 @media (max-width: 768px) {
     .hero-title {
-        font-size: 3.5rem;
+        font-size: clamp(2rem, 8vw, 3.2rem);
     }
 
     .hero-subtitle {
