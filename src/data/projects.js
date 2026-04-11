@@ -46,5 +46,41 @@ export const projectsData = [
         tags: ['React', 'Vite', 'MediaPipe AI', 'Glassmorphism'],
         link: '/aesthetic-time/index.html',
         gallery: []
+    },
+    {
+        id: 'books-ppt',
+        title: 'Book\'s Ppt',
+        description: 'A comprehensive offline study hub integrating full NCERT textbook curricula for Classes 10, 11, and 12. Provides a seamless, scrollable reading experience with persistent highlighting tools for core subjects.',
+        tags: ['Android', 'Offline', 'Education'],
+        link: '#',
+        apkLink: '#',
+        gallery: []
+    },
+    {
+        id: 'boredo',
+        title: 'Boredo',
+        description: 'An interactive application designed to combat boredom with engaging activities, micro-games, and dynamic multimedia interactions.',
+        tags: ['Mobile', 'Entertainment', 'Interactive'],
+        link: '#',
+        apkLink: '#',
+        gallery: []
+    },
+    {
+        id: 'fun-o',
+        title: 'Fun-o',
+        description: 'A fun and engaging lifestyle app focused on delivering quick, delightful daily experiences through a beautifully crafted interface.',
+        tags: ['UX/UI', 'Lifestyle', 'React Native'],
+        link: '#',
+        apkLink: '#',
+        gallery: []
+    },
+    {
+        id: 'to-doo',
+        title: 'To-Doo',
+        description: 'A powerful, intuitive task management application that helps organize daily workflows and boost productivity with seamless offline sync.',
+        tags: ['Productivity', 'Local Storage', 'Task Management'],
+        link: '#',
+        apkLink: '#',
+        gallery: []
     }
 ];
