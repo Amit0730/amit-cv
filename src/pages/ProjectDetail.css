@@ -1,0 +1,111 @@
+.project-detail-section {
+    min-height: 100vh;
+    padding-top: calc(var(--safe-pt) + 80px);
+    /* Account for navbar */
+    padding-bottom: 6rem;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    transition: color 0.3s ease;
+}
+
+.back-link:hover {
+    color: var(--text-primary);
+}
+
+.back-arrow {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.back-link:hover .back-arrow {
+    transform: translateX(-4px);
+}
+
+.detail-header {
+    margin-bottom: 4rem;
+}
+
+.detail-title {
+    font-size: clamp(3rem, 6vw, 5rem);
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+}
+
+.detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.detail-tag {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1.25rem;
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.detail-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+}
+
+@media (min-width: 900px) {
+    .detail-content {
+        grid-template-columns: 1fr 2fr;
+    }
+}
+
+.detail-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+.detail-text {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.gallery-item {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 16px;
+    background: var(--bg-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-placeholder {
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    opacity: 0.5;
+}
