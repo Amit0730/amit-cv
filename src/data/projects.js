@@ -15,22 +15,7 @@ export const projectsData = [
         link: '#',
         gallery: []
     },
-    {
-        id: 'isa-ai',
-        title: 'ISA-AI',
-        description: 'Advanced AI assistant integrating multiple models with Vision features, Voice macros, proactive intelligence, and multi-device context synchronization. ISA acts as an ecosystem hub.',
-        tags: ['AI', 'Computer Vision', 'Voice Processing', 'Ecosystem'],
-        link: '#',
-        gallery: []
-    },
-    {
-        id: 'crypzo',
-        title: 'Crypzo',
-        description: 'Dynamic cryptocurrency portfolio tracker and market analysis tool with real-time charts and price alerts.',
-        tags: ['Web3', 'APIs', 'React', 'Data Viz'],
-        link: '#',
-        gallery: []
-    },
+
     {
         id: 'habytix',
         title: 'Habytix',
