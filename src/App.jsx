@@ -8,7 +8,7 @@ import ProjectDetail from './pages/ProjectDetail'
 
 function App() {
   return (
-    <Router>
+    <Router basename="/amit-cv/">
       <Routes>
         <Route path="/" element={
           <div className="app-container">
