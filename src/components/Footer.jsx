@@ -23,6 +23,7 @@ const Footer = () => {
                         <div className="link-group">
                             <h3>Say Hello</h3>
                             <a href="mailto:amitkumarsingh24688@gmail.com" className="email-link">amitkumarsingh24688@gmail.com</a>
+                            <a href="https://wa.me/918638674395" target="_blank" rel="noopener noreferrer" className="email-link">+91 8638674395 (WhatsApp)</a>
                         </div>
                     </div>
                 </div>
