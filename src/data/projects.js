@@ -66,15 +66,6 @@ export const projectsData = [
         gallery: []
     },
     {
-        id: 'fun-o',
-        title: 'Fun-o',
-        description: 'A fun and engaging lifestyle app focused on delivering quick, delightful daily experiences through a beautifully crafted interface.',
-        tags: ['UX/UI', 'Lifestyle', 'React Native'],
-        link: '#',
-        apkLink: '#',
-        gallery: []
-    },
-    {
         id: 'to-doo',
         title: 'To-Doo',
         description: 'A powerful, intuitive task management application that helps organize daily workflows and boost productivity with seamless offline sync.',
