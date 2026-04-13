@@ -13,11 +13,11 @@
 }
 
 .hero-content {
-    order: 2;
+    order: 1;
 }
 
 .hero-image-container {
-    order: 1;
+    order: 2;
 }
 
 .hero-greeting {
