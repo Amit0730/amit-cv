@@ -6,7 +6,7 @@ export const projectsData = [
         tags: ['Next.js', 'Capacitor', 'Android Native', 'Firebase'],
         link: '#',
         apkLink: `${import.meta.env.BASE_URL}apks/expensy-debug.apk`,
-        version: '1.0.4',
+        version: '1.0.9',
         gallery: []
     },
     {
