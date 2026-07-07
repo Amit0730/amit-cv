@@ -119,6 +119,11 @@ const ProjectDetail = () => {
                                         </svg>
                                         Download APK
                                     </a>
+                                    {project.version && (
+                                        <p style={{ marginTop: '12px', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                                            App Version: <strong style={{ color: 'var(--primary-color, #4f46e5)' }}>v{project.version}</strong>
+                                        </p>
+                                    )}
                                 </div>
                             </motion.div>
                         </div>
