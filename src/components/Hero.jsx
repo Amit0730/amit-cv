@@ -2,6 +2,7 @@ import Typewriter from 'typewriter-effect';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Github, Linkedin, Instagram, FileText } from 'lucide-react';
+import ClashingLaserBorder from './ClashingLaserBorder';
 import './Hero.css';
 
 const Hero = () => {
@@ -94,6 +95,9 @@ const Hero = () => {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 >
+                    {/* Dynamic 4-Phase Red/Blue -> Purple Clashing Lines */}
+                    <ClashingLaserBorder />
+
                     <div className="image-wrapper glass-panel">
                         <img src={`${import.meta.env.BASE_URL}images/profile1.jpg`} alt="Amit Kumar Singh" className="hero-image" />
                         <div className="image-overlay"></div>

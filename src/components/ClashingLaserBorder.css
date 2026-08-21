@@ -1,0 +1,561 @@
+/* =========================================================
+   Clashing Laser Border - Simultaneous Dual-Edge Collision
+   ========================================================= */
+
+.clashing-laser-container {
+    position: absolute;
+    inset: -3px;
+    border-radius: 27px;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+    padding: 3px;
+}
+
+.laser-base-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 27px;
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+}
+
+/* Common Beam Properties */
+.laser-beam {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    border-radius: 99px;
+}
+
+/* =========================================================
+   PHASE 1: Vertical (BOTH Left & Right simultaneously)
+   Blue Top -> Down, Red Bottom -> Up (0% - 25% = 0s - 2s)
+   ========================================================= */
+
+.laser-v-1-blue-top-left {
+    width: 3px;
+    height: 40%;
+    left: 0;
+    background: linear-gradient(180deg, transparent, #00d2ff, #0066ff);
+    box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
+    animation: moveV1BlueTop 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.laser-v-1-red-bot-left {
+    width: 3px;
+    height: 40%;
+    left: 0;
+    background: linear-gradient(0deg, transparent, #ff3366, #ff0044);
+    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
+    animation: moveV1RedBot 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.laser-v-1-blue-top-right {
+    width: 3px;
+    height: 40%;
+    right: 0;
+    background: linear-gradient(180deg, transparent, #00d2ff, #0066ff);
+    box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
+    animation: moveV1BlueTop 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.laser-v-1-red-bot-right {
+    width: 3px;
+    height: 40%;
+    right: 0;
+    background: linear-gradient(0deg, transparent, #ff3366, #ff0044);
+    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
+    animation: moveV1RedBot 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes moveV1BlueTop {
+    0% {
+        top: -40%;
+        opacity: 0;
+    }
+    3% {
+        opacity: 1;
+    }
+    18% {
+        top: 28%;
+        opacity: 1;
+    }
+    23% {
+        top: 32%;
+        opacity: 0;
+    }
+    25%, 100% {
+        opacity: 0;
+        top: -40%;
+    }
+}
+
+@keyframes moveV1RedBot {
+    0% {
+        bottom: -40%;
+        opacity: 0;
+    }
+    3% {
+        opacity: 1;
+    }
+    18% {
+        bottom: 28%;
+        opacity: 1;
+    }
+    23% {
+        bottom: 32%;
+        opacity: 0;
+    }
+    25%, 100% {
+        opacity: 0;
+        bottom: -40%;
+    }
+}
+
+/* Phase 1 Purple Collision Burst at Center Height (Left & Right) */
+.burst-v-1-left {
+    position: absolute;
+    top: 50%;
+    left: -1px;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 36px;
+    background: #c084fc;
+    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
+    border-radius: 4px;
+    opacity: 0;
+    animation: burstV1 8s ease-out infinite;
+}
+
+.burst-v-1-right {
+    position: absolute;
+    top: 50%;
+    right: -1px;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 36px;
+    background: #c084fc;
+    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
+    border-radius: 4px;
+    opacity: 0;
+    animation: burstV1 8s ease-out infinite;
+}
+
+@keyframes burstV1 {
+    0%, 16% {
+        opacity: 0;
+        transform: translateY(-50%) scaleY(0.2);
+    }
+    18% {
+        opacity: 1;
+        transform: translateY(-50%) scaleY(1.4);
+    }
+    23% {
+        opacity: 0.8;
+        transform: translateY(-50%) scaleY(1);
+    }
+    25%, 100% {
+        opacity: 0;
+        transform: translateY(-50%) scaleY(0.2);
+    }
+}
+
+/* =========================================================
+   PHASE 2: Horizontal (BOTH Top & Bottom simultaneously)
+   Red Left -> Right, Blue Right -> Left (25% - 50% = 2s - 4s)
+   ========================================================= */
+
+.laser-h-2-red-left-top {
+    height: 3px;
+    width: 40%;
+    top: 0;
+    background: linear-gradient(90deg, transparent, #ff3366, #ff0044);
+    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
+    animation: moveH2RedLeft 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.laser-h-2-blue-right-top {
+    height: 3px;
+    width: 40%;
+    top: 0;
+    background: linear-gradient(270deg, transparent, #00d2ff, #0066ff);
+    box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
+    animation: moveH2BlueRight 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.laser-h-2-red-left-bot {
+    height: 3px;
+    width: 40%;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, #ff3366, #ff0044);
+    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
+    animation: moveH2RedLeft 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.laser-h-2-blue-right-bot {
+    height: 3px;
+    width: 40%;
+    bottom: 0;
+    background: linear-gradient(270deg, transparent, #00d2ff, #0066ff);
+    box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
+    animation: moveH2BlueRight 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes moveH2RedLeft {
+    0%, 25% {
+        left: -40%;
+        opacity: 0;
+    }
+    28% {
+        opacity: 1;
+    }
+    43% {
+        left: 28%;
+        opacity: 1;
+    }
+    48% {
+        left: 32%;
+        opacity: 0;
+    }
+    50%, 100% {
+        opacity: 0;
+        left: -40%;
+    }
+}
+
+@keyframes moveH2BlueRight {
+    0%, 25% {
+        right: -40%;
+        opacity: 0;
+    }
+    28% {
+        opacity: 1;
+    }
+    43% {
+        right: 28%;
+        opacity: 1;
+    }
+    48% {
+        right: 32%;
+        opacity: 0;
+    }
+    50%, 100% {
+        opacity: 0;
+        right: -40%;
+    }
+}
+
+/* Phase 2 Purple Collision Burst at Center Width (Top & Bottom) */
+.burst-h-2-top {
+    position: absolute;
+    left: 50%;
+    top: -1px;
+    transform: translateX(-50%);
+    height: 4px;
+    width: 36px;
+    background: #c084fc;
+    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
+    border-radius: 4px;
+    opacity: 0;
+    animation: burstH2 8s ease-out infinite;
+}
+
+.burst-h-2-bot {
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+    transform: translateX(-50%);
+    height: 4px;
+    width: 36px;
+    background: #c084fc;
+    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
+    border-radius: 4px;
+    opacity: 0;
+    animation: burstH2 8s ease-out infinite;
+}
+
+@keyframes burstH2 {
+    0%, 41% {
+        opacity: 0;
+        transform: translateX(-50%) scaleX(0.2);
+    }
+    43% {
+        opacity: 1;
+        transform: translateX(-50%) scaleX(1.4);
+    }
+    48% {
+        opacity: 0.8;
+        transform: translateX(-50%) scaleX(1);
+    }
+    50%, 100% {
+        opacity: 0;
+        transform: translateX(-50%) scaleX(0.2);
+    }
+}
+
+/* =========================================================
+   PHASE 3: Vertical Reverse (BOTH Left & Right simultaneously)
+   Red Top -> Down, Blue Bottom -> Up (50% - 75% = 4s - 6s)
+   ========================================================= */
+
+.laser-v-3-red-top-left {
+    width: 3px;
+    height: 40%;
+    left: 0;
+    background: linear-gradient(180deg, transparent, #ff3366, #ff0044);
+    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
+    animation: moveV3RedTop 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.laser-v-3-blue-bot-left {
+    width: 3px;
+    height: 40%;
+    left: 0;
+    background: linear-gradient(0deg, transparent, #00d2ff, #0066ff);
+    box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
+    animation: moveV3BlueBot 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.laser-v-3-red-top-right {
+    width: 3px;
+    height: 40%;
+    right: 0;
+    background: linear-gradient(180deg, transparent, #ff3366, #ff0044);
+    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
+    animation: moveV3RedTop 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.laser-v-3-blue-bot-right {
+    width: 3px;
+    height: 40%;
+    right: 0;
+    background: linear-gradient(0deg, transparent, #00d2ff, #0066ff);
+    box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
+    animation: moveV3BlueBot 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes moveV3RedTop {
+    0%, 50% {
+        top: -40%;
+        opacity: 0;
+    }
+    53% {
+        opacity: 1;
+    }
+    68% {
+        top: 28%;
+        opacity: 1;
+    }
+    73% {
+        top: 32%;
+        opacity: 0;
+    }
+    75%, 100% {
+        opacity: 0;
+        top: -40%;
+    }
+}
+
+@keyframes moveV3BlueBot {
+    0%, 50% {
+        bottom: -40%;
+        opacity: 0;
+    }
+    53% {
+        opacity: 1;
+    }
+    68% {
+        bottom: 28%;
+        opacity: 1;
+    }
+    73% {
+        bottom: 32%;
+        opacity: 0;
+    }
+    75%, 100% {
+        opacity: 0;
+        bottom: -40%;
+    }
+}
+
+/* Phase 3 Purple Collision Burst (Left & Right) */
+.burst-v-3-left {
+    position: absolute;
+    top: 50%;
+    left: -1px;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 36px;
+    background: #c084fc;
+    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
+    border-radius: 4px;
+    opacity: 0;
+    animation: burstV3 8s ease-out infinite;
+}
+
+.burst-v-3-right {
+    position: absolute;
+    top: 50%;
+    right: -1px;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 36px;
+    background: #c084fc;
+    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
+    border-radius: 4px;
+    opacity: 0;
+    animation: burstV3 8s ease-out infinite;
+}
+
+@keyframes burstV3 {
+    0%, 66% {
+        opacity: 0;
+        transform: translateY(-50%) scaleY(0.2);
+    }
+    68% {
+        opacity: 1;
+        transform: translateY(-50%) scaleY(1.4);
+    }
+    73% {
+        opacity: 0.8;
+        transform: translateY(-50%) scaleY(1);
+    }
+    75%, 100% {
+        opacity: 0;
+        transform: translateY(-50%) scaleY(0.2);
+    }
+}
+
+/* =========================================================
+   PHASE 4: Horizontal Reverse (BOTH Top & Bottom simultaneously)
+   Blue Left -> Right, Red Right -> Left (75% - 100% = 6s - 8s)
+   ========================================================= */
+
+.laser-h-4-blue-left-top {
+    height: 3px;
+    width: 40%;
+    top: 0;
+    background: linear-gradient(90deg, transparent, #00d2ff, #0066ff);
+    box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
+    animation: moveH4BlueLeft 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.laser-h-4-red-right-top {
+    height: 3px;
+    width: 40%;
+    top: 0;
+    background: linear-gradient(270deg, transparent, #ff3366, #ff0044);
+    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
+    animation: moveH4RedRight 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.laser-h-4-blue-left-bot {
+    height: 3px;
+    width: 40%;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, #00d2ff, #0066ff);
+    box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
+    animation: moveH4BlueLeft 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.laser-h-4-red-right-bot {
+    height: 3px;
+    width: 40%;
+    bottom: 0;
+    background: linear-gradient(270deg, transparent, #ff3366, #ff0044);
+    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
+    animation: moveH4RedRight 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes moveH4BlueLeft {
+    0%, 75% {
+        left: -40%;
+        opacity: 0;
+    }
+    78% {
+        opacity: 1;
+    }
+    93% {
+        left: 28%;
+        opacity: 1;
+    }
+    98% {
+        left: 32%;
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+        left: -40%;
+    }
+}
+
+@keyframes moveH4RedRight {
+    0%, 75% {
+        right: -40%;
+        opacity: 0;
+    }
+    78% {
+        opacity: 1;
+    }
+    93% {
+        right: 28%;
+        opacity: 1;
+    }
+    98% {
+        right: 32%;
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+        right: -40%;
+    }
+}
+
+/* Phase 4 Purple Collision Burst (Top & Bottom) */
+.burst-h-4-top {
+    position: absolute;
+    left: 50%;
+    top: -1px;
+    transform: translateX(-50%);
+    height: 4px;
+    width: 36px;
+    background: #c084fc;
+    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
+    border-radius: 4px;
+    opacity: 0;
+    animation: burstH4 8s ease-out infinite;
+}
+
+.burst-h-4-bot {
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+    transform: translateX(-50%);
+    height: 4px;
+    width: 36px;
+    background: #c084fc;
+    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
+    border-radius: 4px;
+    opacity: 0;
+    animation: burstH4 8s ease-out infinite;
+}
+
+@keyframes burstH4 {
+    0%, 91% {
+        opacity: 0;
+        transform: translateX(-50%) scaleX(0.2);
+    }
+    93% {
+        opacity: 1;
+        transform: translateX(-50%) scaleX(1.4);
+    }
+    98% {
+        opacity: 0.8;
+        transform: translateX(-50%) scaleX(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) scaleX(0.2);
+    }
+}

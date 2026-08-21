@@ -27,12 +27,12 @@
     align-items: center;
 }
 
-.about-image-wrapper {
+.about-image-container {
     position: relative;
-    border-radius: 24px;
-    overflow: hidden;
-    padding: 8px;
+    width: 100%;
     aspect-ratio: 4/5;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .about-image {
@@ -44,7 +44,7 @@
 }
 
 .about-image-wrapper:hover .about-image {
-    transform: scale(1.02);
+    transform: scale(1.03);
 }
 
 .about-heading {
@@ -95,7 +95,7 @@
         grid-template-columns: 1fr;
     }
 
-    .about-image-wrapper {
+    .about-image-container {
         max-width: 400px;
         margin: 0 auto;
     }

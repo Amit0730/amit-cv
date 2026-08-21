@@ -78,6 +78,126 @@ button {
     border-radius: 24px;
 }
 
+/* =========================================================
+   Apple-Style Animations & Rotating Neon Aura (Red + Blue -> Purple)
+   ========================================================= */
+
+@keyframes rotateBeam {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes floatGentle {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes auraBreathing {
+    0%, 100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 0.85;
+        transform: translate(-50%, -50%) scale(1.08);
+    }
+}
+
+/* Photo Aura Container */
+.hero-image-container,
+.about-image-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/5;
+    max-width: 400px;
+    margin: 0 auto;
+    animation: floatGentle 6s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Background Soft Ambient Light (Red and Blue mixing to Purple) */
+.aura-glow {
+    position: absolute;
+    width: 125%;
+    height: 125%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: conic-gradient(
+        from 0deg,
+        #ff0055 0deg,
+        #8b5cf6 60deg,
+        #0066ff 120deg,
+        #9333ea 180deg,
+        #ff0055 240deg,
+        #8b5cf6 300deg,
+        #0066ff 360deg
+    );
+    filter: blur(50px);
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+    animation: rotateBeam 10s linear infinite, auraBreathing 5s ease-in-out infinite;
+}
+
+/* Rotating Crisp Neon Border Lines directly hugging the photo */
+.aura-spin-border {
+    position: absolute;
+    inset: -3px;
+    border-radius: 27px;
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+    padding: 3px;
+}
+
+.aura-spin-border::before {
+    content: '';
+    position: absolute;
+    width: 250%;
+    height: 250%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: conic-gradient(
+        from 0deg,
+        #ff0055 0deg,
+        #8b5cf6 45deg,
+        transparent 90deg,
+        #0066ff 180deg,
+        #9333ea 225deg,
+        transparent 270deg,
+        #ff0055 360deg
+    );
+    animation: rotateBeam 5s linear infinite;
+}
+
+/* Glass Card holding the photo */
+.image-wrapper,
+.about-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    padding: 10px;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    z-index: 2;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+}
+
 ::-webkit-scrollbar {
     width: 8px;
 }

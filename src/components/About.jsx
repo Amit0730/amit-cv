@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import ClashingLaserBorder from './ClashingLaserBorder';
 import './About.css';
 
 const About = () => {
@@ -18,13 +19,18 @@ const About = () => {
 
                 <div className="about-grid">
                     <motion.div
-                        className="about-image-wrapper glass-panel"
+                        className="about-image-container"
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true, amount: 0.3 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                     >
-                        <img src={`${import.meta.env.BASE_URL}images/profile2.jpg`} alt="Amit at LPU" className="about-image" />
+                        {/* Dynamic 4-Phase Red/Blue -> Purple Clashing Lines */}
+                        <ClashingLaserBorder />
+
+                        <div className="about-image-wrapper glass-panel">
+                            <img src={`${import.meta.env.BASE_URL}images/profile2.jpg`} alt="Amit at LPU" className="about-image" />
+                        </div>
                     </motion.div>
 
                     <motion.div
@@ -41,7 +47,7 @@ const About = () => {
                         </p>
 
                         <p className="about-text">
-                            Beyond pure coding, I also possess strong design and editing capabilities. I have good knowledge and hands-on experience mastering tools like <strong>Adobe Photoshop, Premiere Pro, and Blender</strong> for creative workflows.
+                            Beyond pure coding, I also possess strong design and editing capabilities. I have good knowledge and hands-on experience mastering tools like <strong>Android Studio, Adobe Photoshop, Premiere Pro, and Blender</strong> for creative workflows.
                         </p>
 
                         <p className="about-text">
