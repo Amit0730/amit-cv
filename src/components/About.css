@@ -9,7 +9,7 @@
 
 .section-title {
     font-size: 3rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: .5rem;
 }
 
 .title-underline {
@@ -40,7 +40,7 @@
     height: 100%;
     object-fit: cover;
     border-radius: 16px;
-    transition: transform 0.3s ease;
+    transition: transform .3s ease;
 }
 
 .about-image-wrapper:hover .about-image {
@@ -74,12 +74,12 @@
 .skill-name {
     display: block;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: .5rem;
 }
 
 .skill-bar {
     height: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    background: #ffffff1a;
     border-radius: 4px;
     overflow: hidden;
 }

@@ -26,6 +26,12 @@
     letter-spacing: -0.5px;
 }
 
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
 .nav-links {
     display: flex;
     gap: 2rem;
@@ -46,4 +52,4 @@
     .nav-links {
         display: none;
     }
-}
+}

@@ -1,8 +1,8 @@
 .project-detail-section {
     min-height: 100vh;
     padding-top: calc(var(--safe-pt) + 80px);
-    /* Account for navbar */
     padding-bottom: 6rem;
+    background-color: #000000;
 }
 
 .back-link {
@@ -13,6 +13,7 @@
     font-size: 1rem;
     margin-bottom: 2rem;
     transition: color 0.3s ease;
+    text-decoration: none;
 }
 
 .back-link:hover {
@@ -59,8 +60,13 @@
     gap: 4rem;
 }
 
+.detail-content.single-col {
+    grid-template-columns: 1fr;
+    max-width: 800px;
+}
+
 @media (min-width: 900px) {
-    .detail-content {
+    .detail-content:not(.single-col) {
         grid-template-columns: 1fr 2fr;
     }
 }

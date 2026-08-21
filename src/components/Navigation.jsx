@@ -16,10 +16,12 @@ const Navigation = () => {
         <nav className={`navigation ${scrolled ? 'scrolled glass-panel' : ''}`}>
             <div className="container nav-container">
                 <a href="#home" className="nav-logo text-gradient">Amit Kumar Singh</a>
-                <div className="nav-links">
-                    <a href="#about">About</a>
-                    <a href="#projects">Projects</a>
-                    <a href="#contact">Contact</a>
+                <div className="nav-right">
+                    <div className="nav-links">
+                        <a href="#about">About</a>
+                        <a href="#projects">Projects</a>
+                        <a href="#contact">Contact</a>
+                    </div>
                 </div>
             </div>
         </nav>

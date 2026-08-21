@@ -34,6 +34,8 @@ const ProjectDetail = () => {
         );
     }
 
+    const hasGallery = project.gallery && project.gallery.length > 0;
+
     return (
         <div className="app-container">
             <Navigation />
@@ -66,7 +68,7 @@ const ProjectDetail = () => {
                             </div>
                         </motion.div>
 
-                        <div className="detail-content">
+                        <div className={`detail-content ${!hasGallery && !project.apkLink ? 'single-col' : ''}`}>
                             <motion.div
                                 className="detail-info"
                                 initial={{ opacity: 0, y: 30 }}
@@ -76,56 +78,53 @@ const ProjectDetail = () => {
                                 <h3>About the Project</h3>
                                 <p className="detail-text">{project.description}</p>
 
-                                {project.link !== '#' && (
+                                {project.link && project.link !== '#' && (
                                     <a href={project.link} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
                                         View Live Project
                                     </a>
                                 )}
                             </motion.div>
 
-                            <motion.div
-                                className="detail-gallery"
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.7, delay: 0.6 }}
-                            >
-                                <h3>Gallery & Previews</h3>
-                                <div className="gallery-grid">
-                                    {project.gallery && project.gallery.length > 0 ? (
-                                        project.gallery.map((imgUrl, i) => (
-                                            <div key={i} className="gallery-item glass-panel">
-                                                <img src={imgUrl} alt={`${project.title} screenshot ${i + 1}`} />
+                            {(hasGallery || project.apkLink) && (
+                                <motion.div
+                                    className="detail-media-column"
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.7, delay: 0.6 }}
+                                >
+                                    {hasGallery && (
+                                        <div className="detail-gallery">
+                                            <h3>Gallery & Previews</h3>
+                                            <div className="gallery-grid">
+                                                {project.gallery.map((imgUrl, i) => (
+                                                    <div key={i} className="gallery-item glass-panel">
+                                                        <img src={imgUrl} alt={`${project.title} screenshot ${i + 1}`} />
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))
-                                    ) : (
-                                        <>
-                                            <div className="gallery-item glass-panel">
-                                                <span className="gallery-placeholder">Screenshot 1 (Pending)</span>
-                                            </div>
-                                            <div className="gallery-item glass-panel">
-                                                <span className="gallery-placeholder">Screenshot 2 (Pending)</span>
-                                            </div>
-                                        </>
+                                        </div>
                                     )}
-                                </div>
 
-                                <div className="detail-download" style={{ marginTop: '3rem', textAlign: 'center' }}>
-                                    <h3 style={{ marginBottom: '1.5rem' }}>Download Application</h3>
-                                    <a href={project.apkLink || '#'} download className="btn btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                            <polyline points="7 10 12 15 17 10"></polyline>
-                                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                                        </svg>
-                                        Download APK
-                                    </a>
-                                    {project.version && (
-                                        <p style={{ marginTop: '12px', fontSize: '14px', color: 'var(--text-secondary)' }}>
-                                            App Version: <strong style={{ color: 'var(--primary-color, #4f46e5)' }}>v{project.version}</strong>
-                                        </p>
+                                    {project.apkLink && (
+                                        <div className="detail-download" style={{ marginTop: hasGallery ? '3rem' : '0', textAlign: 'center' }}>
+                                            <h3 style={{ marginBottom: '1.5rem' }}>Download Application</h3>
+                                            <a href={project.apkLink} download className="btn btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                                </svg>
+                                                Download APK
+                                            </a>
+                                            {project.version && (
+                                                <p style={{ marginTop: '12px', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                                                    App Version: <strong style={{ color: 'var(--primary-color, #4f46e5)' }}>v{project.version}</strong>
+                                                </p>
+                                            )}
+                                        </div>
                                     )}
-                                </div>
-                            </motion.div>
+                                </motion.div>
+                            )}
                         </div>
 
                     </div>
