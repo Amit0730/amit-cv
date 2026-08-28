@@ -25,7 +25,7 @@ const About = () => {
                         viewport={{ once: true, amount: 0.3 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                     >
-                        {/* Dynamic 4-Phase Red/Blue -> Purple Clashing Lines */}
+                        {/* 4-Phase Clashing Laser Border on Both Parallel Sides */}
                         <ClashingLaserBorder />
 
                         <div className="about-image-wrapper glass-panel">

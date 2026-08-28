@@ -95,7 +95,7 @@ const Hero = () => {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 >
-                    {/* Dynamic 4-Phase Red/Blue -> Purple Clashing Lines */}
+                    {/* 4-Phase Clashing Laser Border on Both Parallel Sides */}
                     <ClashingLaserBorder />
 
                     <div className="image-wrapper glass-panel">

@@ -8,6 +8,7 @@ import Projects from './components/Projects';
 import Footer from './components/Footer';
 import ProjectDetail from './pages/ProjectDetail';
 import CVPage from './pages/CVPage';
+import CursorGlow from './components/CursorGlow';
 import './index.css';
 
 const Home = () => (
@@ -25,6 +26,9 @@ const Home = () => (
 const App = () => {
     return (
         <BrowserRouter basename={import.meta.env.BASE_URL || '/'}>
+            {/* Interactive Mouse Trail & Ambient Spotlight */}
+            <CursorGlow />
+
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/project/:id" element={<ProjectDetail />} />

@@ -18,6 +18,11 @@
 
 .hero-image-container {
     order: 2;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/5;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .hero-greeting {
@@ -142,6 +147,14 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
     color: #ffffff;
+}
+
+.image-wrapper {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    padding: 10px;
+    background: var(--glass-bg);
 }
 
 .hero-image {

@@ -1,5 +1,5 @@
 /* =========================================================
-   Clashing Laser Border - Simultaneous Dual-Edge Collision
+   Clashing Laser Border - Original Red & Blue -> Purple Colors
    ========================================================= */
 
 .clashing-laser-container {
@@ -33,41 +33,29 @@
    Blue Top -> Down, Red Bottom -> Up (0% - 25% = 0s - 2s)
    ========================================================= */
 
-.laser-v-1-blue-top-left {
-    width: 3px;
-    height: 40%;
-    left: 0;
-    background: linear-gradient(180deg, transparent, #00d2ff, #0066ff);
-    box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
-    animation: moveV1BlueTop 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-.laser-v-1-red-bot-left {
-    width: 3px;
-    height: 40%;
-    left: 0;
-    background: linear-gradient(0deg, transparent, #ff3366, #ff0044);
-    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
-    animation: moveV1RedBot 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
+.laser-v-1-blue-top-left,
 .laser-v-1-blue-top-right {
     width: 3px;
     height: 40%;
-    right: 0;
     background: linear-gradient(180deg, transparent, #00d2ff, #0066ff);
     box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
     animation: moveV1BlueTop 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
+.laser-v-1-blue-top-left { left: 0; }
+.laser-v-1-blue-top-right { right: 0; }
+
+.laser-v-1-red-bot-left,
 .laser-v-1-red-bot-right {
     width: 3px;
     height: 40%;
-    right: 0;
-    background: linear-gradient(0deg, transparent, #ff3366, #ff0044);
-    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
+    background: linear-gradient(0deg, transparent, #ff3366, #ff0055);
+    box-shadow: 0 0 10px #ff0055, 0 0 20px #ff3366;
     animation: moveV1RedBot 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
+
+.laser-v-1-red-bot-left { left: 0; }
+.laser-v-1-red-bot-right { right: 0; }
 
 @keyframes moveV1BlueTop {
     0% {
@@ -113,34 +101,23 @@
     }
 }
 
-/* Phase 1 Purple Collision Burst at Center Height (Left & Right) */
-.burst-v-1-left {
+/* Phase 1 Purple Collision Burst */
+.burst-v-1-left,
+.burst-v-1-right {
     position: absolute;
     top: 50%;
-    left: -1px;
     transform: translateY(-50%);
     width: 4px;
     height: 36px;
     background: #c084fc;
-    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
+    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7c3aed;
     border-radius: 4px;
     opacity: 0;
     animation: burstV1 8s ease-out infinite;
 }
 
-.burst-v-1-right {
-    position: absolute;
-    top: 50%;
-    right: -1px;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 36px;
-    background: #c084fc;
-    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
-    border-radius: 4px;
-    opacity: 0;
-    animation: burstV1 8s ease-out infinite;
-}
+.burst-v-1-left { left: -1px; }
+.burst-v-1-right { right: -1px; }
 
 @keyframes burstV1 {
     0%, 16% {
@@ -166,41 +143,29 @@
    Red Left -> Right, Blue Right -> Left (25% - 50% = 2s - 4s)
    ========================================================= */
 
-.laser-h-2-red-left-top {
-    height: 3px;
-    width: 40%;
-    top: 0;
-    background: linear-gradient(90deg, transparent, #ff3366, #ff0044);
-    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
-    animation: moveH2RedLeft 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-.laser-h-2-blue-right-top {
-    height: 3px;
-    width: 40%;
-    top: 0;
-    background: linear-gradient(270deg, transparent, #00d2ff, #0066ff);
-    box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
-    animation: moveH2BlueRight 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
+.laser-h-2-red-left-top,
 .laser-h-2-red-left-bot {
     height: 3px;
     width: 40%;
-    bottom: 0;
-    background: linear-gradient(90deg, transparent, #ff3366, #ff0044);
-    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
+    background: linear-gradient(90deg, transparent, #ff3366, #ff0055);
+    box-shadow: 0 0 10px #ff0055, 0 0 20px #ff3366;
     animation: moveH2RedLeft 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
+.laser-h-2-red-left-top { top: 0; }
+.laser-h-2-red-left-bot { bottom: 0; }
+
+.laser-h-2-blue-right-top,
 .laser-h-2-blue-right-bot {
     height: 3px;
     width: 40%;
-    bottom: 0;
     background: linear-gradient(270deg, transparent, #00d2ff, #0066ff);
     box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
     animation: moveH2BlueRight 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
+
+.laser-h-2-blue-right-top { top: 0; }
+.laser-h-2-blue-right-bot { bottom: 0; }
 
 @keyframes moveH2RedLeft {
     0%, 25% {
@@ -246,34 +211,23 @@
     }
 }
 
-/* Phase 2 Purple Collision Burst at Center Width (Top & Bottom) */
-.burst-h-2-top {
+/* Phase 2 Purple Collision Burst */
+.burst-h-2-top,
+.burst-h-2-bot {
     position: absolute;
     left: 50%;
-    top: -1px;
     transform: translateX(-50%);
     height: 4px;
     width: 36px;
     background: #c084fc;
-    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
+    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7c3aed;
     border-radius: 4px;
     opacity: 0;
     animation: burstH2 8s ease-out infinite;
 }
 
-.burst-h-2-bot {
-    position: absolute;
-    left: 50%;
-    bottom: -1px;
-    transform: translateX(-50%);
-    height: 4px;
-    width: 36px;
-    background: #c084fc;
-    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
-    border-radius: 4px;
-    opacity: 0;
-    animation: burstH2 8s ease-out infinite;
-}
+.burst-h-2-top { top: -1px; }
+.burst-h-2-bot { bottom: -1px; }
 
 @keyframes burstH2 {
     0%, 41% {
@@ -299,41 +253,29 @@
    Red Top -> Down, Blue Bottom -> Up (50% - 75% = 4s - 6s)
    ========================================================= */
 
-.laser-v-3-red-top-left {
-    width: 3px;
-    height: 40%;
-    left: 0;
-    background: linear-gradient(180deg, transparent, #ff3366, #ff0044);
-    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
-    animation: moveV3RedTop 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-.laser-v-3-blue-bot-left {
-    width: 3px;
-    height: 40%;
-    left: 0;
-    background: linear-gradient(0deg, transparent, #00d2ff, #0066ff);
-    box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
-    animation: moveV3BlueBot 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
+.laser-v-3-red-top-left,
 .laser-v-3-red-top-right {
     width: 3px;
     height: 40%;
-    right: 0;
-    background: linear-gradient(180deg, transparent, #ff3366, #ff0044);
-    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
+    background: linear-gradient(180deg, transparent, #ff3366, #ff0055);
+    box-shadow: 0 0 10px #ff0055, 0 0 20px #ff3366;
     animation: moveV3RedTop 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
+.laser-v-3-red-top-left { left: 0; }
+.laser-v-3-red-top-right { right: 0; }
+
+.laser-v-3-blue-bot-left,
 .laser-v-3-blue-bot-right {
     width: 3px;
     height: 40%;
-    right: 0;
     background: linear-gradient(0deg, transparent, #00d2ff, #0066ff);
     box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
     animation: moveV3BlueBot 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
+
+.laser-v-3-blue-bot-left { left: 0; }
+.laser-v-3-blue-bot-right { right: 0; }
 
 @keyframes moveV3RedTop {
     0%, 50% {
@@ -379,34 +321,23 @@
     }
 }
 
-/* Phase 3 Purple Collision Burst (Left & Right) */
-.burst-v-3-left {
+/* Phase 3 Purple Collision Burst */
+.burst-v-3-left,
+.burst-v-3-right {
     position: absolute;
     top: 50%;
-    left: -1px;
     transform: translateY(-50%);
     width: 4px;
     height: 36px;
     background: #c084fc;
-    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
+    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7c3aed;
     border-radius: 4px;
     opacity: 0;
     animation: burstV3 8s ease-out infinite;
 }
 
-.burst-v-3-right {
-    position: absolute;
-    top: 50%;
-    right: -1px;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 36px;
-    background: #c084fc;
-    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
-    border-radius: 4px;
-    opacity: 0;
-    animation: burstV3 8s ease-out infinite;
-}
+.burst-v-3-left { left: -1px; }
+.burst-v-3-right { right: -1px; }
 
 @keyframes burstV3 {
     0%, 66% {
@@ -432,41 +363,29 @@
    Blue Left -> Right, Red Right -> Left (75% - 100% = 6s - 8s)
    ========================================================= */
 
-.laser-h-4-blue-left-top {
-    height: 3px;
-    width: 40%;
-    top: 0;
-    background: linear-gradient(90deg, transparent, #00d2ff, #0066ff);
-    box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
-    animation: moveH4BlueLeft 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-.laser-h-4-red-right-top {
-    height: 3px;
-    width: 40%;
-    top: 0;
-    background: linear-gradient(270deg, transparent, #ff3366, #ff0044);
-    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
-    animation: moveH4RedRight 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
+.laser-h-4-blue-left-top,
 .laser-h-4-blue-left-bot {
     height: 3px;
     width: 40%;
-    bottom: 0;
     background: linear-gradient(90deg, transparent, #00d2ff, #0066ff);
     box-shadow: 0 0 10px #0066ff, 0 0 20px #00d2ff;
     animation: moveH4BlueLeft 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
+.laser-h-4-blue-left-top { top: 0; }
+.laser-h-4-blue-left-bot { bottom: 0; }
+
+.laser-h-4-red-right-top,
 .laser-h-4-red-right-bot {
     height: 3px;
     width: 40%;
-    bottom: 0;
-    background: linear-gradient(270deg, transparent, #ff3366, #ff0044);
-    box-shadow: 0 0 10px #ff0044, 0 0 20px #ff3366;
+    background: linear-gradient(270deg, transparent, #ff3366, #ff0055);
+    box-shadow: 0 0 10px #ff0055, 0 0 20px #ff3366;
     animation: moveH4RedRight 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
+
+.laser-h-4-red-right-top { top: 0; }
+.laser-h-4-red-right-bot { bottom: 0; }
 
 @keyframes moveH4BlueLeft {
     0%, 75% {
@@ -512,34 +431,23 @@
     }
 }
 
-/* Phase 4 Purple Collision Burst (Top & Bottom) */
-.burst-h-4-top {
+/* Phase 4 Purple Collision Burst */
+.burst-h-4-top,
+.burst-h-4-bot {
     position: absolute;
     left: 50%;
-    top: -1px;
     transform: translateX(-50%);
     height: 4px;
     width: 36px;
     background: #c084fc;
-    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
+    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7c3aed;
     border-radius: 4px;
     opacity: 0;
     animation: burstH4 8s ease-out infinite;
 }
 
-.burst-h-4-bot {
-    position: absolute;
-    left: 50%;
-    bottom: -1px;
-    transform: translateX(-50%);
-    height: 4px;
-    width: 36px;
-    background: #c084fc;
-    box-shadow: 0 0 15px 4px #a855f7, 0 0 30px 6px #7e22ce;
-    border-radius: 4px;
-    opacity: 0;
-    animation: burstH4 8s ease-out infinite;
-}
+.burst-h-4-top { top: -1px; }
+.burst-h-4-bot { bottom: -1px; }
 
 @keyframes burstH4 {
     0%, 91% {
