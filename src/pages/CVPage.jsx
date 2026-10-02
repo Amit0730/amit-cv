@@ -11,7 +11,8 @@ const CVPage = () => {
         window.scrollTo(0, 0);
     }, []);
 
-    const cvFilePath = `${import.meta.env.BASE_URL}files/Amit_Kumar_Singh_CV.docx`;
+    const cvDocxPath = `${import.meta.env.BASE_URL}files/Amit_Kumar_Singh_CV.docx`;
+    const cvPdfPath = `${import.meta.env.BASE_URL}files/Amit_Kumar_Singh_CV.pdf`;
 
     return (
         <div className="app-container">
@@ -52,38 +53,46 @@ const CVPage = () => {
                                 <div className="cv-doc-info">
                                     <FileText className="cv-doc-icon" size={24} />
                                     <div>
-                                        <h3 className="cv-doc-name">Amit_Kumar_Singh_CV.docx</h3>
-                                        <span className="cv-doc-type">Word Document</span>
+                                        <h3 className="cv-doc-name">Amit_Kumar_Singh_CV.pdf</h3>
+                                        <span className="cv-doc-type">Official Curriculum Vitae</span>
                                     </div>
                                 </div>
 
                                 <div className="cv-actions">
                                     <a
-                                        href={cvFilePath}
-                                        download="Amit_Kumar_Singh_CV.docx"
+                                        href={cvPdfPath}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="btn btn-secondary cv-action-btn"
+                                    >
+                                        <ExternalLink size={18} />
+                                        <span>Open Fullscreen</span>
+                                    </a>
+                                    <a
+                                        href={cvPdfPath}
+                                        download="Amit_Kumar_Singh_CV.pdf"
                                         className="btn btn-primary cv-action-btn"
                                     >
                                         <Download size={18} />
-                                        <span>Download Document</span>
+                                        <span>Download PDF</span>
+                                    </a>
+                                    <a
+                                        href={cvDocxPath}
+                                        download="Amit_Kumar_Singh_CV.docx"
+                                        className="btn btn-secondary cv-action-btn"
+                                    >
+                                        <Download size={18} />
+                                        <span>Download .docx</span>
                                     </a>
                                 </div>
                             </div>
 
-                            <div className="cv-content-card">
-                                <div className="cv-placeholder-preview">
-                                    <div className="preview-icon-badge">
-                                        <FileText size={48} />
-                                    </div>
-                                    <h2>Curriculum Vitae Ready</h2>
-                                    <p>
-                                        Your Word document file (<code>Amit_Kumar_Singh_CV.docx</code>) is attached and ready to be viewed or downloaded.
-                                    </p>
-                                    <div className="preview-meta-tags">
-                                        <span className="meta-tag">19-Year-Old Engineering Student at LPU</span>
-                                        <span className="meta-tag">AI & Machine Learning</span>
-                                        <span className="meta-tag">Full Stack Development</span>
-                                    </div>
-                                </div>
+                            <div className="cv-content-card cv-pdf-viewer-card">
+                                <iframe
+                                    src={`${cvPdfPath}#toolbar=1&view=FitH`}
+                                    title="Amit Kumar Singh Curriculum Vitae"
+                                    className="cv-pdf-frame"
+                                />
                             </div>
                         </motion.div>
 
