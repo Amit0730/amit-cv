@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import ClashingLaserBorder from './ClashingLaserBorder';
+import { calculateAge } from '../utils/age';
 import './About.css';
 
 const About = () => {
@@ -43,7 +44,7 @@ const About = () => {
                         <h3 className="about-heading text-gradient">Driven by logic, guided by innovation.</h3>
 
                         <p className="about-text">
-                            I am Amit Kumar Singh, a passionate 19-year-old engineering student at Lovely Professional University (LPU), India. My academic journey is deeply rooted in <strong>Artificial Intelligence and Software Development</strong>. I thrive on the intersection of logical problem solving and creative engineering.
+                            I am Amit Kumar Singh, a passionate {calculateAge()}-year-old engineering student at Lovely Professional University (LPU), India. My academic journey is deeply rooted in <strong>Artificial Intelligence and Software Development</strong>. I thrive on the intersection of logical problem solving and creative engineering.
                         </p>
 
                         <p className="about-text">
@@ -68,8 +69,8 @@ const About = () => {
                             {[
                                 { name: "Artificial Intelligence", level: "90%" },
                                 { name: "Software Engineering", level: "85%" },
-                                { name: "Video Editing (Premiere Pro)", level: "80%" },
-                                { name: "Design & 3D (Photoshop, Blender)", level: "75%" }
+                                { name: "Video Editing (Premiere Pro)", level: "50%" },
+                                { name: "Design & 3D (Photoshop, Blender)", level: "50%" }
                             ].map((skill, index) => (
                                 <motion.div
                                     key={index}

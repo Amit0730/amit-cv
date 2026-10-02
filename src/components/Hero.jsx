@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Github, Linkedin, Instagram, FileText } from 'lucide-react';
 import ClashingLaserBorder from './ClashingLaserBorder';
+import { calculateAge } from '../utils/age';
 import './Hero.css';
 
 const Hero = () => {
@@ -29,7 +30,7 @@ const Hero = () => {
                         />
                     </h2>
                     <p className="hero-description">
-                        19-year-old engineering student at LPU, building intelligent systems and scalable technological innovations with a strong foundation in Artificial Intelligence and Software Development.
+                        {calculateAge()}-year-old engineering student at LPU, building intelligent systems and scalable technological innovations with a strong foundation in Artificial Intelligence and Software Development.
                     </p>
 
                     <motion.div
