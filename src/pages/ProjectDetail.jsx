@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { projectsData } from '../data/projects';
+import { projectsData, allWorkspaceProjects } from '../data/projects';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import './ProjectDetail.css';
@@ -11,7 +11,7 @@ const ProjectDetail = () => {
     const navigate = useNavigate();
 
     // Find the specific project based on the URL parameter
-    const project = projectsData.find(p => p.id === id);
+    const project = projectsData.find(p => p.id === id) || allWorkspaceProjects.find(p => p.id === id);
 
     // Scroll to top when page loads
     useEffect(() => {
