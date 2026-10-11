@@ -8,6 +8,7 @@ import Projects from './components/Projects';
 import Footer from './components/Footer';
 import ProjectDetail from './pages/ProjectDetail';
 import CVPage from './pages/CVPage';
+import MoreProjectsPage from './pages/MoreProjectsPage';
 import CursorGlow from './components/CursorGlow';
 import './index.css';
 
@@ -33,6 +34,7 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/project/:id" element={<ProjectDetail />} />
                 <Route path="/cv" element={<CVPage />} />
+                <Route path="/more" element={<MoreProjectsPage />} />
             </Routes>
         </BrowserRouter>
     );
