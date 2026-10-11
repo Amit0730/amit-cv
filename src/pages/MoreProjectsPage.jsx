@@ -7,7 +7,6 @@ import {
     ArrowRight, 
     Search, 
     X, 
-    FolderGit2, 
     CheckCircle2, 
     Sparkles 
 } from 'lucide-react';
@@ -30,8 +29,6 @@ const MoreProjectsPage = () => {
         return allWorkspaceProjects.filter(project => {
             const matchesSearch = 
                 project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                project.folder.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
             if (!matchesSearch) return false;
@@ -87,7 +84,7 @@ const MoreProjectsPage = () => {
                                 </div>
                                 <h1 className="more-page-title text-gradient">All Projects</h1>
                                 <p className="more-page-subtitle">
-                                    Full directory of all {allWorkspaceProjects.length} engineering projects discovered across your workspace — including AI systems, native mobile apps, extensions, and web tools.
+                                    Directory of all {allWorkspaceProjects.length} engineering projects across AI systems, native mobile apps, extensions, and web tools.
                                 </p>
                             </div>
 
@@ -98,7 +95,7 @@ const MoreProjectsPage = () => {
                                     <span className="more-status-bold">Condition: Working</span>
                                 </div>
                                 <span className="more-status-sub">
-                                    ✓ All {allWorkspaceProjects.length} projects tested & operational in local repository
+                                    ✓ All {allWorkspaceProjects.length} projects tested & operational
                                 </span>
                             </div>
                         </motion.div>
@@ -115,7 +112,7 @@ const MoreProjectsPage = () => {
                                 <input
                                     type="text"
                                     className="more-search-input"
-                                    placeholder="Search by project name, tech tag, or folder path..."
+                                    placeholder="Search by project name or technology tag..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
@@ -177,13 +174,6 @@ const MoreProjectsPage = () => {
 
                                     <h3 className="more-card-title">{project.title}</h3>
 
-                                    <div className="more-card-folder">
-                                        <FolderGit2 size={13} className="folder-icon" />
-                                        <span>{project.folder}</span>
-                                    </div>
-
-                                    <p className="more-card-desc">{project.description}</p>
-
                                     <div className="more-card-tags">
                                         {project.tags.map((tag, i) => (
                                             <span key={i} className="tag mini-tag">{tag}</span>
@@ -209,7 +199,7 @@ const MoreProjectsPage = () => {
                                         ) : (
                                             <span className="more-status-verified">
                                                 <CheckCircle2 size={14} className="verified-icon" />
-                                                <span>Working in Workspace</span>
+                                                <span>Working</span>
                                             </span>
                                         )}
 
