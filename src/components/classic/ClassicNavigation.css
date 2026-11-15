@@ -34,6 +34,7 @@
 
 .nav-links {
     display: flex;
+    align-items: center;
     gap: 2rem;
 }
 
@@ -48,55 +49,28 @@
     color: var(--text-primary);
 }
 
+/* Clean, un-intrusive link to New Website matching original blue/cyan theme (zero red) */
+.nav-link-new-website {
+    font-weight: 600 !important;
+    color: var(--accent-cyan) !important;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    background: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.nav-link-new-website:hover {
+    color: #FFFFFF !important;
+    background: rgba(6, 182, 212, 0.18);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.35);
+    transform: translateY(-1px);
+}
+
 @media (max-width: 768px) {
     .nav-links {
         display: none;
     }
-}
-
-
-/* New Website Button near Contact */
-.nav-new-website-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0.18), rgba(59, 130, 246, 0.18));
-    border: 1px solid rgba(220, 38, 38, 0.45);
-    color: #FFFFFF !important;
-    padding: 4px 12px;
-    border-radius: 9999px;
-    font-size: 0.85rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.02em;
-    transition: all 0.25s ease;
-    box-shadow: 0 0 14px rgba(220, 38, 38, 0.25);
-    text-decoration: none;
-    margin-left: 0.5rem;
-}
-
-.nav-new-website-btn:hover {
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0.32), rgba(59, 130, 246, 0.32));
-    border-color: #EF4444;
-    transform: translateY(-2px);
-    box-shadow: 0 0 22px rgba(220, 38, 38, 0.5);
-}
-
-.sparkle-icon {
-    color: #FACC15;
-    animation: sparklePulse 2s infinite ease-in-out;
-}
-
-@keyframes sparklePulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.25); opacity: 0.7; }
-}
-
-.badge-new-pill {
-    background: #EF4444;
-    color: #FFFFFF;
-    font-size: 9px;
-    font-weight: 800;
-    padding: 1px 5px;
-    border-radius: 4px;
-    letter-spacing: 0.05em;
 }

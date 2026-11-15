@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
 import './ClassicNavigation.css';
 
 const ClassicNavigation = () => {
@@ -23,11 +22,9 @@ const ClassicNavigation = () => {
                         <a href="#about">About</a>
                         <a href="#projects">Projects</a>
                         <a href="#contact">Contact</a>
-                        {/* New Website option near Contact requested by user */}
-                        <Link to="/new" className="nav-new-website-btn" title="Open New AI Multi-Agent Website">
-                            <Sparkles size={14} className="sparkle-icon" />
-                            <span>New Website</span>
-                            <span className="badge-new-pill">AI V2</span>
+                        {/* Clean link to new website matching original nav style with cyan accent, zero red tone */}
+                        <Link to="/new" className="nav-link-new-website" title="Open New AI Multi-Agent Website">
+                            New Website
                         </Link>
                     </div>
                 </div>
