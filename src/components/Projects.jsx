@@ -146,10 +146,20 @@ const ProjectCard = ({ project, index, isDelivered, startOffset = { x: -100, y: 
 
 /* The 4th card placed beside the 3rd project: opens /more page on click */
 const MoreCard = ({ totalCount, isDelivered, startOffset = { x: 100, y: 0 } }) => {
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+
+    function handleMouseMove({ currentTarget, clientX, clientY }) {
+        const { left, top } = currentTarget.getBoundingClientRect();
+        mouseX.set(clientX - left);
+        mouseY.set(clientY - top);
+    }
+
     return (
         <Link to="/more" style={{ textDecoration: 'none', display: 'block' }}>
             <motion.div
-                className="project-card more-card glass-panel"
+                className="project-card more-trigger-card glass-panel"
+                onMouseMove={handleMouseMove}
                 initial={{ 
                     x: startOffset.x, 
                     y: startOffset.y, 
@@ -163,23 +173,61 @@ const MoreCard = ({ totalCount, isDelivered, startOffset = { x: 100, y: 0 } }) =
                     scale: isDelivered ? 1 : 0.9 
                 }}
                 transition={{ type: 'spring', damping: 20, stiffness: 120 }}
-                whileHover={{ y: -6, transition: { duration: 0.25 } }}
+                whileHover={{ y: -8, transition: { duration: 0.25 } }}
                 style={{ height: '100%', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
             >
-                <div className="more-card-content">
-                    <div className="more-card-icon-halo">
-                        <Layers size={32} />
+                <motion.div
+                    className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300"
+                    style={{
+                        background: useMotionTemplate`
+                            radial-gradient(
+                                380px circle at ${mouseX}px ${mouseY}px,
+                                rgba(139, 92, 246, 0.25),
+                                transparent 80%
+                            )
+                        `,
+                        position: 'absolute',
+                        inset: 0,
+                        zIndex: 0,
+                        pointerEvents: 'none',
+                        opacity: 0,
+                        transition: 'opacity 0.3s'
+                    }}
+                    whileHover={{ opacity: 1 }}
+                />
+
+                <div className="project-content more-card-content" style={{ position: 'relative', zIndex: 1 }}>
+                    <div className="more-top-meta">
+                        <span className="more-badge-pill">
+                            <Layers size={13} />
+                            <span>+{totalCount} Workspace Projects</span>
+                        </span>
+                        <span className="condition-pill-badge glowing">
+                            <span className="pulse-green-dot-mini"></span>
+                            Condition: Working
+                        </span>
                     </div>
-                    <div className="more-card-text-block">
-                        <span className="more-card-count-badge">+{totalCount} PROJECTS</span>
-                        <h3 className="more-card-heading">Explore All Projects</h3>
-                        <p className="more-card-sub">
-                            Complete archive of AI architectures, web apps, client projects, and tools.
-                        </p>
+
+                    <h3 className="project-title more-title text-gradient">
+                        More
+                    </h3>
+                    
+                    <p className="project-desc more-desc">
+                        Explore all <strong>{totalCount} active projects</strong> from your project folder on a dedicated page. Browse AI/ML models, native mobile apps, extensions, and web tools with verified live working condition.
+                    </p>
+
+                    <div className="project-tags more-tags">
+                        <span className="tag highlight-tag">All Projects Folder</span>
+                        <span className="tag highlight-tag">Condition: Working</span>
+                        <span className="tag highlight-tag">Dedicated Page</span>
+                        <span className="tag highlight-tag">Direct Links</span>
                     </div>
-                    <div className="more-card-cta">
-                        <span>OPEN VAULT</span>
-                        <ArrowRight size={18} />
+
+                    <div className="more-action-row">
+                        <span className="more-btn">
+                            <span>More</span>
+                            <ArrowRight size={18} />
+                        </span>
                     </div>
                 </div>
             </motion.div>
