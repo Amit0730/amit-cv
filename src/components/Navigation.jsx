@@ -1,30 +1,62 @@
 import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { FileText, RotateCcw } from 'lucide-react';
+import { useBuildEngine } from '../context/BuildEngineContext';
 import './Navigation.css';
 
 const Navigation = () => {
     const [scrolled, setScrolled] = useState(false);
+    const location = useLocation();
+    const { heroDelivered } = useBuildEngine();
 
     useEffect(() => {
         const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
+            setScrolled(window.scrollY > 40);
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    const isNewHomePage = location.pathname === '/new' || location.pathname === '/new/' || location.pathname === '/new-website';
+
     return (
-        <nav className={`navigation ${scrolled ? 'scrolled glass-panel' : ''}`}>
-            <div className="container nav-container">
-                <a href="#home" className="nav-logo text-gradient">Amit Kumar Singh</a>
-                <div className="nav-right">
-                    <div className="nav-links">
-                        <a href="#about">About</a>
-                        <a href="#projects">Projects</a>
-                        <a href="#contact">Contact</a>
-                    </div>
+        <header className="nav-fixed-wrapper">
+            <motion.nav 
+                className={`nav-pill-bar ${scrolled ? 'scrolled-glass' : ''}`}
+                initial={{ opacity: 0, y: -45, scale: 0.9 }}
+                animate={{ 
+                    opacity: heroDelivered.nav ? 1 : 0, 
+                    y: heroDelivered.nav ? 0 : -45,
+                    scale: heroDelivered.nav ? 1 : 0.9
+                }}
+                transition={{ type: 'spring', damping: 18, stiffness: 130 }}
+                style={{ pointerEvents: heroDelivered.nav ? 'auto' : 'none' }}
+            >
+                {/* Monogram Brand Avatar */}
+                <Link to="/new" className="nav-monogram-circle" title="Amit Kumar Singh (AI Agent V2)">
+                    <span>A</span>
+                </Link>
+
+                <div className="nav-pill-links">
+                    <a href="#home" className="nav-item">Home</a>
+                    <a href="#projects" className="nav-item">Work</a>
+                    <a href="#about" className="nav-item">About</a>
+                    <a href="#contact" className="nav-item">Contact</a>
+
+                    <Link to="/cv" className="nav-item nav-item-cv" title="View Full CV">
+                        <FileText size={14} />
+                        <span>CV</span>
+                    </Link>
+
+                    {/* Old Website option requested by user right near CV */}
+                    <Link to="/" className="nav-item nav-item-old-website" title="Return to Old / Classic Website">
+                        <RotateCcw size={13} />
+                        <span>Old Website</span>
+                    </Link>
                 </div>
-            </div>
-        </nav>
+            </motion.nav>
+        </header>
     );
 };
 

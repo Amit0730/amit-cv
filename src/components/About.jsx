@@ -1,30 +1,47 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import ClashingLaserBorder from './ClashingLaserBorder';
 import { calculateAge } from '../utils/age';
+import { useBuildEngine } from '../context/BuildEngineContext';
 import './About.css';
 
 const About = () => {
+    const { aboutDelivered } = useBuildEngine();
+
     return (
         <section id="about" className="section about-section">
             <div className="container">
+                {/* Section Header: Brought in by Agent Motion */}
                 <motion.div
                     className="section-header"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 0.6 }}
+                    initial={{ y: -80, opacity: 0, scale: 0.9 }}
+                    animate={{ 
+                        y: aboutDelivered.title ? 0 : -80, 
+                        opacity: aboutDelivered.title ? 1 : 0, 
+                        scale: aboutDelivered.title ? 1 : 0.9 
+                    }}
+                    transition={{ type: 'spring', damping: 18, stiffness: 120 }}
                 >
-                    <h2 className="section-title">About Me</h2>
-                    <div className="title-underline"></div>
+                    <div className="section-eyebrow-red">ABOUT</div>
+                    <h2 className="section-title-impact">
+                        NOT JUST CODE.<br />
+                        <span style={{ color: '#EF4444' }}>CODE THAT SHIPS.</span>
+                    </h2>
                 </motion.div>
 
                 <div className="about-grid">
+                    {/* 2nd Photo: Brought in by Agent Palette */}
                     <motion.div
                         className="about-image-container"
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        initial={{ x: -260, y: 30, opacity: 0, scale: 0.88, rotate: -3 }}
+                        animate={{ 
+                            x: aboutDelivered.photo2 ? 0 : -260, 
+                            y: aboutDelivered.photo2 ? 0 : 30, 
+                            opacity: aboutDelivered.photo2 ? 1 : 0, 
+                            scale: aboutDelivered.photo2 ? 1 : 0.88,
+                            rotate: aboutDelivered.photo2 ? 0 : -3
+                        }}
+                        transition={{ type: 'spring', damping: 20, stiffness: 110 }}
                     >
                         {/* 4-Phase Clashing Laser Border on Both Parallel Sides */}
                         <ClashingLaserBorder />
@@ -34,12 +51,16 @@ const About = () => {
                         </div>
                     </motion.div>
 
+                    {/* Bio Story: Brought in by Agent Copy */}
                     <motion.div
                         className="about-content"
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                        initial={{ x: 260, opacity: 0, scale: 0.92 }}
+                        animate={{ 
+                            x: aboutDelivered.bio ? 0 : 260, 
+                            opacity: aboutDelivered.bio ? 1 : 0, 
+                            scale: aboutDelivered.bio ? 1 : 0.92 
+                        }}
+                        transition={{ type: 'spring', damping: 20, stiffness: 110 }}
                     >
                         <h3 className="about-heading text-gradient">Driven by logic, guided by innovation.</h3>
 
@@ -55,44 +76,9 @@ const About = () => {
                             When I'm not glued to a screen building tech or hacking away, you'll find me following my passions for <strong>Motorsports (F1 & MotoGP), bikes, and cars</strong>. I'm also a huge sports enthusiast, closely tracking <strong>MMA, Football, and Basketball</strong>.
                         </p>
 
-                        <motion.div
-                            className="skills-container"
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true, amount: 0.1 }}
-                            variants={{
-                                visible: {
-                                    transition: { staggerChildren: 0.15 }
-                                }
-                            }}
-                        >
-                            {[
-                                { name: "Artificial Intelligence", level: "90%" },
-                                { name: "Software Engineering", level: "85%" },
-                                { name: "Video Editing (Premiere Pro)", level: "50%" },
-                                { name: "Design & 3D (Photoshop, Blender)", level: "50%" }
-                            ].map((skill, index) => (
-                                <motion.div
-                                    key={index}
-                                    className="skill-item"
-                                    variants={{
-                                        hidden: { opacity: 0, y: 20 },
-                                        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-                                    }}
-                                >
-                                    <span className="skill-name">{skill.name}</span>
-                                    <div className="skill-bar">
-                                        <motion.div
-                                            className="skill-fill"
-                                            initial={{ width: 0 }}
-                                            whileInView={{ width: skill.level }}
-                                            viewport={{ once: true }}
-                                            transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
-                                        ></motion.div>
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </motion.div>
+                        <div className="about-quote">
+                            "Building software is not about typing code, it's about solving real-world friction and shipping architectures that endure."
+                        </div>
                     </motion.div>
                 </div>
             </div>

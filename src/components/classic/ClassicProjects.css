@@ -1,0 +1,220 @@
+.projects-section {
+    background-color: var(--bg-color);
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.project-card {
+    transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px #00000080, inset 0 0 0 1px var(--accent-blue);
+}
+
+.project-content {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-top-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.project-title {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+}
+
+.project-desc {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.tag {
+    font-size: .75rem;
+    padding: .25rem .75rem;
+    background: #ffffff0d;
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 99px;
+    color: var(--accent-cyan);
+    font-weight: 500;
+}
+
+/* =========================================================
+   Pulsing Green Condition Indicator
+   ========================================================= */
+
+@keyframes pulseGlowGreen {
+    0% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    }
+}
+
+.pulse-green-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulseGlowGreen 2s infinite;
+}
+
+.pulse-green-dot-mini {
+    width: 7px;
+    height: 7px;
+    background-color: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulseGlowGreen 1.8s infinite;
+}
+
+.condition-pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.25rem 0.65rem;
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.35);
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #4ade80;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.condition-pill-badge.glowing {
+    background: rgba(34, 197, 94, 0.18);
+    border-color: rgba(34, 197, 94, 0.5);
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.2);
+}
+
+/* =========================================================
+   4th Card: More Trigger Card (Renamed to "More")
+   ========================================================= */
+
+.more-trigger-card {
+    background: linear-gradient(145deg, rgba(17, 17, 24, 0.8), rgba(28, 20, 48, 0.6));
+    border: 1px dashed rgba(139, 92, 246, 0.45);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.more-trigger-card:hover {
+    border-style: solid;
+    border-color: var(--accent-purple);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 36px rgba(139, 92, 246, 0.35), inset 0 0 0 1px rgba(139, 92, 246, 0.4);
+}
+
+.more-top-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.more-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 99px;
+    color: #c4b5fd;
+}
+
+.more-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+}
+
+.more-desc {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.more-tags .highlight-tag {
+    background: rgba(139, 92, 246, 0.12);
+    border-color: rgba(139, 92, 246, 0.25);
+    color: #e0e7ff;
+}
+
+.more-action-row {
+    margin-top: auto;
+    padding-top: 1.25rem;
+    display: flex;
+    width: 100%;
+}
+
+.more-btn {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 99px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.35);
+    transition: all 0.3s ease;
+}
+
+.more-trigger-card:hover .more-btn {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(139, 92, 246, 0.55);
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+}
+
+.more-trigger-card:hover .more-btn svg {
+    transform: translateX(4px);
+    transition: transform 0.25s ease;
+}
+
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+}
