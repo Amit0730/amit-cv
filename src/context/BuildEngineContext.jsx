@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 const BuildEngineContext = createContext(null);
 
@@ -30,6 +30,13 @@ export const BuildEngineProvider = ({ children }) => {
         card4: false
     });
 
+    // Active blueprint building states per section
+    const [buildingStates, setBuildingStates] = useState({
+        hero: true,        // Hero starts building immediately on page mount!
+        about: false,
+        projects: false
+    });
+
     const [isBuilding, setIsBuilding] = useState(true);
     const [agentsActive, setAgentsActive] = useState(true);
     const [speedMultiplier, setSpeedMultiplier] = useState(1);
@@ -55,6 +62,11 @@ export const BuildEngineProvider = ({ children }) => {
             card3: false,
             card4: false
         });
+        setBuildingStates({
+            hero: true,
+            about: false,
+            projects: false
+        });
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -68,6 +80,7 @@ export const BuildEngineProvider = ({ children }) => {
             heroDelivered, setHeroDelivered,
             aboutDelivered, setAboutDelivered,
             projectsDelivered, setProjectsDelivered,
+            buildingStates, setBuildingStates,
             isBuilding, setIsBuilding,
             agentsActive, setAgentsActive,
             speedMultiplier, setSpeedMultiplier,

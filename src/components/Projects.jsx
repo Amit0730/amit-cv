@@ -4,17 +4,18 @@ import { Link } from 'react-router-dom';
 import { projectsData, allWorkspaceProjects } from '../data/projects';
 import { ArrowRight, Layers } from 'lucide-react';
 import { useBuildEngine } from '../context/BuildEngineContext';
+import AgentBuilderFrame from './AgentBuilderFrame';
 import './Projects.css';
 
 const Projects = () => {
-    const { projectsDelivered } = useBuildEngine();
+    const { projectsDelivered, buildingStates } = useBuildEngine();
 
     return (
         <section id="projects" className="section projects-section">
             <div className="container">
                 <motion.div
                     className="section-header"
-                    initial={{ opacity: 0, scale: 0.95 }}
+                    initial={{ opacity: 0.7, scale: 0.98 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true, amount: 0.3 }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
@@ -28,49 +29,81 @@ const Projects = () => {
 
                 {/* 2-Column Grid: 3 Featured Projects + 1 "More" Card */}
                 <div className="projects-grid">
-                    {/* Card 01 - Delivered by Agent Dev */}
+                    {/* Card 01 - Built by Agent Dev */}
                     {projectsData[0] && (
-                        <ProjectCard 
-                            project={projectsData[0]} 
-                            index={0} 
+                        <AgentBuilderFrame
+                            id="builder-project-card-0"
+                            agentName="Dev"
+                            color="#A855F7"
+                            label="card 01: expensy"
+                            isBuilding={buildingStates.projects}
                             isDelivered={projectsDelivered.card1}
-                            startOffset={{ x: -180, y: -40 }}
-                        />
+                        >
+                            <ProjectCard 
+                                project={projectsData[0]} 
+                                index={0} 
+                                isDelivered={projectsDelivered.card1}
+                            />
+                        </AgentBuilderFrame>
                     )}
 
-                    {/* Card 02 - Delivered by Agent Scout */}
+                    {/* Card 02 - Built by Agent Scout */}
                     {projectsData[1] && (
-                        <ProjectCard 
-                            project={projectsData[1]} 
-                            index={1} 
+                        <AgentBuilderFrame
+                            id="builder-project-card-1"
+                            agentName="Scout"
+                            color="#38BDF8"
+                            label="card 02: smart mgmt"
+                            isBuilding={buildingStates.projects}
                             isDelivered={projectsDelivered.card2}
-                            startOffset={{ x: 180, y: -40 }}
-                        />
+                        >
+                            <ProjectCard 
+                                project={projectsData[1]} 
+                                index={1} 
+                                isDelivered={projectsDelivered.card2}
+                            />
+                        </AgentBuilderFrame>
                     )}
 
-                    {/* Card 03 - Delivered by Agent Lint */}
+                    {/* Card 03 - Built by Agent Lint */}
                     {projectsData[2] && (
-                        <ProjectCard 
-                            project={projectsData[2]} 
-                            index={2} 
+                        <AgentBuilderFrame
+                            id="builder-project-card-2"
+                            agentName="Lint"
+                            color="#94A3B8"
+                            label="card 03: hospital sys"
+                            isBuilding={buildingStates.projects}
                             isDelivered={projectsDelivered.card3}
-                            startOffset={{ x: -180, y: 40 }}
-                        />
+                        >
+                            <ProjectCard 
+                                project={projectsData[2]} 
+                                index={2} 
+                                isDelivered={projectsDelivered.card3}
+                            />
+                        </AgentBuilderFrame>
                     )}
 
-                    {/* 4th Card: More Card near 3rd Project - Delivered by Agent Layout */}
-                    <MoreCard 
-                        totalCount={allWorkspaceProjects.length} 
-                        isDelivered={projectsDelivered.card4} 
-                        startOffset={{ x: 180, y: 40 }}
-                    />
+                    {/* 4th Card: More Card near 3rd Project - Built by Agent Layout */}
+                    <AgentBuilderFrame
+                        id="builder-project-card-3"
+                        agentName="Layout"
+                        color="#FACC15"
+                        label="card 04: more vault"
+                        isBuilding={buildingStates.projects}
+                        isDelivered={projectsDelivered.card4}
+                    >
+                        <MoreCard 
+                            totalCount={allWorkspaceProjects.length} 
+                            isDelivered={projectsDelivered.card4} 
+                        />
+                    </AgentBuilderFrame>
                 </div>
             </div>
         </section>
     );
 };
 
-const ProjectCard = ({ project, index, isDelivered, startOffset = { x: -100, y: 0 } }) => {
+const ProjectCard = ({ project, index, isDelivered }) => {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
 
@@ -81,21 +114,14 @@ const ProjectCard = ({ project, index, isDelivered, startOffset = { x: -100, y: 
     }
 
     return (
-        <Link to={`/project/${project.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+        <Link to={`/project/${project.id}`} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
             <motion.div
                 className="project-card glass-panel"
                 onMouseMove={handleMouseMove}
-                initial={{ 
-                    x: startOffset.x, 
-                    y: startOffset.y, 
-                    opacity: 0, 
-                    scale: 0.9 
-                }}
+                initial={{ opacity: 0.5, scale: 0.94 }}
                 animate={{ 
-                    x: isDelivered ? 0 : startOffset.x, 
-                    y: isDelivered ? 0 : startOffset.y, 
-                    opacity: isDelivered ? 1 : 0, 
-                    scale: isDelivered ? 1 : 0.9 
+                    opacity: isDelivered ? 1 : 0.85, 
+                    scale: 1
                 }}
                 transition={{ type: 'spring', damping: 20, stiffness: 120 }}
                 whileHover={{ y: -6, transition: { duration: 0.25 } }}
@@ -107,7 +133,7 @@ const ProjectCard = ({ project, index, isDelivered, startOffset = { x: -100, y: 
                         background: useMotionTemplate`
                             radial-gradient(
                                 350px circle at ${mouseX}px ${mouseY}px,
-                                rgba(220, 38, 38, 0.18),
+                                rgba(220, 38, 38, 0.15),
                                 transparent 80%
                             )
                         `,
@@ -123,7 +149,7 @@ const ProjectCard = ({ project, index, isDelivered, startOffset = { x: -100, y: 
 
                 <div className="project-content" style={{ position: 'relative', zIndex: 1 }}>
                     <div className="card-top-header">
-                        <div className="card-title-group">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                             <span className="card-index-num">{String(index + 1).padStart(2, '0')}</span>
                             <h3 className="project-title text-gradient">{project.title}</h3>
                         </div>
@@ -145,7 +171,7 @@ const ProjectCard = ({ project, index, isDelivered, startOffset = { x: -100, y: 
 };
 
 /* The 4th card placed beside the 3rd project: opens /more page on click */
-const MoreCard = ({ totalCount, isDelivered, startOffset = { x: 100, y: 0 } }) => {
+const MoreCard = ({ totalCount, isDelivered }) => {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
 
@@ -156,21 +182,14 @@ const MoreCard = ({ totalCount, isDelivered, startOffset = { x: 100, y: 0 } }) =
     }
 
     return (
-        <Link to="/more" style={{ textDecoration: 'none', display: 'block' }}>
+        <Link to="/more" style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
             <motion.div
                 className="project-card more-trigger-card glass-panel"
                 onMouseMove={handleMouseMove}
-                initial={{ 
-                    x: startOffset.x, 
-                    y: startOffset.y, 
-                    opacity: 0, 
-                    scale: 0.9 
-                }}
+                initial={{ opacity: 0.5, scale: 0.94 }}
                 animate={{ 
-                    x: isDelivered ? 0 : startOffset.x, 
-                    y: isDelivered ? 0 : startOffset.y, 
-                    opacity: isDelivered ? 1 : 0, 
-                    scale: isDelivered ? 1 : 0.9 
+                    opacity: isDelivered ? 1 : 0.85, 
+                    scale: 1
                 }}
                 transition={{ type: 'spring', damping: 20, stiffness: 120 }}
                 whileHover={{ y: -8, transition: { duration: 0.25 } }}
