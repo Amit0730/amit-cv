@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import ClashingLaserBorder from '../ClashingLaserBorder';
 import { calculateAge } from '../../utils/age';
 import './ClassicAbout.css';
 
@@ -20,18 +19,13 @@ const ClassicAbout = () => {
 
                 <div className="about-grid">
                     <motion.div
-                        className="about-image-container"
+                        className="about-image-wrapper glass-panel"
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true, amount: 0.3 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                     >
-                        {/* 4-Phase Clashing Laser Border on Both Parallel Sides */}
-                        <ClashingLaserBorder />
-
-                        <div className="about-image-wrapper glass-panel">
-                            <img src={`${import.meta.env.BASE_URL}images/profile2.jpg`} alt="Amit at LPU" className="about-image" />
-                        </div>
+                        <img src={`${import.meta.env.BASE_URL}images/profile2.jpg`} alt="Amit at LPU" className="about-image" />
                     </motion.div>
 
                     <motion.div

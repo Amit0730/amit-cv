@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import './CursorGlow.css';
 
-const CursorGlow = () => {
+const CursorGlow = ({ classic = false }) => {
     const canvasRef = useRef(null);
 
     useEffect(() => {
@@ -23,8 +23,15 @@ const CursorGlow = () => {
         resize();
         window.addEventListener('resize', resize, { passive: true });
 
-        // Pure vivid colors: Red, Blue, Purple
-        const colors = [
+        // Palette: Classic site is strictly Blue/Cyan/Purple (zero red)
+        const colors = classic ? [
+            '#0066ff', // Pure Cobalt Blue
+            '#3b82f6', // Electric Blue
+            '#a855f7', // Pure Neon Purple
+            '#8b5cf6', // Violet Purple
+            '#00d2ff', // Electric Cyan
+            '#06b6d4'  // Clean Cyan
+        ] : [
             '#ff0055', // Pure Neon Red
             '#0066ff', // Pure Cobalt Blue
             '#a855f7', // Pure Neon Purple

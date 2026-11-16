@@ -45,7 +45,7 @@ const NewAgentWebsite = () => (
 // The Classic / Live Main Website Page
 const OldClassicWebsite = () => (
     <>
-        <CursorGlow />
+        <CursorGlow classic={true} />
         <ClassicHome />
     </>
 );
