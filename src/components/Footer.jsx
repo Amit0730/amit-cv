@@ -1,3 +1,4 @@
+import React from 'react';
 import './Footer.css';
 
 const Footer = () => {
@@ -29,8 +30,8 @@ const Footer = () => {
                 </div>
 
                 <div className="footer-bottom">
-                    <p>&copy; {new Date().getFullYear()} Amit Kumar Singh. All rights reserved.</p>
-                    <p className="made-with">Designed with passion and logic.</p>
+                    <p>&copy; 2026 AMIT KUMAR SINGH. All rights reserved.</p>
+                    <p className="made-with">BUILT BY AN AGENT SWARM • PUNJAB / UTTAR PRADESH, INDIA</p>
                 </div>
             </div>
         </footer>

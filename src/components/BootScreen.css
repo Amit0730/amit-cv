@@ -1,0 +1,146 @@
+/* =========================================================
+   Boot Screen Overlay (Matching video start)
+   ========================================================= */
+
+.boot-screen-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background-color: #060709;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    animation: bootFadeIn 0.3s ease-out;
+}
+
+@keyframes bootFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.boot-center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.boot-orbit-stage {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.boot-dots-ring {
+    position: absolute;
+    width: 0;
+    height: 0;
+    animation: ringOrbit 8s linear infinite;
+}
+
+@keyframes ringOrbit {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.boot-agent-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    margin-top: -3px;
+    border-radius: 50%;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.boot-monogram-core {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #EF4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 14px;
+    box-shadow: 0 0 18px rgba(239, 68, 68, 0.5);
+}
+
+.boot-status-text {
+    font-family: 'JetBrains Mono', monospace, ui-monospace, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #94A3B8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+}
+
+.boot-counter-highlight {
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Footer Strip */
+.boot-footer-strip {
+    position: absolute;
+    bottom: 24px;
+    left: 32px;
+    right: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace, ui-monospace, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: #64748B;
+    letter-spacing: 0.8px;
+}
+
+.boot-footer-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.boot-pill-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: #FFFFFF;
+}
+
+@media (max-width: 640px) {
+    .boot-footer-strip {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+        bottom: 16px;
+    }
+}

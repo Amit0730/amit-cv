@@ -8,9 +8,12 @@ import ClassicHome from './components/classic/ClassicHome';
 // New AI Multi-Agent Website Components
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
-import About from './components/About';
 import Projects from './components/Projects';
+import TrackRecord from './components/TrackRecord';
+import SkillsSection from './components/SkillsSection';
+import About from './components/About';
 import Footer from './components/Footer';
+import BootScreen from './components/BootScreen';
 import MultiAgentEngine from './components/MultiAgentEngine';
 import { BuildEngineProvider } from './context/BuildEngineContext';
 
@@ -21,9 +24,12 @@ import MoreProjectsPage from './pages/MoreProjectsPage';
 import CursorGlow from './components/CursorGlow';
 import './index.css';
 
-// The New AI Multi-Agent Website Page
+// The New AI Multi-Agent Website Page (Matching the Video Showcase)
 const NewAgentWebsite = () => (
     <BuildEngineProvider>
+        {/* Boot Screen Loader (Matching video 0.0s - 2.5s) */}
+        <BootScreen />
+
         {/* Interactive Mouse Trail & Spotlight */}
         <CursorGlow />
 
@@ -34,8 +40,10 @@ const NewAgentWebsite = () => (
             <Navigation />
             <main>
                 <Hero />
-                <About />
                 <Projects />
+                <TrackRecord />
+                <SkillsSection />
+                <About />
             </main>
             <Footer />
         </div>

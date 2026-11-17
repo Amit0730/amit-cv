@@ -34,6 +34,7 @@ const Projects = () => {
                         <AgentBuilderFrame
                             id="builder-project-card-0"
                             agentName="Dev"
+                            action="placing"
                             color="#A855F7"
                             label="card 01: expensy"
                             isBuilding={buildingStates.projects}
@@ -52,8 +53,9 @@ const Projects = () => {
                         <AgentBuilderFrame
                             id="builder-project-card-1"
                             agentName="Scout"
+                            action="sizing"
                             color="#38BDF8"
-                            label="card 02: smart mgmt"
+                            label="card 02: aesthetic clock"
                             isBuilding={buildingStates.projects}
                             isDelivered={projectsDelivered.card2}
                         >
@@ -70,6 +72,7 @@ const Projects = () => {
                         <AgentBuilderFrame
                             id="builder-project-card-2"
                             agentName="Lint"
+                            action="typing"
                             color="#94A3B8"
                             label="card 03: hospital sys"
                             isBuilding={buildingStates.projects}
@@ -87,6 +90,7 @@ const Projects = () => {
                     <AgentBuilderFrame
                         id="builder-project-card-3"
                         agentName="Layout"
+                        action="grid"
                         color="#FACC15"
                         label="card 04: more vault"
                         isBuilding={buildingStates.projects}

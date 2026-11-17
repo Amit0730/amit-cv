@@ -1,4 +1,8 @@
-/* Multi-Agent Live Engine Overlay */
+/* =========================================================
+   Multi-Agent Live Engine Overlay & Cursors
+   Exact replication of Video Showcase
+   ========================================================= */
+
 .multi-agent-overlay {
     position: fixed;
     top: 0;
@@ -10,7 +14,7 @@
     overflow: hidden;
 }
 
-/* Individual Agent Cursor */
+/* Individual Agent Cursor Wrapper */
 .agent-cursor-wrapper {
     position: absolute;
     top: 0;
@@ -24,103 +28,51 @@
 
 /* Pointer Arrow */
 .agent-pointer-svg {
-    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.7));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
     flex-shrink: 0;
+    transform: rotate(-5deg);
 }
 
 /* Badge Tag */
 .agent-badge-tag {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 3px 9px;
+    gap: 5px;
+    padding: 3px 8px;
     border-radius: 999px;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    letter-spacing: 0.3px;
-    margin-left: 2px;
-    margin-top: 14px;
+    letter-spacing: 0.2px;
+    margin-left: 1px;
+    margin-top: 12px;
     user-select: none;
     line-height: 1;
-    transform-origin: top left;
     white-space: nowrap;
 }
 
-.agent-badge-dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    opacity: 0.8;
+.agent-bot-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.9;
 }
 
-/* Blueprint Wireframe Box being actively drawn by Cursors */
-.blueprint-wireframe-box {
-    position: fixed;
-    border: 1.5px solid;
-    pointer-events: none;
-    z-index: 9998;
-    background: rgba(14, 165, 233, 0.04);
-    box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.08);
-    transition: all 0.12s ease-out;
-}
-
-/* 4 Corner Anchors like Figma / Blueprint */
-.bp-anchor {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
-}
-
-.bp-anchor.tl {
-    top: -3px;
-    left: -3px;
-}
-
-.bp-anchor.tr {
-    top: -3px;
-    right: -3px;
-}
-
-.bp-anchor.bl {
-    bottom: -3px;
-    left: -3px;
-}
-
-.bp-anchor.br {
-    bottom: -3px;
-    right: -3px;
-}
-
-/* Dimension Tag Pill */
-.bp-dimension-tag {
-    position: absolute;
-    top: -22px;
-    left: -1px;
-    padding: 2px 7px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-family: monospace;
+.agent-badge-name {
     font-weight: 700;
-    color: #000000;
-    letter-spacing: 0.4px;
-    white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-    user-select: none;
 }
 
-/* Click Ripple */
+/* Click & Delivery Ripples */
 .agent-click-ripple {
     position: fixed;
-    width: 28px;
-    height: 28px;
-    margin-left: -14px;
-    margin-top: -14px;
+    width: 26px;
+    height: 26px;
+    margin-left: -13px;
+    margin-top: -13px;
     border: 2px solid;
     border-radius: 50%;
     pointer-events: none;
-    animation: rippleAnim 0.7s cubic-bezier(0, 0.2, 0.8, 1) forwards;
+    animation: rippleAnim 0.75s cubic-bezier(0, 0.2, 0.8, 1) forwards;
 }
 
 @keyframes rippleAnim {
@@ -128,17 +80,19 @@
         transform: scale(0.2);
         opacity: 1;
     }
-
     100% {
-        transform: scale(2.6);
+        transform: scale(2.8);
         opacity: 0;
     }
 }
 
-/* Bottom Control Dock */
+/* =========================================================
+   Bottom Floating Control Dock (Matching crop_dock_frame6.jpg)
+   ========================================================= */
+
 .agents-dock-container {
     position: fixed;
-    bottom: 24px;
+    bottom: 22px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10000;
@@ -149,23 +103,23 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(14, 14, 18, 0.92);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.7), 0 0 1px rgba(255, 255, 255, 0.2);
-    padding: 7px 18px;
+    background: rgba(12, 12, 16, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75), 0 0 1px rgba(255, 255, 255, 0.2);
+    padding: 6px 14px;
     border-radius: 9999px;
     color: #FFFFFF;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 12px;
+    font-size: 11.5px;
     user-select: none;
     transition: all 0.25s ease;
 }
 
 .agents-dock-pill:hover {
-    border-color: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.8);
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.85);
 }
 
 /* Status Group */
@@ -176,16 +130,16 @@
 }
 
 .dock-pulse-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     transition: background-color 0.3s ease;
 }
 
 .dock-pulse-dot.online {
     background: #22C55E;
-    box-shadow: 0 0 10px #22C55E;
-    animation: pulseGlow 1.8s infinite;
+    box-shadow: 0 0 8px #22C55E;
+    animation: dockPulse 1.8s infinite;
 }
 
 .dock-pulse-dot.offline {
@@ -193,35 +147,33 @@
     box-shadow: 0 0 6px #EF4444;
 }
 
-@keyframes pulseGlow {
-
-    0%,
-    100% {
+@keyframes dockPulse {
+    0%, 100% {
         opacity: 1;
         transform: scale(1);
     }
-
     50% {
-        opacity: 0.5;
-        transform: scale(1.2);
+        opacity: 0.4;
+        transform: scale(1.25);
     }
 }
 
 .dock-agents-count {
     font-weight: 700;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.8px;
     font-size: 11px;
     color: #E2E8F0;
     text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace, ui-monospace, sans-serif;
 }
 
 .dock-divider {
     width: 1px;
-    height: 16px;
+    height: 14px;
     background: rgba(255, 255, 255, 0.15);
 }
 
-/* Action Button */
+/* Action Buttons */
 .dock-action-btn {
     display: flex;
     align-items: center;
@@ -232,8 +184,8 @@
     cursor: pointer;
     font-size: 11px;
     font-weight: 600;
-    padding: 4px 6px;
-    border-radius: 6px;
+    padding: 3px 6px;
+    border-radius: 5px;
     transition: all 0.2s ease;
 }
 
@@ -242,71 +194,101 @@
     background: rgba(255, 255, 255, 0.08);
 }
 
-.dock-action-btn.active {
-    color: #E2E8F0;
+.dock-power-status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #CBD5E1;
+    font-weight: 700;
+    font-size: 10.5px;
+    letter-spacing: 0.5px;
+    font-family: 'JetBrains Mono', monospace, ui-monospace, sans-serif;
 }
 
 .dock-btn-label {
-    letter-spacing: 0.4px;
+    letter-spacing: 0.5px;
+    font-family: 'JetBrains Mono', monospace, ui-monospace, sans-serif;
+    font-size: 10px;
 }
 
 /* Speed Button */
 .dock-speed-btn {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: #FACC15;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #FFFFFF;
     cursor: pointer;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 7px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace, ui-monospace, sans-serif;
     transition: all 0.2s ease;
 }
 
 .dock-speed-btn:hover {
-    background: rgba(250, 204, 21, 0.15);
-    border-color: #FACC15;
+    background: rgba(255, 255, 255, 0.16);
 }
 
-/* Stop Button (Red Accent from video) */
-.dock-stop-btn {
+/* Red STOP / START Button (Matches video red pill button) */
+.dock-stop-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     background: #DC2626;
-    color: #FFFFFF;
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
     border: none;
-    font-size: 11px;
+    color: #FFFFFF;
+    font-family: 'JetBrains Mono', monospace, ui-monospace, sans-serif;
+    font-size: 10.5px;
     font-weight: 800;
-    letter-spacing: 0.5px;
-    padding: 5px 12px;
+    letter-spacing: 0.6px;
+    padding: 4px 12px;
     border-radius: 9999px;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
     transition: all 0.2s ease;
 }
 
-.dock-stop-btn:hover {
-    background: #EF4444;
-    box-shadow: 0 0 14px rgba(239, 68, 68, 0.6);
+.dock-stop-pill-btn:hover {
+    background: linear-gradient(135deg, #F87171 0%, #EF4444 100%);
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.6);
     transform: scale(1.04);
 }
 
-.dock-stop-btn.stopped {
-    background: #16A34A;
-    box-shadow: 0 2px 8px rgba(22, 163, 74, 0.4);
+.dock-stop-pill-btn.stopped {
+    background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
 }
 
-.dock-stop-btn.stopped:hover {
-    background: #22C55E;
-    box-shadow: 0 0 14px rgba(34, 197, 94, 0.6);
+.dock-stop-icon {
+    width: 6px;
+    height: 6px;
+    background: #FFFFFF;
+    border-radius: 1px;
+}
+
+.dock-stop-pill-btn.stopped .dock-stop-icon {
+    width: 0;
+    height: 0;
+    border-top: 3.5px solid transparent;
+    border-bottom: 3.5px solid transparent;
+    border-left: 6px solid #FFFFFF;
+    border-radius: 0;
+    background: transparent;
 }
 
 @media (max-width: 640px) {
-    .agents-dock-pill {
-        gap: 8px;
-        padding: 6px 12px;
-        font-size: 11px;
+    .agents-dock-container {
+        bottom: 12px;
+        width: 95%;
     }
-
-    .dock-agents-count {
+    .agents-dock-pill {
+        justify-content: space-between;
+        padding: 5px 10px;
         font-size: 10px;
+    }
+    .dock-power-status,
+    .dock-speed-btn {
+        display: none;
     }
 }

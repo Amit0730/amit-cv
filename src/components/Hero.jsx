@@ -13,7 +13,7 @@ const Hero = () => {
 
     return (
         <section id="home" className="hero-section section">
-            {/* Giant Background Word from Video - Brought in by Render Agent */}
+            {/* Giant Background Word from Video - Stamped by Render Agent */}
             <motion.div
                 id="builder-hero-bg"
                 className="hero-giant-bg"
@@ -29,31 +29,48 @@ const Hero = () => {
             </motion.div>
 
             <div className="container hero-container-cinematic">
-                {/* 1. Left Column: Built by Agent Typeset */}
-                <AgentBuilderFrame
-                    id="builder-hero-name"
-                    agentName="Typeset"
-                    color="#22C55E"
-                    label="headline: 540×380"
-                    isBuilding={buildingStates.hero}
-                    isDelivered={heroDelivered.name}
-                    className="hero-frame-left"
-                >
-                    <motion.div
-                        className="hero-left-col"
-                        initial={{ opacity: 0.5, scale: 0.94 }}
-                        animate={{
-                            opacity: heroDelivered.name ? 1 : 0.85,
-                            scale: heroDelivered.name ? 1 : 0.96
-                        }}
-                        transition={{ type: 'spring', damping: 20, stiffness: 120 }}
+                {/* 1. Left Column: Multi-Agent Typography, Copy, CTA & Meta */}
+                <div className="hero-left-col">
+                    {/* A. Name & Greeting - Built by Typeset */}
+                    <AgentBuilderFrame
+                        id="builder-hero-name"
+                        agentName="Typeset"
+                        action="composing"
+                        color="#22C55E"
+                        label="540×120"
+                        isBuilding={buildingStates.hero}
+                        isDelivered={heroDelivered.name}
+                        className="hero-subframe"
                     >
                         <p className="hero-greeting-sub">Hello, I'm</p>
+                        <h1 className="hero-name-giant">AMIT KUMAR SINGH.</h1>
+                    </AgentBuilderFrame>
 
-                        <h1 className="hero-name-giant">AMIT KUMAR SINGH</h1>
-
+                    {/* B. Role Subtitle - Built by Copy */}
+                    <AgentBuilderFrame
+                        id="builder-hero-role"
+                        agentName="Copy"
+                        action="typing"
+                        color="#06B6D4"
+                        label="headline: 420×44"
+                        isBuilding={buildingStates.hero}
+                        isDelivered={heroDelivered.role}
+                        className="hero-subframe"
+                    >
                         <h2 className="hero-role-headline">SOFTWARE ENGINEER & AI BUILDER</h2>
+                    </AgentBuilderFrame>
 
+                    {/* C. Pitch & Capabilities - Built by Lint */}
+                    <AgentBuilderFrame
+                        id="builder-hero-pitch"
+                        agentName="Lint"
+                        action="typing"
+                        color="#94A3B8"
+                        label="bio: 520×140"
+                        isBuilding={buildingStates.hero}
+                        isDelivered={heroDelivered.pitch}
+                        className="hero-subframe"
+                    >
                         <div className="hero-typewriter-box">
                             <span className="typewriter-prefix">Specializing in: </span>
                             <Typewriter
@@ -76,7 +93,19 @@ const Hero = () => {
                             I build intelligent systems, mobile applications, and AI-assisted workflows that actually ship.
                             Engineering student at LPU with proven experience building production-ready architectures from brief to live deployment.
                         </p>
+                    </AgentBuilderFrame>
 
+                    {/* D. CTA Action Buttons - Placed by Index */}
+                    <AgentBuilderFrame
+                        id="builder-hero-cta"
+                        agentName="Index"
+                        action="placing"
+                        color="#84CC16"
+                        label="cta: 320×48"
+                        isBuilding={buildingStates.hero}
+                        isDelivered={heroDelivered.cta}
+                        className="hero-subframe"
+                    >
                         <div className="hero-cta-group">
                             <a href="#projects" className="btn-hero-red">
                                 <span>VIEW WORK</span>
@@ -87,7 +116,19 @@ const Hero = () => {
                                 <span>VIEW CV</span>
                             </Link>
                         </div>
+                    </AgentBuilderFrame>
 
+                    {/* E. Location Badge & Socials - Built by QA */}
+                    <AgentBuilderFrame
+                        id="builder-hero-location"
+                        agentName="QA"
+                        action="typing"
+                        color="#3B82F6"
+                        label="location: 480×32"
+                        isBuilding={buildingStates.hero}
+                        isDelivered={heroDelivered.location}
+                        className="hero-subframe"
+                    >
                         <div className="hero-meta-tag">
                             <span className="meta-beacon" />
                             <span>BASED IN PUNJAB / UTTAR PRADESH, INDIA • OPEN TO INTERNSHIPS & ROLES</span>
@@ -112,13 +153,14 @@ const Hero = () => {
                                 </svg>
                             </a>
                         </div>
-                    </motion.div>
-                </AgentBuilderFrame>
+                    </AgentBuilderFrame>
+                </div>
 
                 {/* 2. Center Column: Built by Agent Deploy */}
                 <AgentBuilderFrame
                     id="builder-hero-photo"
                     agentName="Deploy"
+                    action="framing"
                     color="#F97316"
                     label="portrait: 340×430"
                     isBuilding={buildingStates.hero}
@@ -153,6 +195,7 @@ const Hero = () => {
                 <AgentBuilderFrame
                     id="builder-hero-stats"
                     agentName="Code"
+                    action="compiling"
                     color="#3B82F6"
                     label="stats: 210×260"
                     isBuilding={buildingStates.hero}
@@ -170,22 +213,22 @@ const Hero = () => {
                     >
                         <div className="stats-stack-card">
                             <div className="stat-unit">
-                                <div className="stat-number-giant text-gradient">15+</div>
-                                <div className="stat-label-muted">PROJECTS BUILT</div>
+                                <div className="stat-number-giant text-gradient">40.</div>
+                                <div className="stat-label-muted">UNIT TESTS SHIPPED</div>
                             </div>
 
                             <div className="stat-divider-subtle" />
 
                             <div className="stat-unit">
-                                <div className="stat-number-giant text-gradient">04</div>
-                                <div className="stat-label-muted">APPS LIVE ON VERCEL & GH</div>
+                                <div className="stat-number-giant text-gradient">02.</div>
+                                <div className="stat-label-muted">APPS LIVE IN PROD</div>
                             </div>
 
                             <div className="stat-divider-subtle" />
 
                             <div className="stat-unit">
-                                <div className="stat-number-giant text-red-accent">'26</div>
-                                <div className="stat-label-muted">BATCH / B.TECH CSE (AI)</div>
+                                <div className="stat-number-giant text-red-accent">'26.</div>
+                                <div className="stat-label-muted">B.TECH CSE (AI) LEAD</div>
                             </div>
                         </div>
                     </motion.div>

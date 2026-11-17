@@ -24,6 +24,7 @@ const Navigation = () => {
             <AgentBuilderFrame
                 id="builder-hero-nav"
                 agentName="Layout"
+                action="snapping"
                 color="#FACC15"
                 label="nav: 460×48"
                 isBuilding={buildingStates.hero}

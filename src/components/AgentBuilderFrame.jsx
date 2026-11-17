@@ -4,6 +4,7 @@ import './AgentBuilderFrame.css';
 const AgentBuilderFrame = ({
     id,
     agentName = 'Agent',
+    action = 'placing',
     color = '#38bdf8',
     label = '',
     isBuilding = false,
@@ -36,25 +37,29 @@ const AgentBuilderFrame = ({
             className={`agent-builder-frame ${showBlueprint ? 'blueprint-active' : ''} ${isDelivered ? 'delivered-active' : ''} ${className}`}
             style={{ '--frame-color': color }}
         >
-            {/* The Blueprint Wireframe Overlay (Active during assembly) */}
+            {/* The Blueprint Wireframe Overlay with Handles (Active during assembly) */}
             {showBlueprint && (
                 <>
                     <div className="blueprint-outline" />
 
-                    {/* 4 Corner Resize Handles */}
+                    {/* Corner & Midpoint Handles matching Figma / Canvas from the Video */}
                     <span className="builder-handle handle-tl" />
+                    <span className="builder-handle handle-tc" />
                     <span className="builder-handle handle-tr" />
+                    <span className="builder-handle handle-ml" />
+                    <span className="builder-handle handle-mr" />
                     <span className="builder-handle handle-bl" />
+                    <span className="builder-handle handle-bc" />
                     <span className="builder-handle handle-br" />
 
-                    {/* Floating Element Spec Tag */}
+                    {/* Blue / Agent Spec Tag at Top Left (Exact match to video crop) */}
                     <div className="builder-spec-tag">
-                        <span className="spec-agent-dot" style={{ backgroundColor: color }} />
-                        <span className="spec-agent-name">{agentName}</span>
-                        <span className="spec-divider">•</span>
-                        <span className="spec-dims">
-                            {dimensions.w > 0 ? `${dimensions.w}×${dimensions.h}px` : label || 'sizing...'}
-                        </span>
+                        <span className="spec-agent-tag">{agentName} {action}</span>
+                        {dimensions.w > 0 && (
+                            <span className="spec-dims-tag">
+                                {dimensions.w} × {dimensions.h}
+                            </span>
+                        )}
                     </div>
                 </>
             )}
