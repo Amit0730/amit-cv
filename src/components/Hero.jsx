@@ -90,7 +90,7 @@ const Hero = () => {
 
                         <div className="hero-meta-tag">
                             <span className="meta-beacon" />
-                            <span>BASED IN PUNJAB / INDORE, INDIA • OPEN TO INTERNSHIPS & ROLES</span>
+                            <span>BASED IN PUNJAB / UTTAR PRADESH, INDIA • OPEN TO INTERNSHIPS & ROLES</span>
                         </div>
 
                         {/* Social links */}
