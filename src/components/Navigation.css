@@ -71,6 +71,15 @@
     color: #FFFFFF;
 }
 
+/* Navigation Agent live link validation pulse */
+.nav-item.nav-item-verified {
+    color: #C084FC !important;
+    background: rgba(139, 92, 246, 0.22) !important;
+    border-radius: 6px;
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
+    transition: all 0.2s ease;
+}
+
 .nav-item-cv {
     display: inline-flex;
     align-items: center;

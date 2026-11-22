@@ -51,8 +51,10 @@ const AgentBuilderFrame = ({
         return () => window.removeEventListener('resize', updateDims);
     }, [isBuilding, isDelivered]);
 
-    // Show blueprint when element is actively under inspection or building and not delivered
-    const showBlueprint = agentsActive && !isDelivered && (Boolean(liveInspection) || isBuilding);
+    // Issue H Fix: Only show the active blueprint selection outline, 8 handles and spec tag
+    // on the element CURRENTLY being actively selected/manipulated by an agent.
+    const hasActiveAgent = Boolean(liveInspection);
+    const showActiveSelection = agentsActive && !isDelivered && hasActiveAgent;
 
     const activeColor = liveInspection?.color || color;
     const activeAgentName = liveInspection?.agentName || agentName;
@@ -61,11 +63,11 @@ const AgentBuilderFrame = ({
     const activeHeight = liveDims?.h || measuredDims.h;
 
     // Dynamic sizing and motion styles
-    // Problem 4 Fix: applies both width and height when resizing
+    // Issue G Fix: maxWidth: 100% ensures responsive layout is never broken on mobile
     const dynamicStyle = {
         '--frame-color': activeColor,
         ...(liveDims?.w ? { width: `${liveDims.w}px`, maxWidth: '100%' } : {}),
-        ...(liveDims?.h ? { height: `${liveDims.h}px`, minHeight: `${liveDims.h}px` } : {}),
+        ...(liveDims?.h ? { height: `${liveDims.h}px` } : {}),
         ...(liveMotionOffset !== undefined ? { transform: `translateY(${liveMotionOffset}px)` } : {})
     };
 
@@ -73,11 +75,11 @@ const AgentBuilderFrame = ({
         <div
             id={id}
             ref={frameRef}
-            className={`agent-builder-frame ${showBlueprint ? 'blueprint-active' : ''} ${isDelivered ? 'delivered-active' : 'unbuilt-state'} ${isTestingHover ? 'agent-testing-hover' : ''} ${liveStyle ? 'agent-style-active' : ''} ${liveMedia ? 'agent-media-active' : ''} ${className}`}
+            className={`agent-builder-frame ${showActiveSelection ? 'blueprint-active' : ''} ${isDelivered ? 'delivered-active' : 'unbuilt-state'} ${isTestingHover ? 'agent-testing-hover' : ''} ${liveStyle ? 'agent-style-active' : ''} ${liveMedia ? 'agent-media-active' : ''} ${className}`}
             style={dynamicStyle}
         >
-            {/* The Blueprint Wireframe Overlay with Handles (Active during assembly) */}
-            {showBlueprint && (
+            {/* The Blueprint Wireframe Overlay with Handles (Active ONLY when assigned agent is working on it) */}
+            {showActiveSelection && (
                 <>
                     <div className="blueprint-outline" />
 

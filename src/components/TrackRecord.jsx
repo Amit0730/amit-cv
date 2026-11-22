@@ -43,7 +43,8 @@ const TRACK_RECORDS = [
 ];
 
 export default function TrackRecord() {
-    const { trackDelivered, buildingStates, typedText = {}, agentsActive = true } = useBuildEngine();
+    const { trackDelivered, buildingStates, typedText = {}, componentStages = {}, agentsActive = true } = useBuildEngine();
+    const timelineStage = trackDelivered.timeline || !agentsActive ? 5 : (componentStages['builder-track-timeline'] || 0);
 
     return (
         <section id="track-record" className="section track-section">
@@ -103,30 +104,41 @@ export default function TrackRecord() {
                             isDelivered={trackDelivered.timeline}
                         >
                             <div className="track-timeline-list">
-                                {TRACK_RECORDS.map((item, idx) => (
-                                    <motion.div
-                                        key={idx}
-                                        id={`track-item-${idx}`}
-                                        className="track-timeline-item"
-                                        initial={{ opacity: 0.6, y: 10 }}
-                                        animate={{
-                                            opacity: trackDelivered.timeline ? 1 : 0.85,
-                                            y: 0
-                                        }}
-                                        transition={{ duration: 0.35, delay: idx * 0.08 }}
-                                    >
-                                        <div className="track-item-content">
-                                            <div className="track-item-header">
-                                                <h3 className="track-item-role">{item.role}</h3>
-                                                <span className="track-item-org">{item.org}</span>
+                                {timelineStage === 0 ? (
+                                    <div className="track-timeline-wireframe" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                        {[1, 2, 3, 4, 5].map(k => (
+                                            <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '1.2rem', background: 'rgba(255, 255, 255, 0.02)', border: '1px dashed rgba(255, 255, 255, 0.08)', borderRadius: '12px' }}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '70%' }}>
+                                                    <span className="wireframe-bar" style={{ width: '40%', height: '16px' }} />
+                                                    <span className="wireframe-bar" style={{ width: '80%', height: '10px' }} />
+                                                </div>
+                                                <span className="wireframe-bar" style={{ width: '48px', height: '24px', borderRadius: '6px' }} />
                                             </div>
-                                            <p className="track-item-desc">{item.desc}</p>
-                                        </div>
-                                        <div className="track-item-year-badge">
-                                            <span>{item.year}</span>
-                                        </div>
-                                    </motion.div>
-                                ))}
+                                        ))}
+                                    </div>
+                                ) : (
+                                    TRACK_RECORDS.slice(0, timelineStage).map((item, idx) => (
+                                        <motion.div
+                                            key={idx}
+                                            id={`track-item-${idx}`}
+                                            className="track-timeline-item"
+                                            initial={{ opacity: 0, y: 15 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ duration: 0.3 }}
+                                        >
+                                            <div className="track-item-content">
+                                                <div className="track-item-header">
+                                                    <h3 className="track-item-role">{item.role}</h3>
+                                                    <span className="track-item-org">{item.org}</span>
+                                                </div>
+                                                <p className="track-item-desc">{item.desc}</p>
+                                            </div>
+                                            <div className="track-item-year-badge">
+                                                <span>{item.year}</span>
+                                            </div>
+                                        </motion.div>
+                                    ))
+                                )}
                             </div>
                         </AgentBuilderFrame>
                     </div>

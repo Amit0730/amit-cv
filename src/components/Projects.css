@@ -62,6 +62,67 @@
     flex-direction: column;
 }
 
+/* Staged Wireframe Assembly Styles */
+.project-card-wireframe {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.wireframe-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.wireframe-index-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: rgba(220, 38, 38, 0.12);
+    color: rgba(220, 38, 38, 0.5);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.wireframe-bar {
+    height: 12px;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 4px;
+}
+
+.wireframe-title-bar {
+    width: 140px;
+    height: 18px;
+}
+
+.wireframe-desc-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 2rem;
+}
+
+.wireframe-tags-row {
+    display: flex;
+    gap: 8px;
+}
+
+.wireframe-tag-slot {
+    width: 56px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 999px;
+}
+
 .project-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 10px 30px #00000080, inset 0 0 0 1px var(--accent-blue);

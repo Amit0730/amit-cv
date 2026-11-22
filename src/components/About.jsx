@@ -68,11 +68,18 @@ const About = () => {
                             }}
                             transition={{ type: 'spring', damping: 20, stiffness: 110 }}
                         >
-                            {/* 4-Phase Clashing Laser Border on Both Parallel Sides */}
-                            <ClashingLaserBorder />
+                            {aboutDelivered?.photo2 && <ClashingLaserBorder />}
 
                             <div className="about-image-wrapper glass-panel">
-                                <img src={`${import.meta.env.BASE_URL}images/profile2.jpg`} alt="Amit at LPU" className="about-image" />
+                                {aboutDelivered?.photo2 || !agentsActive ? (
+                                    <img src={`${import.meta.env.BASE_URL}images/profile2.jpg`} alt="Amit at LPU" className="about-image" />
+                                ) : (
+                                    <div className="portrait-wireframe-slot" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '340px', background: 'rgba(255, 255, 255, 0.02)', border: '1px dashed rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
+                                        <span className="wireframe-pill" style={{ padding: '6px 14px', borderRadius: '999px', background: 'rgba(255, 255, 255, 0.05)', fontSize: '11px', color: '#71717A', fontFamily: 'monospace' }}>
+                                            [LPU CAMPUS PORTRAIT WIREFRAME]
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </motion.div>
                     </AgentBuilderFrame>
@@ -98,21 +105,36 @@ const About = () => {
                         >
                             <h3 className="about-heading text-gradient">Driven by logic, guided by innovation.</h3>
 
-                            <p className="about-text">
-                                I am Amit Kumar Singh, a passionate {calculateAge()}-year-old engineering student at Lovely Professional University (LPU), India. My academic journey is deeply rooted in <strong>Artificial Intelligence and Software Development</strong>. I thrive on the intersection of logical problem solving and creative engineering.
-                            </p>
+                            {aboutDelivered?.bio || !agentsActive ? (
+                                <>
+                                    <p className="about-text">
+                                        I am Amit Kumar Singh, a passionate {calculateAge()}-year-old engineering student at Lovely Professional University (LPU), India. My academic journey is deeply rooted in <strong>Artificial Intelligence and Software Development</strong>. I thrive on the intersection of logical problem solving and creative engineering.
+                                    </p>
 
-                            <p className="about-text">
-                                Beyond pure coding, I also possess strong design and editing capabilities. I have good knowledge and hands-on experience mastering tools like <strong>Android Studio, Adobe Photoshop, Premiere Pro, and Blender</strong> for creative workflows.
-                            </p>
+                                    <p className="about-text">
+                                        Beyond pure coding, I also possess strong design and editing capabilities. I have good knowledge and hands-on experience mastering tools like <strong>Android Studio, Adobe Photoshop, Premiere Pro, and Blender</strong> for creative workflows.
+                                    </p>
 
-                            <p className="about-text">
-                                When I'm not glued to a screen building tech or hacking away, you'll find me following my passions for <strong>Motorsports (F1 & MotoGP), bikes, and cars</strong>. I'm also a huge sports enthusiast, closely tracking <strong>MMA, Football, and Basketball</strong>.
-                            </p>
+                                    <p className="about-text">
+                                        When I'm not glued to a screen building tech or hacking away, you'll find me following my passions for <strong>Motorsports (F1 & MotoGP), bikes, and cars</strong>. I'm also a huge sports enthusiast, closely tracking <strong>MMA, Football, and Basketball</strong>.
+                                    </p>
 
-                            <div className="about-quote">
-                                "Building software is not about typing code, it's about solving real-world friction and shipping architectures that endure."
-                            </div>
+                                    <div className="about-quote">
+                                        "Building software is not about typing code, it's about solving real-world friction and shipping architectures that endure."
+                                    </div>
+                                </>
+                            ) : typedText['builder-about-bio'] !== undefined ? (
+                                <p className="about-text">
+                                    {typedText['builder-about-bio']}
+                                    <span className="typing-cursor-blink">|</span>
+                                </p>
+                            ) : (
+                                <div className="about-wireframe-stack" style={{ display: 'flex', flexDirection: 'column', gap: '12px', margin: '18px 0' }}>
+                                    <span className="wireframe-bar" style={{ width: '95%', height: '14px' }} />
+                                    <span className="wireframe-bar" style={{ width: '88%', height: '14px' }} />
+                                    <span className="wireframe-bar" style={{ width: '70%', height: '14px' }} />
+                                </div>
+                            )}
                         </motion.div>
                     </AgentBuilderFrame>
                 </div>

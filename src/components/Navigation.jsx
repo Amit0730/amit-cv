@@ -9,7 +9,7 @@ import './Navigation.css';
 const Navigation = () => {
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
-    const { heroDelivered, buildingStates, agentsActive = true } = useBuildEngine();
+    const { heroDelivered, buildingStates, navVerifiedLinks = {}, agentsActive = true } = useBuildEngine();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -47,19 +47,19 @@ const Navigation = () => {
                     </Link>
 
                     <div className="nav-pill-links">
-                        <a href="#home" className="nav-item">Home</a>
-                        <a href="#track-record" className="nav-item">Track</a>
-                        <a href="#projects" className="nav-item">Work</a>
-                        <a href="#about" className="nav-item">About</a>
-                        <a href="#contact" className="nav-item">Contact</a>
+                        <a href="#home" className={`nav-item ${navVerifiedLinks['#home'] ? 'nav-item-verified' : ''}`}>Home</a>
+                        <a href="#track-record" className={`nav-item ${navVerifiedLinks['#track-record'] ? 'nav-item-verified' : ''}`}>Track</a>
+                        <a href="#projects" className={`nav-item ${navVerifiedLinks['#projects'] ? 'nav-item-verified' : ''}`}>Work</a>
+                        <a href="#about" className={`nav-item ${navVerifiedLinks['#about'] ? 'nav-item-verified' : ''}`}>About</a>
+                        <a href="#contact" className={`nav-item ${navVerifiedLinks['#contact'] ? 'nav-item-verified' : ''}`}>Contact</a>
 
-                        <Link to="/cv" className="nav-item nav-item-cv" title="View Full CV">
+                        <Link to="/cv" className={`nav-item nav-item-cv ${navVerifiedLinks['/cv'] ? 'nav-item-verified' : ''}`} title="View Full CV">
                             <FileText size={14} />
                             <span>CV</span>
                         </Link>
 
                         {/* Old Website option requested by user right near CV */}
-                        <Link to="/" className="nav-item nav-item-old-website" title="Return to Old / Classic Website">
+                        <Link to="/" className={`nav-item nav-item-old-website ${navVerifiedLinks['/'] ? 'nav-item-verified' : ''}`} title="Return to Old / Classic Website">
                             <RotateCcw size={13} />
                             <span>Old Website</span>
                         </Link>

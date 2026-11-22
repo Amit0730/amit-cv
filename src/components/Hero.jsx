@@ -9,7 +9,7 @@ import AgentBuilderFrame from './AgentBuilderFrame';
 import './Hero.css';
 
 const Hero = () => {
-    const { heroDelivered, buildingStates, typedText = {}, agentsActive = true } = useBuildEngine();
+    const { heroDelivered, buildingStates, typedText = {}, componentStages = {}, agentsActive = true } = useBuildEngine();
 
     return (
         <section id="home" className="hero-section section">
@@ -124,16 +124,25 @@ const Hero = () => {
                         isDelivered={heroDelivered.cta}
                         className="hero-subframe"
                     >
-                        <div className="hero-cta-group">
-                            <a href="#projects" className="btn-hero-red">
-                                <span>VIEW WORK</span>
-                                <ArrowUpRight size={18} />
-                            </a>
-                            <Link to="/cv" className="btn-hero-glass">
-                                <FileText size={17} />
-                                <span>VIEW CV</span>
-                            </Link>
-                        </div>
+                        {heroDelivered.cta || !agentsActive || (componentStages['builder-hero-cta'] || 0) >= 1 ? (
+                            <div className="hero-cta-group">
+                                <a href="#projects" className="btn-hero-red">
+                                    <span>VIEW WORK</span>
+                                    <ArrowUpRight size={18} />
+                                </a>
+                                {(heroDelivered.cta || !agentsActive || (componentStages['builder-hero-cta'] || 0) >= 2) && (
+                                    <Link to="/cv" className="btn-hero-glass">
+                                        <FileText size={17} />
+                                        <span>VIEW CV</span>
+                                    </Link>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="hero-cta-wireframe" style={{ display: 'flex', gap: '1rem', minHeight: '48px', alignItems: 'center' }}>
+                                <span className="wireframe-bar" style={{ width: '130px', height: '44px', borderRadius: '8px', display: 'inline-block' }} />
+                                <span className="wireframe-bar" style={{ width: '110px', height: '44px', borderRadius: '8px', display: 'inline-block' }} />
+                            </div>
+                        )}
                     </AgentBuilderFrame>
 
                     {/* E. Location Badge & Socials - Built by QA */}
@@ -195,15 +204,25 @@ const Hero = () => {
                         transition={{ type: 'spring', damping: 20, stiffness: 120 }}
                     >
                         <div className="hero-portrait-stage">
-                            <ClashingLaserBorder />
+                            {heroDelivered.photo && <ClashingLaserBorder />}
 
                             <div className="hero-portrait-wrapper glass-panel">
-                                <img
-                                    src={`${import.meta.env.BASE_URL}images/profile1.jpg`}
-                                    alt="Amit Kumar Singh"
-                                    className="hero-portrait-img"
-                                />
-                                <div className="hero-portrait-ambient-glow" />
+                                {heroDelivered.photo || !agentsActive ? (
+                                    <>
+                                        <img
+                                            src={`${import.meta.env.BASE_URL}images/profile1.jpg`}
+                                            alt="Amit Kumar Singh"
+                                            className="hero-portrait-img"
+                                        />
+                                        <div className="hero-portrait-ambient-glow" />
+                                    </>
+                                ) : (
+                                    <div className="portrait-wireframe-slot" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '320px', background: 'rgba(255, 255, 255, 0.02)', border: '1px dashed rgba(255, 255, 255, 0.15)', borderRadius: '20px' }}>
+                                        <span className="wireframe-pill" style={{ padding: '6px 14px', borderRadius: '999px', background: 'rgba(255, 255, 255, 0.05)', fontSize: '11px', color: '#71717A', fontFamily: 'monospace' }}>
+                                            [PORTRAIT ASSET WIREFRAME]
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </motion.div>
@@ -230,24 +249,45 @@ const Hero = () => {
                         transition={{ type: 'spring', damping: 20, stiffness: 120 }}
                     >
                         <div className="stats-stack-card">
-                            <div className="stat-unit">
-                                <div className="stat-number-giant text-gradient">40.</div>
-                                <div className="stat-label-muted">UNIT TESTS SHIPPED</div>
-                            </div>
+                            {(heroDelivered.stats || !agentsActive || (componentStages['builder-hero-stats'] || 0) >= 1) ? (
+                                <div className="stat-unit">
+                                    <div className="stat-number-giant text-gradient">40.</div>
+                                    <div className="stat-label-muted">UNIT TESTS SHIPPED</div>
+                                </div>
+                            ) : (
+                                <div className="stat-unit" style={{ minHeight: '52px' }}>
+                                    <span className="wireframe-bar" style={{ width: '60px', height: '24px', marginBottom: '6px', display: 'block' }} />
+                                    <span className="wireframe-bar" style={{ width: '120px', height: '10px', display: 'block' }} />
+                                </div>
+                            )}
 
                             <div className="stat-divider-subtle" />
 
-                            <div className="stat-unit">
-                                <div className="stat-number-giant text-gradient">02.</div>
-                                <div className="stat-label-muted">APPS LIVE IN PROD</div>
-                            </div>
+                            {(heroDelivered.stats || !agentsActive || (componentStages['builder-hero-stats'] || 0) >= 2) ? (
+                                <div className="stat-unit">
+                                    <div className="stat-number-giant text-gradient">02.</div>
+                                    <div className="stat-label-muted">APPS LIVE IN PROD</div>
+                                </div>
+                            ) : (
+                                <div className="stat-unit" style={{ minHeight: '52px' }}>
+                                    <span className="wireframe-bar" style={{ width: '60px', height: '24px', marginBottom: '6px', display: 'block' }} />
+                                    <span className="wireframe-bar" style={{ width: '110px', height: '10px', display: 'block' }} />
+                                </div>
+                            )}
 
                             <div className="stat-divider-subtle" />
 
-                            <div className="stat-unit">
-                                <div className="stat-number-giant text-red-accent">'26.</div>
-                                <div className="stat-label-muted">B.TECH CSE (AI) LEAD</div>
-                            </div>
+                            {(heroDelivered.stats || !agentsActive || (componentStages['builder-hero-stats'] || 0) >= 3) ? (
+                                <div className="stat-unit">
+                                    <div className="stat-number-giant text-red-accent">'26.</div>
+                                    <div className="stat-label-muted">B.TECH CSE (AI) LEAD</div>
+                                </div>
+                            ) : (
+                                <div className="stat-unit" style={{ minHeight: '52px' }}>
+                                    <span className="wireframe-bar" style={{ width: '60px', height: '24px', marginBottom: '6px', display: 'block' }} />
+                                    <span className="wireframe-bar" style={{ width: '130px', height: '10px', display: 'block' }} />
+                                </div>
+                            )}
                         </div>
                     </motion.div>
                 </AgentBuilderFrame>

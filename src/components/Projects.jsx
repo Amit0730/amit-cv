@@ -58,6 +58,7 @@ const Projects = () => {
                             isDelivered={projectsDelivered.card1}
                         >
                             <ProjectCard 
+                                frameId="builder-project-card-0"
                                 project={projectsData[0]} 
                                 index={0} 
                                 isDelivered={projectsDelivered.card1}
@@ -77,6 +78,7 @@ const Projects = () => {
                             isDelivered={projectsDelivered.card2}
                         >
                             <ProjectCard 
+                                frameId="builder-project-card-1"
                                 project={projectsData[1]} 
                                 index={1} 
                                 isDelivered={projectsDelivered.card2}
@@ -96,6 +98,7 @@ const Projects = () => {
                             isDelivered={projectsDelivered.card3}
                         >
                             <ProjectCard 
+                                frameId="builder-project-card-2"
                                 project={projectsData[2]} 
                                 index={2} 
                                 isDelivered={projectsDelivered.card3}
@@ -124,7 +127,10 @@ const Projects = () => {
     );
 };
 
-const ProjectCard = ({ project, index, isDelivered }) => {
+const ProjectCard = ({ frameId, project, index, isDelivered }) => {
+    const { componentStages = {}, agentsActive = true } = useBuildEngine();
+    const stage = isDelivered || !agentsActive ? 4 : (componentStages[frameId] || 0);
+
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
 
@@ -134,19 +140,41 @@ const ProjectCard = ({ project, index, isDelivered }) => {
         mouseY.set(clientY - top);
     }
 
+    // Issue A Fix: Staged Component Assembly
+    // Stage 0: Clean unfinished wireframe container (matching reference video wireframe)
+    if (stage === 0) {
+        return (
+            <div className="project-card project-card-wireframe" style={{ height: '100%', minHeight: '260px' }}>
+                <div className="wireframe-card-header">
+                    <span className="wireframe-pill wireframe-index-pill">{String(index + 1).padStart(2, '0')}</span>
+                    <span className="wireframe-bar wireframe-title-bar" />
+                </div>
+                <div className="wireframe-desc-stack">
+                    <span className="wireframe-bar" style={{ width: '90%' }} />
+                    <span className="wireframe-bar" style={{ width: '75%' }} />
+                </div>
+                <div className="wireframe-tags-row">
+                    <span className="wireframe-tag-slot" />
+                    <span className="wireframe-tag-slot" />
+                    <span className="wireframe-tag-slot" />
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <Link to={`/project/${project.id}`} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+        <Link to={`/project/${project.id}`} style={{ textDecoration: 'none', display: 'block', height: '100%', pointerEvents: stage >= 4 ? 'auto' : 'none' }}>
             <motion.div
-                className="project-card glass-panel"
+                className={`project-card glass-panel ${stage < 4 ? 'card-assembling' : ''}`}
                 onMouseMove={handleMouseMove}
-                initial={{ opacity: 0.5, scale: 0.94 }}
+                initial={{ opacity: 0.6, scale: 0.95 }}
                 animate={{ 
-                    opacity: isDelivered ? 1 : 0.85, 
+                    opacity: 1, 
                     scale: 1
                 }}
                 transition={{ type: 'spring', damping: 20, stiffness: 120 }}
-                whileHover={{ y: -6, transition: { duration: 0.25 } }}
-                style={{ height: '100%', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
+                whileHover={stage >= 4 ? { y: -6, transition: { duration: 0.25 } } : {}}
+                style={{ height: '100%', cursor: stage >= 4 ? 'pointer' : 'default', position: 'relative', overflow: 'hidden' }}
             >
                 <motion.div
                     className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
@@ -162,7 +190,7 @@ const ProjectCard = ({ project, index, isDelivered }) => {
                         inset: 0,
                         zIndex: 0,
                         pointerEvents: 'none',
-                        opacity: 0,
+                        opacity: stage >= 4 ? undefined : 0,
                         transition: 'opacity 0.3s'
                     }}
                     whileHover={{ opacity: 1 }}
@@ -174,16 +202,32 @@ const ProjectCard = ({ project, index, isDelivered }) => {
                             <span className="card-index-num">{String(index + 1).padStart(2, '0')}</span>
                             <h3 className="project-title text-gradient">{project.title}</h3>
                         </div>
-                        <span className="condition-pill-badge">
-                            <span className="pulse-green-dot-mini"></span>
-                            Working
-                        </span>
+                        {stage >= 4 && (
+                            <span className="condition-pill-badge">
+                                <span className="pulse-green-dot-mini"></span>
+                                Working
+                            </span>
+                        )}
                     </div>
-                    <p className="project-desc">{project.description}</p>
+                    {stage >= 2 ? (
+                        <p className="project-desc">{project.description}</p>
+                    ) : (
+                        <div className="wireframe-desc-stack" style={{ margin: '14px 0' }}>
+                            <span className="wireframe-bar" style={{ width: '85%' }} />
+                            <span className="wireframe-bar" style={{ width: '60%' }} />
+                        </div>
+                    )}
                     <div className="project-tags">
-                        {project.tags.map((tag, i) => (
-                            <span key={i} className="tag">{tag}</span>
-                        ))}
+                        {stage >= 3 ? (
+                            project.tags.map((tag, i) => (
+                                <span key={i} className="tag">{tag}</span>
+                            ))
+                        ) : (
+                            <div className="wireframe-tags-row">
+                                <span className="wireframe-tag-slot" />
+                                <span className="wireframe-tag-slot" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </motion.div>

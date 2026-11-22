@@ -508,9 +508,10 @@ export const INITIAL_TASKS = [
         targetId: 'builder-about-bio',
         section: 'about',
         action: 'copy',
-        label: 'editorializing bio narrative',
+        text: 'I am Amit Kumar Singh, a passionate engineering student at Lovely Professional University (LPU), India. My academic journey is deeply rooted in Artificial Intelligence and Software Development. I thrive on the intersection of logical problem solving and creative engineering.',
+        label: 'authoring bio narrative',
         corner: 'tr',
-        duration: 1.3,
+        duration: 1.4,
         dependencies: ['task-about-title']
     },
     {

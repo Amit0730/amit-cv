@@ -43,6 +43,8 @@ export const BuildEngineProvider = ({ children }) => {
     const [activeStyles, setActiveStyles] = useState({});
     const [activeMedia, setActiveMedia] = useState({});
     const [motionTests, setMotionTests] = useState({});
+    const [componentStages, setComponentStages] = useState({});
+    const [navVerifiedLinks, setNavVerifiedLinks] = useState({});
 
     // Section delivery flags (for final resting states & fallback)
     const [heroDelivered, setHeroDelivered] = useState({
@@ -237,6 +239,23 @@ export const BuildEngineProvider = ({ children }) => {
         });
     }, []);
 
+    // Set dynamic staged component assembly progress (0 to 4)
+    const setComponentStage = useCallback((targetId, stage) => {
+        setComponentStages(prev => ({ ...prev, [targetId]: stage }));
+    }, []);
+
+    // Set navigation link verified highlight
+    const setNavVerifiedLink = useCallback((href, isVerified = true) => {
+        setNavVerifiedLinks(prev => {
+            if (!isVerified) {
+                const next = { ...prev };
+                delete next[href];
+                return next;
+            }
+            return { ...prev, [href]: true };
+        });
+    }, []);
+
     // Power toggle: AGENTS ON / AGENTS OFF
     // Problem 3 Fix: When AGENTS OFF, presentation renders cleanly without faking task completions!
     const setAgentsActive = useCallback((active) => {
@@ -249,6 +268,7 @@ export const BuildEngineProvider = ({ children }) => {
             setActiveStyles({});
             setActiveMedia({});
             setMotionTests({});
+            setNavVerifiedLinks({});
         }
     }, []);
 
@@ -274,6 +294,8 @@ export const BuildEngineProvider = ({ children }) => {
         setActiveStyles({});
         setActiveMedia({});
         setMotionTests({});
+        setComponentStages({});
+        setNavVerifiedLinks({});
 
         setHeroDelivered({
             nav: false, name: false, role: false, pitch: false, cta: false, location: false, photo: false, stats: false, bg: false
@@ -325,6 +347,8 @@ export const BuildEngineProvider = ({ children }) => {
             activeStyles, setActiveStyle,
             activeMedia, setActiveMedia: setActiveMediaState,
             motionTests, setMotionTest,
+            componentStages, setComponentStage,
+            navVerifiedLinks, setNavVerifiedLink,
 
             // Section delivery states
             heroDelivered, setHeroDelivered,

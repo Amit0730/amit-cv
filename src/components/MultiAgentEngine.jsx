@@ -27,7 +27,9 @@ export default function MultiAgentEngine() {
         setTesting,
         setActiveStyle,
         setActiveMedia,
-        setMotionTest
+        setMotionTest,
+        setComponentStage,
+        setNavVerifiedLink
     } = useBuildEngine();
 
     const [ripples, setRipples] = useState([]);
@@ -35,14 +37,18 @@ export default function MultiAgentEngine() {
     const animFrameRef = useRef(null);
 
     // Initial state for each of the 12 agents from AGENT_ROSTER
+    // Issue F Fix: Each agent has an assigned home station to prevent chaotic wandering
     const agentsRef = useRef(
         AGENT_ROSTER.map((cfg, index) => {
             const w = typeof window !== 'undefined' ? window.innerWidth : 1200;
-            const startX = cfg.zone.minXRel * w + Math.random() * (cfg.zone.maxXRel - cfg.zone.minXRel) * w;
-            const startY = cfg.zone.minY + Math.random() * (cfg.zone.maxY - cfg.zone.minY);
+            const startX = cfg.zone.minXRel * w + ((index % 6) / 5) * (cfg.zone.maxXRel - cfg.zone.minXRel) * w;
+            const startY = cfg.zone.minY + ((index % 3) / 2) * (cfg.zone.maxY - cfg.zone.minY);
 
             return {
                 ...cfg,
+                homeX: startX,
+                homeY: startY,
+                homePhase: index * 0.7,
                 x: startX,
                 y: startY,
                 targetX: startX,
@@ -55,7 +61,6 @@ export default function MultiAgentEngine() {
                 stateTimer: 0,
                 taskTime: 0,
                 labelExtra: '',
-                wanderTimer: 0.2 + index * 0.2,
                 speedMod: 0.95 + (index % 4) * 0.08,
                 isCarrying: false
             };
@@ -152,10 +157,19 @@ export default function MultiAgentEngine() {
 
                 // -------------------------------------------------------------
                 // A. Task Assignment to Matching Idle Agents
+                // Section 7 Fix: Concurrency protection (One active agent per target)
                 // -------------------------------------------------------------
                 readyTasks.forEach(task => {
                     const existingAgent = agentsRef.current.find(a => a.currentTaskId === task.id);
                     if (existingAgent) return;
+
+                    // Concurrency check: Ensure no other agent is already actively manipulating this target
+                    const targetBusy = agentsRef.current.some(a => {
+                        if (!a.currentTaskId) return false;
+                        const activeTask = tasks.find(t => t.id === a.currentTaskId);
+                        return activeTask && activeTask.targetId === task.targetId;
+                    });
+                    if (targetBusy) return;
 
                     const agent = agentsRef.current.find(a => a.id === task.agentId && !a.currentTaskId);
                     if (agent) {
@@ -203,7 +217,7 @@ export default function MultiAgentEngine() {
                                     agent.stateTimer = 0;
                                     agent.labelExtra = 'selecting...';
 
-                                    // Latch Figma selection outline
+                                    // Latch Figma selection outline (Issue H Fix: only active element has handles)
                                     setInspection(currentTask.targetId, {
                                         agentName: agent.name,
                                         action: currentTask.action,
@@ -237,9 +251,20 @@ export default function MultiAgentEngine() {
                                         const charLen = Math.max(1, Math.floor(progress * currentTask.text.length));
                                         setElementTypedText(currentTask.targetId, currentTask.text.slice(0, charLen));
                                     }
+                                    // Issue E Fix: Staged reveal for complex timeline content
+                                    if (currentTask.targetId === 'builder-track-timeline') {
+                                        const stage = Math.min(Math.floor(progress * 5) + 1, 5);
+                                        setComponentStage('builder-track-timeline', stage);
+                                        agent.labelExtra = `milestone ${stage}/5`;
+                                    }
+                                    if (currentTask.targetId === 'builder-skills-principles') {
+                                        const stage = Math.min(Math.floor(progress * 4) + 1, 4);
+                                        setComponentStage('builder-skills-principles', stage);
+                                        agent.labelExtra = `principle ${stage}/4`;
+                                    }
                                 }
                                 // 3. Resize: Drag handle with both width and height
-                                // Cursor dynamically stays glued to the moving handle
+                                // Issue G Fix: Cursor dynamically tracks live handle during drag
                                 else if (currentTask.action === 'resize') {
                                     if (currentTask.startDims && currentTask.targetDims) {
                                         const curW = Math.round(currentTask.startDims.w + (currentTask.targetDims.w - currentTask.startDims.w) * progress);
@@ -275,13 +300,30 @@ export default function MultiAgentEngine() {
                                     const motionY = Math.sin(progress * Math.PI * 2) * -6;
                                     setMotionTest(currentTask.targetId, motionY);
                                 }
-                                // 9. Navigation: Link verification & snapping
+                                // 9. Navigation: Link verification & snapping (Issue B Fix: Real DOM Link Inspection)
                                 else if (currentTask.action === 'navigation') {
-                                    agent.labelExtra = `route check: ok`;
+                                    const navEl = document.getElementById(currentTask.targetId);
+                                    if (navEl) {
+                                        const links = navEl.querySelectorAll('a[href]');
+                                        if (links.length > 0) {
+                                            const idx = Math.min(Math.floor(progress * links.length), links.length - 1);
+                                            const link = links[idx];
+                                            const href = link?.getAttribute('href');
+                                            if (href) {
+                                                agent.labelExtra = `checking ${href}`;
+                                                setNavVerifiedLink(href);
+                                                const linkRect = link.getBoundingClientRect();
+                                                agent.targetX = linkRect.left + linkRect.width / 2;
+                                                agent.targetY = linkRect.bottom;
+                                            }
+                                        }
+                                    }
                                 }
-                                // 10. Component / Layout: Card & structure assembly
+                                // 10. Component / Layout: Card & structure assembly (Issue A Fix: Staged Component Assembly)
                                 else if (currentTask.action === 'component' || currentTask.action === 'layout') {
-                                    agent.labelExtra = `${currentTask.label} (${Math.round(progress * 100)}%)`;
+                                    const stage = progress < 0.25 ? 1 : progress < 0.50 ? 2 : progress < 0.75 ? 3 : 4;
+                                    setComponentStage(currentTask.targetId, stage);
+                                    agent.labelExtra = `${currentTask.label} [stage ${stage}/4]`;
                                 }
                                 // 11. Review: Spec audit pass
                                 else if (currentTask.action === 'review') {
@@ -296,16 +338,37 @@ export default function MultiAgentEngine() {
                                     updateTaskStatus(currentTask.id, 'verifying');
                                 }
                             }
-                            // --- STATE 4: VERIFYING (Problem 5 Fix: Real DOM & Dependency Verification) ---
+                            // --- STATE 4: VERIFYING (Issue C Fix: Action-Specific DOM & Asset Validation) ---
                             else if (agent.state === 'verifying') {
                                 agent.stateTimer += dt * speedMultiplier;
 
-                                // Real inspection: check DOM element geometry and dependency completion
+                                // Action-specific validation
                                 const el = document.getElementById(currentTask.targetId);
                                 const rect = el ? el.getBoundingClientRect() : null;
-                                const domValid = Boolean(rect && (rect.width > 5 || rect.height > 5));
-                                const depsValid = currentTask.dependencies.every(d => completedTaskMap.has(d));
-                                const isVerified = domValid && depsValid;
+                                const hasGeometry = Boolean(rect && (rect.width > 0 || rect.height > 0));
+                                const depsDone = currentTask.dependencies.every(d => completedTaskMap.has(d));
+
+                                let isVerified = false;
+                                if (el && hasGeometry && depsDone) {
+                                    if (currentTask.action === 'type' || currentTask.action === 'copy') {
+                                        const text = (el.innerText || el.textContent || '').trim();
+                                        const expected = (currentTask.text || '').slice(0, 8).trim();
+                                        isVerified = !expected || text.includes(expected);
+                                    } else if (currentTask.action === 'media') {
+                                        const img = el.querySelector('img');
+                                        isVerified = Boolean(img && (img.complete || img.naturalWidth > 0));
+                                    } else if (currentTask.action === 'navigation') {
+                                        const links = el.querySelectorAll('a[href]');
+                                        isVerified = links.length > 0;
+                                    } else if (currentTask.action === 'component' || currentTask.action === 'layout') {
+                                        isVerified = el.children.length > 0 || (el.innerText || '').trim().length > 0;
+                                    } else if (currentTask.action === 'review') {
+                                        const otherTasks = tasks.filter(t => t.section === currentTask.section && t.id !== currentTask.id);
+                                        isVerified = otherTasks.every(t => completedTaskMap.has(t.id));
+                                    } else {
+                                        isVerified = true;
+                                    }
+                                }
 
                                 if (agent.stateTimer >= 0.22) {
                                     if (isVerified) {
@@ -316,9 +379,19 @@ export default function MultiAgentEngine() {
                                         if (currentTask.text) {
                                             setElementTypedText(currentTask.targetId, currentTask.text);
                                         }
-                                        // Problem 4 Fix: Keep target dimensions permanently (do not reset!)
-                                        if (currentTask.action === 'resize' && currentTask.targetDims) {
-                                            setElementDimension(currentTask.targetId, currentTask.targetDims);
+                                        // Finalize component stage to complete
+                                        if (currentTask.action === 'component' || currentTask.action === 'layout') {
+                                            setComponentStage(currentTask.targetId, 4);
+                                        }
+                                        if (currentTask.targetId === 'builder-track-timeline') {
+                                            setComponentStage('builder-track-timeline', 5);
+                                        }
+                                        if (currentTask.targetId === 'builder-skills-principles') {
+                                            setComponentStage('builder-skills-principles', 4);
+                                        }
+                                        // Release temporary inline dimensions so responsive layouts adapt
+                                        if (currentTask.action === 'resize') {
+                                            setElementDimension(currentTask.targetId, null);
                                         }
                                         if (currentTask.action === 'spacing') {
                                             setTimeout(() => setSpacingGuide(currentTask.targetId, null), 900);
@@ -333,10 +406,10 @@ export default function MultiAgentEngine() {
                                             setMotionTest(currentTask.targetId, 0);
                                         }
                                         if (currentTask.action === 'style') {
-                                            setActiveStyle(currentTask.targetId, null);
+                                            setActiveStyle(currentTask.targetId, { active: true, progress: 1 });
                                         }
                                         if (currentTask.action === 'media') {
-                                            setActiveMedia(currentTask.targetId, null);
+                                            setActiveMedia(currentTask.targetId, { mounted: true, progress: 1 });
                                         }
 
                                         updateTaskStatus(currentTask.id, 'completed');
@@ -352,7 +425,7 @@ export default function MultiAgentEngine() {
                                             }
                                         }, 1100);
                                     } else {
-                                        // Graceful failure if DOM element missing
+                                        // Graceful failure if verification failed
                                         agent.labelExtra = 'verify ✕';
                                         updateTaskStatus(currentTask.id, 'failed');
                                         agent.currentTaskId = null;
@@ -363,15 +436,10 @@ export default function MultiAgentEngine() {
                             }
                         }
                     } else {
-                        // Autonomous smooth ambient wandering within agent zone
-                        agent.wanderTimer -= dt * speedMultiplier;
-                        if (agent.wanderTimer <= 0) {
-                            const minX = agent.zone.minXRel * w;
-                            const maxX = agent.zone.maxXRel * w;
-                            agent.targetX = minX + Math.random() * (maxX - minX);
-                            agent.targetY = agent.zone.minY + Math.random() * (agent.zone.maxY - agent.zone.minY);
-                            agent.wanderTimer = 1.8 + Math.random() * 2.2;
-                        }
+                        // Issue F Fix: Calm standby station micro-floating (No chaotic aimless wandering)
+                        const t = currentTime * 0.0018 + agent.homePhase;
+                        agent.targetX = agent.homeX + Math.sin(t) * 4;
+                        agent.targetY = agent.homeY + Math.cos(t * 1.3) * 3;
                     }
 
                     // Physics motion calculation (Smooth easing)
@@ -379,8 +447,8 @@ export default function MultiAgentEngine() {
                     const dy = agent.targetY - agent.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
 
-                    const accel = agent.isCarrying ? 12.0 : 4.5;
-                    const maxSpeed = agent.isCarrying ? 820 : 320;
+                    const accel = agent.isCarrying ? 12.0 : 4.0;
+                    const maxSpeed = agent.isCarrying ? 820 : 280;
                     const baseSpeed = Math.min(dist * 5.2, maxSpeed) * agent.speedMod * speedMultiplier;
 
                     if (dist > 1) {
@@ -423,7 +491,8 @@ export default function MultiAgentEngine() {
         tasks, activeSections, updateTaskStatus, getHandle, addRipple,
         setInspection, setElementTypedText, setElementDimension,
         setSpacingGuide, setReviewed, setTesting,
-        setActiveStyle, setActiveMedia, setMotionTest
+        setActiveStyle, setActiveMedia, setMotionTest,
+        setComponentStage, setNavVerifiedLink
     ]);
 
     return (

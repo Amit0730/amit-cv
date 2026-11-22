@@ -151,6 +151,40 @@
     box-shadow: 0 10px 30px rgba(220, 38, 38, 0.25);
     height: 100%;
     min-height: 320px;
+    transition: all 0.4s ease;
+}
+
+.manifesto-card-wireframe {
+    background: rgba(18, 18, 22, 0.4);
+    border: 1px dashed rgba(239, 68, 68, 0.3);
+    border-radius: 14px;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 320px;
+    transition: all 0.4s ease;
+}
+
+.manifesto-card-wireframe .manifesto-quote-text {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.manifesto-card-wireframe .manifesto-author {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.skills-wireframe-bar {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0.05) 100%);
+    background-size: 200% 100%;
+    animation: skillsWireframePulse 2s ease-in-out infinite;
+    border-radius: 4px;
+}
+
+@keyframes skillsWireframePulse {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 .manifesto-quote-text {

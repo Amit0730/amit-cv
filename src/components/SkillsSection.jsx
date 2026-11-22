@@ -37,7 +37,11 @@ const PRINCIPLES = [
 ];
 
 export default function SkillsSection() {
-    const { skillsDelivered, buildingStates } = useBuildEngine();
+    const { skillsDelivered, buildingStates, componentStages, activeStyles, agentsActive } = useBuildEngine();
+
+    const eduStage = skillsDelivered.skills || !agentsActive ? 4 : (componentStages['builder-skills-edu'] || 0);
+    const principlesStage = skillsDelivered.principles || !agentsActive ? 4 : (componentStages['builder-skills-principles'] || 0);
+    const manifestoStyled = skillsDelivered.manifesto || !agentsActive || Boolean(activeStyles['builder-skills-manifesto']?.active);
 
     return (
         <section id="skills" className="section skills-section">
@@ -56,19 +60,40 @@ export default function SkillsSection() {
                         >
                             <div className="skills-edu-card">
                                 <span className="skills-eyebrow">EDUCATION & SKILLS</span>
-                                <div className="skills-degree-box">
-                                    <h3 className="skills-degree-title">B.Tech • Computer Science</h3>
-                                    <p className="skills-degree-loc">Lovely Professional University • expected 2026</p>
-                                </div>
-
-                                <div className="skills-categories-stack">
-                                    {SKILLS_DATA.map((cat, i) => (
-                                        <div key={i} className="skill-cat-row">
-                                            <span className="skill-cat-label">{cat.label}</span>
-                                            <span className="skill-cat-items">{cat.items}</span>
+                                
+                                {eduStage === 0 ? (
+                                    <div className="skills-edu-wireframe">
+                                        <div className="skills-wireframe-bar" style={{ width: '70%', height: '22px', marginBottom: '8px' }} />
+                                        <div className="skills-wireframe-bar" style={{ width: '45%', height: '14px', marginBottom: '24px' }} />
+                                        {[1, 2, 3, 4, 5, 6].map((k) => (
+                                            <div key={k} className="skill-cat-row" style={{ marginBottom: '14px' }}>
+                                                <div className="skills-wireframe-bar" style={{ width: '25%', height: '10px', marginBottom: '4px' }} />
+                                                <div className="skills-wireframe-bar" style={{ width: '85%', height: '14px' }} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="skills-degree-box">
+                                            <h3 className="skills-degree-title">B.Tech • Computer Science</h3>
+                                            <p className="skills-degree-loc">Lovely Professional University • expected 2026</p>
                                         </div>
-                                    ))}
-                                </div>
+
+                                        <div className="skills-categories-stack">
+                                            {SKILLS_DATA.map((cat, i) => {
+                                                const visible = eduStage >= 3 || (eduStage === 2 && i < 4) || (eduStage === 1 && i < 2);
+                                                return (
+                                                    <div key={i} className="skill-cat-row" style={{ opacity: visible ? 1 : 0.25 }}>
+                                                        <span className="skill-cat-label">{cat.label}</span>
+                                                        <span className="skill-cat-items">
+                                                            {visible ? cat.items : '········································'}
+                                                        </span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </AgentBuilderFrame>
                     </div>
@@ -87,15 +112,30 @@ export default function SkillsSection() {
                             <div className="principles-card">
                                 <span className="skills-eyebrow">HOW I WORK</span>
                                 <div className="principles-stack">
-                                    {PRINCIPLES.map((p, i) => (
-                                        <div key={i} className="principle-item">
-                                            <div className="principle-num-title">
-                                                <span className="principle-num">{p.num}</span>
-                                                <h4 className="principle-title">{p.title}</h4>
+                                    {PRINCIPLES.map((p, i) => {
+                                        const isRevealed = principlesStage > i;
+                                        return (
+                                            <div key={i} className="principle-item">
+                                                {isRevealed ? (
+                                                    <>
+                                                        <div className="principle-num-title">
+                                                            <span className="principle-num">{p.num}</span>
+                                                            <h4 className="principle-title">{p.title}</h4>
+                                                        </div>
+                                                        <p className="principle-desc">{p.desc}</p>
+                                                    </>
+                                                ) : (
+                                                    <div className="principle-wireframe-placeholder">
+                                                        <div className="principle-num-title">
+                                                            <span className="principle-num" style={{ opacity: 0.3 }}>{p.num}</span>
+                                                            <div className="skills-wireframe-bar" style={{ width: '60%', height: '18px' }} />
+                                                        </div>
+                                                        <div className="skills-wireframe-bar" style={{ width: '85%', height: '12px', marginTop: '6px', marginLeft: '1.6rem' }} />
+                                                    </div>
+                                                )}
                                             </div>
-                                            <p className="principle-desc">{p.desc}</p>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </AgentBuilderFrame>
@@ -113,10 +153,10 @@ export default function SkillsSection() {
                             isDelivered={skillsDelivered.manifesto}
                         >
                             <motion.div
-                                className="manifesto-card-accent"
+                                className={manifestoStyled ? "manifesto-card-accent" : "manifesto-card-wireframe"}
                                 initial={{ opacity: 0.7, scale: 0.95 }}
                                 animate={{
-                                    opacity: skillsDelivered.manifesto ? 1 : 0.85,
+                                    opacity: manifestoStyled ? 1 : 0.6,
                                     scale: 1
                                 }}
                                 transition={{ type: 'spring', damping: 20, stiffness: 120 }}
