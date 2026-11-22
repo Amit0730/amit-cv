@@ -118,6 +118,7 @@ export default function MultiAgentEngine() {
     const {
         isBooted,
         heroDelivered, setHeroDelivered,
+        aboutDelivered, setAboutDelivered,
         projectsDelivered, setProjectsDelivered,
         trackDelivered, setTrackDelivered,
         skillsDelivered, setSkillsDelivered,
@@ -134,6 +135,7 @@ export default function MultiAgentEngine() {
 
     // Track states of section building
     const heroTimerRef = useRef(0);
+    const aboutBuildingRef = useRef(false);
     const projectsBuildingRef = useRef(false);
     const trackBuildingRef = useRef(false);
     const skillsBuildingRef = useRef(false);
@@ -200,6 +202,7 @@ export default function MultiAgentEngine() {
         if (!isBuilding || !isBooted) return;
 
         heroTimerRef.current = 0;
+        aboutBuildingRef.current = false;
         projectsBuildingRef.current = false;
         trackBuildingRef.current = false;
         skillsBuildingRef.current = false;
@@ -570,12 +573,78 @@ export default function MultiAgentEngine() {
                     }, 40);
                 }
             }
+
+            // -----------------------------------------------------------------
+            // D. SCROLL INTO ABOUT: Motion, Palette & Copy assemble!
+            // -----------------------------------------------------------------
+            const aboutEl = document.getElementById('about');
+            if (aboutEl && !aboutDelivered?.title && !aboutBuildingRef.current) {
+                const rect = aboutEl.getBoundingClientRect();
+                if (rect.top <= window.innerHeight * 0.85) {
+                    aboutBuildingRef.current = true;
+                    setBuildingStates(prev => ({ ...prev, about: true }));
+
+                    let aboutTimer = 0;
+                    const aboutInterval = setInterval(() => {
+                        aboutTimer += 0.05 * speedMultiplier;
+
+                        const titleH = getHandle('builder-about-title', 'br');
+                        const photo2H = getHandle('builder-about-photo', 'br');
+                        const bioH = getHandle('builder-about-bio', 'tr');
+
+                        if (titleH) {
+                            agentsRef.current[3].isCarrying = true;
+                            agentsRef.current[3].targetX = titleH.x;
+                            agentsRef.current[3].targetY = titleH.y;
+                            agentsRef.current[3].labelExtra = 'drawing headline ✍️';
+                        }
+                        if (photo2H) {
+                            agentsRef.current[5].isCarrying = true;
+                            agentsRef.current[5].targetX = photo2H.x;
+                            agentsRef.current[5].targetY = photo2H.y;
+                            agentsRef.current[5].labelExtra = 'lighting photo 🎨';
+                        }
+                        if (bioH) {
+                            agentsRef.current[4].isCarrying = true;
+                            agentsRef.current[4].targetX = bioH.x;
+                            agentsRef.current[4].targetY = bioH.y;
+                            agentsRef.current[4].labelExtra = 'authoring bio 📄';
+                        }
+
+                        if (aboutTimer >= 1.15) {
+                            if (titleH) addRipple(titleH.x, titleH.y, '#EC4899');
+                            if (photo2H) addRipple(photo2H.x, photo2H.y, '#EAB308');
+                            if (bioH) addRipple(bioH.x, bioH.y, '#06B6D4');
+
+                            setAboutDelivered({
+                                title: true,
+                                photo2: true,
+                                bio: true
+                            });
+
+                            setBuildingStates(prev => ({ ...prev, about: false }));
+
+                            agentsRef.current[3].labelExtra = 'headline placed ✓';
+                            agentsRef.current[5].labelExtra = 'photo placed ✓';
+                            agentsRef.current[4].labelExtra = 'bio placed ✓';
+
+                            setTimeout(() => {
+                                agentsRef.current[3].isCarrying = false;
+                                agentsRef.current[5].isCarrying = false;
+                                agentsRef.current[4].isCarrying = false;
+                            }, 700);
+
+                            clearInterval(aboutInterval);
+                        }
+                    }, 40);
+                }
+            }
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         handleScroll();
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [projectsDelivered.card1, trackDelivered.title, skillsDelivered.skills, agentsActive, speedMultiplier]);
+    }, [projectsDelivered.card1, trackDelivered.title, skillsDelivered.skills, aboutDelivered?.title, agentsActive, speedMultiplier]);
 
     // =========================================================================
     // 3. 60FPS SIMULATION LOOP: AUTONOMOUS PHYSICS & DIRECT DOM TRANSFORMS

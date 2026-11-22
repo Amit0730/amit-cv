@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node -e \"const fs=require('fs'); fs.mkdirSync('dist/new', {recursive:true}); fs.copyFileSync('dist/index.html', 'dist/new/index.html'); fs.copyFileSync('dist/index.html', 'dist/404.html');\"",
+    "build": "vite build && node -e \"const fs=require('fs'); fs.mkdirSync('dist/new', {recursive:true}); fs.copyFileSync('dist/index.html', 'dist/new/index.html'); if(fs.existsSync('public/404.html')) fs.copyFileSync('public/404.html', 'dist/404.html');\"",
     "lint": "eslint .",
     "preview": "vite preview"
   },

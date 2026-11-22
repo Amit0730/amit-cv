@@ -23,6 +23,13 @@ export const BuildEngineProvider = ({ children }) => {
         bg: false
     });
 
+    // Delivery flags for About section elements
+    const [aboutDelivered, setAboutDelivered] = useState({
+        title: false,
+        photo2: false,
+        bio: false
+    });
+
     // Delivery flags for Projects section cards
     const [projectsDelivered, setProjectsDelivered] = useState({
         header: false,
@@ -51,7 +58,8 @@ export const BuildEngineProvider = ({ children }) => {
         hero: true,
         projects: false,
         track: false,
-        skills: false
+        skills: false,
+        about: false
     });
 
     const [isBuilding, setIsBuilding] = useState(true);
@@ -71,6 +79,11 @@ export const BuildEngineProvider = ({ children }) => {
             photo: false,
             stats: false,
             bg: false
+        });
+        setAboutDelivered({
+            title: false,
+            photo2: false,
+            bio: false
         });
         setProjectsDelivered({
             header: false,
@@ -93,7 +106,8 @@ export const BuildEngineProvider = ({ children }) => {
             hero: true,
             projects: false,
             track: false,
-            skills: false
+            skills: false,
+            about: false
         });
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -108,6 +122,7 @@ export const BuildEngineProvider = ({ children }) => {
             isBooted, setIsBooted,
             bootCount, setBootCount,
             heroDelivered, setHeroDelivered,
+            aboutDelivered, setAboutDelivered,
             projectsDelivered, setProjectsDelivered,
             trackDelivered, setTrackDelivered,
             skillsDelivered, setSkillsDelivered,

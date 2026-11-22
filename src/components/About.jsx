@@ -7,7 +7,7 @@ import AgentBuilderFrame from './AgentBuilderFrame';
 import './About.css';
 
 const About = () => {
-    const { aboutDelivered, buildingStates } = useBuildEngine();
+    const { aboutDelivered = { title: true, photo2: true, bio: true }, buildingStates = {} } = useBuildEngine() || {};
 
     return (
         <section id="about" className="section about-section">
@@ -18,14 +18,14 @@ const About = () => {
                     agentName="Motion"
                     color="#EC4899"
                     label="headline: 640×120"
-                    isBuilding={buildingStates.about}
-                    isDelivered={aboutDelivered.title}
+                    isBuilding={buildingStates?.about}
+                    isDelivered={aboutDelivered?.title}
                 >
                     <motion.div
                         className="section-header"
                         initial={{ opacity: 0.5, scale: 0.95 }}
                         animate={{ 
-                            opacity: aboutDelivered.title ? 1 : 0.85, 
+                            opacity: aboutDelivered?.title ? 1 : 0.85, 
                             scale: 1
                         }}
                         transition={{ type: 'spring', damping: 18, stiffness: 120 }}
@@ -45,14 +45,14 @@ const About = () => {
                         agentName="Palette"
                         color="#EAB308"
                         label="photo: 340×430"
-                        isBuilding={buildingStates.about}
-                        isDelivered={aboutDelivered.photo2}
+                        isBuilding={buildingStates?.about}
+                        isDelivered={aboutDelivered?.photo2}
                     >
                         <motion.div
                             className="about-image-container"
                             initial={{ opacity: 0.5, scale: 0.92 }}
                             animate={{ 
-                                opacity: aboutDelivered.photo2 ? 1 : 0.85, 
+                                opacity: aboutDelivered?.photo2 ? 1 : 0.85, 
                                 scale: 1
                             }}
                             transition={{ type: 'spring', damping: 20, stiffness: 110 }}
@@ -72,14 +72,14 @@ const About = () => {
                         agentName="Copy"
                         color="#06B6D4"
                         label="editorial: 580×420"
-                        isBuilding={buildingStates.about}
-                        isDelivered={aboutDelivered.bio}
+                        isBuilding={buildingStates?.about}
+                        isDelivered={aboutDelivered?.bio}
                     >
                         <motion.div
                             className="about-content"
                             initial={{ opacity: 0.5, scale: 0.95 }}
                             animate={{ 
-                                opacity: aboutDelivered.bio ? 1 : 0.85, 
+                                opacity: aboutDelivered?.bio ? 1 : 0.85, 
                                 scale: 1
                             }}
                             transition={{ type: 'spring', damping: 20, stiffness: 110 }}

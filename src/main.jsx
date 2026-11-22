@@ -67,6 +67,7 @@ const App = () => {
 
                 {/* Route /new: The New AI Multi-Agent Website */}
                 <Route path="/new" element={<NewAgentWebsite />} />
+                <Route path="/new/*" element={<NewAgentWebsite />} />
                 <Route path="/new-website" element={<NewAgentWebsite />} />
 
                 {/* Other dedicated pages */}
