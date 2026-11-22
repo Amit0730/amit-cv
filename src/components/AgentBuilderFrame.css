@@ -20,17 +20,17 @@
     border-radius: 6px;
     pointer-events: none;
     z-index: 50;
+    box-shadow: 0 0 10px var(--frame-color, rgba(56, 189, 248, 0.35));
     animation: blueprintGlow 2.5s ease-in-out infinite;
+    will-change: opacity;
 }
 
 @keyframes blueprintGlow {
     0%, 100% {
-        opacity: 0.85;
-        box-shadow: 0 0 6px var(--frame-color, rgba(56, 189, 248, 0.3));
+        opacity: 0.75;
     }
     50% {
         opacity: 1;
-        box-shadow: 0 0 16px var(--frame-color, rgba(56, 189, 248, 0.5));
     }
 }
 

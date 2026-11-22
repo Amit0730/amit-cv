@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { projectsData, allWorkspaceProjects } from '../data/projects';
@@ -133,7 +133,7 @@ const Projects = () => {
     );
 };
 
-const ProjectCard = ({ frameId, project, index, isDelivered }) => {
+const ProjectCard = memo(({ frameId, project, index, isDelivered }) => {
     const { componentStages = {}, presentationFallbacks = {}, agentsActive = true } = useBuildEngine();
     const stage = isDelivered || !agentsActive || presentationFallbacks[frameId] || presentationFallbacks['projects'] ? 4 : (componentStages[frameId] || 0);
 
@@ -233,10 +233,10 @@ const ProjectCard = ({ frameId, project, index, isDelivered }) => {
             </motion.div>
         </Link>
     );
-};
+});
 
 /* The 4th card placed beside the 3rd project: opens /more page on click */
-const MoreCard = ({ totalCount, isDelivered }) => {
+const MoreCard = memo(({ totalCount, isDelivered }) => {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
     const moreGradient = useMotionTemplate`radial-gradient(380px circle at ${mouseX}px ${mouseY}px, rgba(139, 92, 246, 0.25), transparent 80%)`;
@@ -312,6 +312,6 @@ const MoreCard = ({ totalCount, isDelivered }) => {
             </motion.div>
         </Link>
     );
-};
+});
 
 export default Projects;

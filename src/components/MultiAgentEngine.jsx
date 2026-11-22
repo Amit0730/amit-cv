@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, memo } from 'react';
 import { useBuildEngine } from '../context/BuildEngineContext';
 import { AGENT_ROSTER } from '../engine/agentTasks';
 import './MultiAgentEngine.css';
@@ -37,12 +37,71 @@ export default function MultiAgentEngine() {
         catchUpSection
     } = useBuildEngine();
 
-    const [ripples, setRipples] = useState([]);
     const containerRef = useRef(null);
+    const ripplesContainerRef = useRef(null);
+    const cursorDomsRef = useRef([]);
     const animFrameRef = useRef(null);
 
+    // Keep active refs for simulation loop to avoid re-binding rAF on every state change
+    const tasksRef = useRef(tasks);
+    tasksRef.current = tasks;
+
+    const activeSectionsRef = useRef(activeSections);
+    activeSectionsRef.current = activeSections;
+
+    const isBuildingRef = useRef(isBuilding);
+    isBuildingRef.current = isBuilding;
+
+    const isPausedRef = useRef(isPaused);
+    isPausedRef.current = isPaused;
+
+    const agentsActiveRef = useRef(agentsActive);
+    agentsActiveRef.current = agentsActive;
+
+    const speedMultiplierRef = useRef(speedMultiplier);
+    speedMultiplierRef.current = speedMultiplier;
+
+    const isBootedRef = useRef(isBooted);
+    isBootedRef.current = isBooted;
+
+    const preloadedAssetsRef = useRef(preloadedAssets);
+    preloadedAssetsRef.current = preloadedAssets;
+
+    const callbacksRef = useRef({
+        updateTaskStatus,
+        setInspection,
+        setElementTypedText,
+        setElementDimension,
+        setSpacingGuide,
+        setReviewed,
+        setTesting,
+        setActiveStyle,
+        setActiveMedia,
+        setMotionTest,
+        setComponentStage,
+        setNavVerifiedLink,
+        setPresentationFallback
+    });
+    callbacksRef.current = {
+        updateTaskStatus,
+        setInspection,
+        setElementTypedText,
+        setElementDimension,
+        setSpacingGuide,
+        setReviewed,
+        setTesting,
+        setActiveStyle,
+        setActiveMedia,
+        setMotionTest,
+        setComponentStage,
+        setNavVerifiedLink,
+        setPresentationFallback
+    };
+
+    // Coordinate cache to prevent forced reflows (getBoundingClientRect layout thrashing)
+    const handleCacheRef = useRef(new Map());
+
     // Initial state for each of the 12 agents from AGENT_ROSTER
-    // Issue F Fix: Each agent has an assigned home station to prevent chaotic wandering
     const agentsRef = useRef(
         AGENT_ROSTER.map((cfg, index) => {
             const w = typeof window !== 'undefined' ? window.innerWidth : 1200;
@@ -67,51 +126,74 @@ export default function MultiAgentEngine() {
                 taskTime: 0,
                 labelExtra: '',
                 speedMod: 0.95 + (index % 4) * 0.08,
-                isCarrying: false
+                isCarrying: false,
+                lastTypedLen: 0,
+                lastStage: 0,
+                dragOrigin: null
             };
         })
     );
 
-    // Generate click / delivery ripple at coordinate
+    // Direct DOM ripple creation (Zero React re-render overhead)
     const addRipple = useCallback((x, y, color = '#38BDF8') => {
-        const id = Date.now() + Math.random();
-        setRipples(prev => [...prev.slice(-12), { id, x, y, color }]);
+        if (!ripplesContainerRef.current) return;
+        const span = document.createElement('span');
+        span.className = 'agent-click-ripple';
+        span.style.left = `${Math.round(x)}px`;
+        span.style.top = `${Math.round(y)}px`;
+        span.style.borderColor = color;
+        span.style.boxShadow = `0 0 14px ${color}`;
+        ripplesContainerRef.current.appendChild(span);
         setTimeout(() => {
-            setRipples(prev => prev.filter(r => r.id !== id));
-        }, 850);
+            if (span.parentNode) span.remove();
+        }, 750);
     }, []);
 
-    // Get live handle coordinate for any element by ID
+    // Cached element handle coordinate resolver
     const getHandle = useCallback((elementId, corner = 'br') => {
         if (typeof document === 'undefined') return null;
+        const cacheKey = `${elementId}-${corner}`;
+        const cached = handleCacheRef.current.get(cacheKey);
+        const now = performance.now();
+        if (cached && (now - cached.time < 140)) {
+            return cached.coords;
+        }
+
         const el = document.getElementById(elementId);
         if (!el) return null;
         const rect = el.getBoundingClientRect();
         if (rect.width === 0 && rect.height === 0) return null;
 
-        if (corner === 'br') return { x: rect.right, y: rect.bottom, width: rect.width, height: rect.height };
-        if (corner === 'tr') return { x: rect.right, y: rect.top, width: rect.width, height: rect.height };
-        if (corner === 'bl') return { x: rect.left, y: rect.bottom, width: rect.width, height: rect.height };
-        if (corner === 'tl') return { x: rect.left, y: rect.top, width: rect.width, height: rect.height };
-        if (corner === 'tc') return { x: rect.left + rect.width / 2, y: rect.top, width: rect.width, height: rect.height };
-        if (corner === 'center') return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2, width: rect.width, height: rect.height };
-        return { x: rect.right, y: rect.bottom, width: rect.width, height: rect.height };
+        let coords;
+        if (corner === 'br') coords = { x: rect.right, y: rect.bottom, width: rect.width, height: rect.height, left: rect.left, top: rect.top };
+        else if (corner === 'tr') coords = { x: rect.right, y: rect.top, width: rect.width, height: rect.height, left: rect.left, top: rect.top };
+        else if (corner === 'bl') coords = { x: rect.left, y: rect.bottom, width: rect.width, height: rect.height, left: rect.left, top: rect.top };
+        else if (corner === 'tl') coords = { x: rect.left, y: rect.top, width: rect.width, height: rect.height, left: rect.left, top: rect.top };
+        else if (corner === 'tc') coords = { x: rect.left + rect.width / 2, y: rect.top, width: rect.width, height: rect.height, left: rect.left, top: rect.top };
+        else if (corner === 'center') coords = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2, width: rect.width, height: rect.height, left: rect.left, top: rect.top };
+        else coords = { x: rect.right, y: rect.bottom, width: rect.width, height: rect.height, left: rect.left, top: rect.top };
+
+        handleCacheRef.current.set(cacheKey, { time: now, coords });
+        return coords;
     }, []);
 
     // =========================================================================
-    // 1. SCROLL-AWARE SECTION UNLOCKING
+    // 1. SCROLL-AWARE SECTION UNLOCKING & CACHE INVALIDATION
     // =========================================================================
     useEffect(() => {
+        let scrollTimeout;
         const handleScroll = () => {
-            if (!agentsActive) return;
+            // Invalidate handle cache on scroll so targets stay true
+            handleCacheRef.current.clear();
 
+            if (!agentsActiveRef.current) return;
+
+            const vh = window.innerHeight;
             const trackEl = document.getElementById('track-record');
             const projectsEl = document.getElementById('projects');
             const skillsEl = document.getElementById('skills');
             const aboutEl = document.getElementById('about');
             const footerEl = document.getElementById('contact');
-
-            const vh = window.innerHeight;
 
             if (trackEl && trackEl.getBoundingClientRect().top <= vh * 0.90) {
                 activateSection('track');
@@ -134,44 +216,66 @@ export default function MultiAgentEngine() {
             }
         };
 
+        const handleResize = () => {
+            handleCacheRef.current.clear();
+        };
+
         window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('resize', handleResize, { passive: true });
         handleScroll();
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [activateSection, agentsActive, catchUpSection]);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleResize);
+            if (scrollTimeout) clearTimeout(scrollTimeout);
+        };
+    }, [activateSection, catchUpSection]);
 
     // =========================================================================
-    // 2. ORCHESTRATION ENGINE LOOP (60FPS Task Dispatcher & Physics)
+    // 2. ORCHESTRATION ENGINE LOOP (Single Persistent 60FPS Loop)
     // =========================================================================
     useEffect(() => {
         let lastTime = performance.now();
+        let isTabActive = typeof document !== 'undefined' ? !document.hidden : true;
+        const prefersReducedMotion = typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
+
+        const onVisibilityChange = () => {
+            isTabActive = !document.hidden;
+            if (isTabActive) {
+                lastTime = performance.now();
+            }
+        };
+        document.addEventListener('visibilitychange', onVisibilityChange);
 
         const updateSimulation = (currentTime) => {
-            const dt = Math.min((currentTime - lastTime) / 1000, 0.08);
+            // Adaptive performance: Pause loop calculations when document tab is hidden
+            if (!isTabActive) {
+                animFrameRef.current = requestAnimationFrame(updateSimulation);
+                return;
+            }
+
+            // Delta-time clamped to 50ms for smooth physics without teleportation jumps
+            const dt = Math.min((currentTime - lastTime) / 1000, 0.05);
             lastTime = currentTime;
-            const w = window.innerWidth;
 
-            if (agentsActive && isBuilding && isBooted && !isPaused) {
-                // Completed task map for fast dependency check
-                const completedTaskMap = new Set();
-                tasks.forEach(t => {
-                    if (t.status === 'completed') completedTaskMap.add(t.id);
-                });
+            const isEngActive = agentsActiveRef.current && isBuildingRef.current && isBootedRef.current && !isPausedRef.current;
+            const currentTasks = tasksRef.current;
+            const currentSections = activeSectionsRef.current;
+            const currentSpeed = speedMultiplierRef.current;
+            const cb = callbacksRef.current;
 
+            if (isEngActive) {
                 // Find ready pending tasks
-                const readyTasks = tasks.filter(task => {
+                const readyTasks = currentTasks.filter(task => {
                     if (task.status !== 'pending') return false;
-                    if (!activeSections[task.section]) return false;
-                    // Phase 9 Fix: Never deadlock on failed tasks; allow downstream tasks to run
+                    if (!currentSections[task.section]) return false;
                     return task.dependencies.every(depId => {
-                        const dep = tasks.find(t => t.id === depId);
+                        const dep = currentTasks.find(t => t.id === depId);
                         return dep && (dep.status === 'completed' || dep.status === 'failed');
                     });
                 });
 
-                // -------------------------------------------------------------
                 // A. Task Assignment to Matching Idle Agents
-                // Section 7 Fix: Concurrency protection (One active agent per target)
-                // -------------------------------------------------------------
                 readyTasks.forEach(task => {
                     const existingAgent = agentsRef.current.find(a => a.currentTaskId === task.id);
                     if (existingAgent) return;
@@ -179,7 +283,7 @@ export default function MultiAgentEngine() {
                     // Concurrency check: Ensure no other agent is already actively manipulating this target
                     const targetBusy = agentsRef.current.some(a => {
                         if (!a.currentTaskId) return false;
-                        const activeTask = tasks.find(t => t.id === a.currentTaskId);
+                        const activeTask = currentTasks.find(t => t.id === a.currentTaskId);
                         return activeTask && activeTask.targetId === task.targetId;
                     });
                     if (targetBusy) return;
@@ -190,19 +294,20 @@ export default function MultiAgentEngine() {
                         agent.state = 'moving';
                         agent.stateTimer = 0;
                         agent.taskTime = 0;
+                        agent.lastTypedLen = 0;
+                        agent.lastStage = 0;
+                        agent.dragOrigin = null;
                         agent.isCarrying = true;
                         agent.labelExtra = `-> ${task.label || task.action}`;
 
-                        updateTaskStatus(task.id, 'assigned');
+                        cb.updateTaskStatus(task.id, 'assigned');
                     }
                 });
 
-                // -------------------------------------------------------------
                 // B. Deterministic State Machine & Action Execution
-                // -------------------------------------------------------------
                 agentsRef.current.forEach((agent) => {
                     if (agent.currentTaskId) {
-                        const currentTask = tasks.find(t => t.id === agent.currentTaskId);
+                        const currentTask = currentTasks.find(t => t.id === agent.currentTaskId);
                         if (!currentTask) {
                             agent.currentTaskId = null;
                             agent.isCarrying = false;
@@ -210,110 +315,135 @@ export default function MultiAgentEngine() {
                             return;
                         }
 
-                        // Target handle coordinates
-                        let handle = getHandle(currentTask.targetId, currentTask.corner || 'br');
+                        // Target handle coordinates (cached per task to eliminate forced reflows)
+                        if (!agent.cachedHandle || currentTask.action === 'navigation') {
+                            agent.cachedHandle = getHandle(currentTask.targetId, currentTask.corner || 'br');
+                        }
+                        let handle = agent.cachedHandle;
 
                         if (handle) {
-                            agent.targetX = handle.x;
-                            agent.targetY = handle.y;
+                            if (agent.state === 'executing' && currentTask.action === 'resize' && agent.dragOrigin) {
+                                // Mathematical drag tracking: calculate handle position directly from dimensions
+                                const progress = Math.min(agent.taskTime / Math.max(currentTask.duration || 1.2, 0.4), 1);
+                                const curW = currentTask.startDims.w + (currentTask.targetDims.w - currentTask.startDims.w) * progress;
+                                const curH = currentTask.startDims.h + (currentTask.targetDims.h - currentTask.startDims.h) * progress;
+                                agent.targetX = agent.dragOrigin.left + curW;
+                                agent.targetY = agent.dragOrigin.top + curH;
+                            } else {
+                                agent.targetX = handle.x;
+                                agent.targetY = handle.y;
+                            }
 
                             const dx = agent.targetX - agent.x;
                             const dy = agent.targetY - agent.y;
                             const dist = Math.sqrt(dx * dx + dy * dy);
 
                             // --- STATE 1: MOVING TO TARGET ---
-                            // Problem 1 Fix: Task progress does NOT advance while moving.
-                            // Only advances after cursor reaches handle (threshold <= 18px).
                             if (agent.state === 'moving') {
                                 if (dist <= 18) {
                                     agent.state = 'selecting';
                                     agent.stateTimer = 0;
                                     agent.labelExtra = 'selecting...';
 
-                                    // Latch Figma selection outline (Issue H Fix: only active element has handles)
-                                    setInspection(currentTask.targetId, {
+                                    cb.setInspection(currentTask.targetId, {
                                         agentName: agent.name,
                                         action: currentTask.action,
                                         color: agent.color,
                                         label: currentTask.label
                                     });
-                                    updateTaskStatus(currentTask.id, 'selecting');
+                                    cb.updateTaskStatus(currentTask.id, 'selecting');
                                 }
                             }
-                            // --- STATE 2: SELECTING ELEMENT (Brief inspection pause) ---
+                            // --- STATE 2: SELECTING ELEMENT ---
                             else if (agent.state === 'selecting') {
-                                agent.stateTimer += dt * speedMultiplier;
-                                if (agent.stateTimer >= 0.2) {
+                                agent.stateTimer += dt * currentSpeed;
+                                if (agent.stateTimer >= 0.18) {
                                     agent.state = 'executing';
                                     agent.stateTimer = 0;
                                     agent.taskTime = 0;
                                     agent.labelExtra = currentTask.label;
-                                    updateTaskStatus(currentTask.id, 'executing');
+                                    if (currentTask.action === 'resize' && handle) {
+                                        agent.dragOrigin = { left: handle.left, top: handle.top };
+                                    }
+                                    cb.updateTaskStatus(currentTask.id, 'executing');
                                 }
                             }
                             // --- STATE 3: EXECUTING CONCRETE ACTION ---
-                            // Problem 2 Fix: Full implementation of all 12 agent actions.
                             else if (agent.state === 'executing') {
-                                agent.taskTime += dt * speedMultiplier;
+                                agent.taskTime += dt * currentSpeed;
                                 const duration = Math.max(currentTask.duration || 1.2, 0.4);
                                 const progress = Math.min(agent.taskTime / duration, 1);
 
-                                // 1 & 2. Typography & Copy: Progressive text typing
+                                // 1 & 2. Typography & Copy: Progressive text typing (Selective integer updates)
                                 if (currentTask.action === 'type' || currentTask.action === 'copy') {
                                     if (currentTask.text) {
                                         const charLen = Math.max(1, Math.floor(progress * currentTask.text.length));
-                                        setElementTypedText(currentTask.targetId, currentTask.text.slice(0, charLen));
+                                        if (charLen !== agent.lastTypedLen) {
+                                            agent.lastTypedLen = charLen;
+                                            cb.setElementTypedText(currentTask.targetId, currentTask.text.slice(0, charLen));
+                                        }
                                     }
-                                    // Issue E Fix: Staged reveal for complex timeline content
                                     if (currentTask.targetId === 'builder-track-timeline') {
                                         const stage = Math.min(Math.floor(progress * 5) + 1, 5);
-                                        setComponentStage('builder-track-timeline', stage);
-                                        agent.labelExtra = `milestone ${stage}/5`;
+                                        if (stage !== agent.lastStage) {
+                                            agent.lastStage = stage;
+                                            cb.setComponentStage('builder-track-timeline', stage);
+                                            agent.labelExtra = `milestone ${stage}/5`;
+                                        }
                                     }
                                     if (currentTask.targetId === 'builder-skills-principles') {
                                         const stage = Math.min(Math.floor(progress * 4) + 1, 4);
-                                        setComponentStage('builder-skills-principles', stage);
-                                        agent.labelExtra = `principle ${stage}/4`;
+                                        if (stage !== agent.lastStage) {
+                                            agent.lastStage = stage;
+                                            cb.setComponentStage('builder-skills-principles', stage);
+                                            agent.labelExtra = `principle ${stage}/4`;
+                                        }
                                     }
                                 }
-                                // 3. Resize: Drag handle with both width and height
-                                // Issue G Fix: Cursor dynamically tracks live handle during drag
+                                // 3. Resize: Smooth interpolated drag
                                 else if (currentTask.action === 'resize') {
                                     if (currentTask.startDims && currentTask.targetDims) {
                                         const curW = Math.round(currentTask.startDims.w + (currentTask.targetDims.w - currentTask.startDims.w) * progress);
                                         const curH = Math.round(currentTask.startDims.h + (currentTask.targetDims.h - currentTask.startDims.h) * progress);
-                                        setElementDimension(currentTask.targetId, { w: curW, h: curH });
-
-                                        // Update handle location so cursor moves with dragging handle
-                                        const liveHandle = getHandle(currentTask.targetId, currentTask.corner || 'br');
-                                        if (liveHandle) {
-                                            agent.targetX = liveHandle.x;
-                                            agent.targetY = liveHandle.y;
-                                        }
+                                        cb.setElementDimension(currentTask.targetId, { w: curW, h: curH });
                                     }
                                 }
                                 // 4. Spacing: Temporary Figma measurement guide
                                 else if (currentTask.action === 'spacing') {
-                                    setSpacingGuide(currentTask.targetId, currentTask.spacingLabel || 'gap: 24px');
+                                    if (agent.stateTimer === 0) {
+                                        cb.setSpacingGuide(currentTask.targetId, currentTask.spacingLabel || 'gap: 24px');
+                                    }
                                 }
-                                // 5. Interaction: Simulated button hover / click testing
+                                // 5. Interaction: Simulated button hover
                                 else if (currentTask.action === 'interact') {
-                                    setTesting(currentTask.targetId, progress < 0.88);
+                                    if (agent.lastStage === 0) {
+                                        agent.lastStage = 1;
+                                        cb.setTesting(currentTask.targetId, true);
+                                    }
                                 }
-                                // 6. Style: Glow, shadow and theme coloring
+                                // 6. Style: Glow & theme coloring (Thresholded state dispatch)
                                 else if (currentTask.action === 'style') {
-                                    setActiveStyle(currentTask.targetId, { progress, active: true });
+                                    if (agent.lastStage === 0) {
+                                        agent.lastStage = 1;
+                                        cb.setActiveStyle(currentTask.targetId, { progress: 0.5, active: true });
+                                    }
                                 }
-                                // 7. Media: Image mounting & laser burst
+                                // 7. Media: Image mounting & laser sweep
                                 else if (currentTask.action === 'media') {
-                                    setActiveMedia(currentTask.targetId, { progress, mounted: true });
+                                    if (agent.lastStage === 0) {
+                                        agent.lastStage = 1;
+                                        cb.setActiveMedia(currentTask.targetId, { progress: 0.5, mounted: true });
+                                    }
                                 }
-                                // 8. Motion: Spring physics displacement test
+                                // 8. Motion: Hardware-accelerated direct DOM transform
                                 else if (currentTask.action === 'motion') {
-                                    const motionY = Math.sin(progress * Math.PI * 2) * -6;
-                                    setMotionTest(currentTask.targetId, motionY);
+                                    const targetEl = document.getElementById(currentTask.targetId);
+                                    if (targetEl) {
+                                        const motionY = Math.sin(progress * Math.PI * 2) * -6;
+                                        targetEl.style.transform = `translate3d(0, ${motionY.toFixed(1)}px, 0)`;
+                                    }
                                 }
-                                // 9. Navigation: Link verification & snapping (Issue B Fix: Real DOM Link Inspection)
+                                // 9. Navigation: Link verification
                                 else if (currentTask.action === 'navigation') {
                                     const navEl = document.getElementById(currentTask.targetId);
                                     if (navEl) {
@@ -322,9 +452,10 @@ export default function MultiAgentEngine() {
                                             const idx = Math.min(Math.floor(progress * links.length), links.length - 1);
                                             const link = links[idx];
                                             const href = link?.getAttribute('href');
-                                            if (href) {
+                                            if (href && href !== agent.lastHref) {
+                                                agent.lastHref = href;
                                                 agent.labelExtra = `checking ${href}`;
-                                                setNavVerifiedLink(href);
+                                                cb.setNavVerifiedLink(href);
                                                 const linkRect = link.getBoundingClientRect();
                                                 agent.targetX = linkRect.left + linkRect.width / 2;
                                                 agent.targetY = linkRect.bottom;
@@ -332,35 +463,35 @@ export default function MultiAgentEngine() {
                                         }
                                     }
                                 }
-                                // 10. Component / Layout: Card & structure assembly (Issue A Fix: Staged Component Assembly)
+                                // 10. Component / Layout: Card assembly (Discrete 4 stages)
                                 else if (currentTask.action === 'component' || currentTask.action === 'layout') {
                                     const stage = progress < 0.25 ? 1 : progress < 0.50 ? 2 : progress < 0.75 ? 3 : 4;
-                                    setComponentStage(currentTask.targetId, stage);
-                                    agent.labelExtra = `${currentTask.label} [stage ${stage}/4]`;
+                                    if (stage !== agent.lastStage) {
+                                        agent.lastStage = stage;
+                                        cb.setComponentStage(currentTask.targetId, stage);
+                                        agent.labelExtra = `${currentTask.label} [stage ${stage}/4]`;
+                                    }
                                 }
                                 // 11. Review: Spec audit pass
                                 else if (currentTask.action === 'review') {
                                     agent.labelExtra = `auditing specs...`;
                                 }
 
-                                // Transition to Verifying when progress reaches 100%
                                 if (progress >= 1) {
                                     agent.state = 'verifying';
                                     agent.stateTimer = 0;
                                     agent.labelExtra = 'verifying...';
-                                    updateTaskStatus(currentTask.id, 'verifying');
+                                    cb.updateTaskStatus(currentTask.id, 'verifying');
                                 }
                             }
-                            // --- STATE 4: VERIFYING (Issue C Fix: Action-Specific DOM & Asset Validation) ---
+                            // --- STATE 4: VERIFYING ---
                             else if (agent.state === 'verifying') {
-                                agent.stateTimer += dt * speedMultiplier;
+                                agent.stateTimer += dt * currentSpeed;
 
-                                // Action-specific validation
                                 const el = document.getElementById(currentTask.targetId);
-                                const rect = el ? el.getBoundingClientRect() : null;
-                                const hasGeometry = Boolean(rect && (rect.width > 0 || rect.height > 0));
+                                const hasGeometry = Boolean(el && (el.offsetWidth > 0 || el.offsetHeight > 0 || (agent.cachedHandle && agent.cachedHandle.width > 0)));
                                 const depsDone = currentTask.dependencies.every(d => {
-                                    const dep = tasks.find(t => t.id === d);
+                                    const dep = currentTasks.find(t => t.id === d);
                                     return dep && (dep.status === 'completed' || dep.status === 'failed');
                                 });
 
@@ -371,10 +502,9 @@ export default function MultiAgentEngine() {
                                         const expected = (currentTask.text || '').slice(0, 8).trim();
                                         isVerified = !expected || text.includes(expected);
                                     } else if (currentTask.action === 'media') {
-                                        // Phase 1 Fix: Verify actual image render or preloaded asset
                                         const img = el.querySelector('img');
                                         const isImgReady = Boolean(img && (img.complete && img.naturalWidth > 0));
-                                        const isPreloaded = Boolean(preloadedAssets?.[currentTask.targetId]?.ready);
+                                        const isPreloaded = Boolean(preloadedAssetsRef.current?.[currentTask.targetId]?.ready);
                                         isVerified = isImgReady || isPreloaded;
                                     } else if (currentTask.action === 'navigation') {
                                         const links = el.querySelectorAll('a[href]');
@@ -382,122 +512,129 @@ export default function MultiAgentEngine() {
                                     } else if (currentTask.action === 'component' || currentTask.action === 'layout') {
                                         isVerified = el.children.length > 0 || (el.innerText || '').trim().length > 0;
                                     } else if (currentTask.action === 'review') {
-                                        const otherTasks = tasks.filter(t => t.section === currentTask.section && t.id !== currentTask.id);
+                                        const otherTasks = currentTasks.filter(t => t.section === currentTask.section && t.id !== currentTask.id);
                                         isVerified = otherTasks.every(t => t.status === 'completed' || t.status === 'failed');
                                     } else {
                                         isVerified = true;
                                     }
                                 }
 
-                                if (agent.stateTimer >= 0.22) {
+                                if (agent.stateTimer >= 0.20) {
                                     if (isVerified) {
                                         addRipple(agent.x, agent.y, agent.color);
 
-                                        // Finalize element state
-                                        setInspection(currentTask.targetId, null);
+                                        cb.setInspection(currentTask.targetId, null);
                                         if (currentTask.text) {
-                                            setElementTypedText(currentTask.targetId, currentTask.text);
+                                            cb.setElementTypedText(currentTask.targetId, currentTask.text);
                                         }
-                                        // Finalize component stage to complete
                                         if (currentTask.action === 'component' || currentTask.action === 'layout') {
-                                            setComponentStage(currentTask.targetId, 4);
+                                            cb.setComponentStage(currentTask.targetId, 4);
                                         }
                                         if (currentTask.targetId === 'builder-track-timeline') {
-                                            setComponentStage('builder-track-timeline', 5);
+                                            cb.setComponentStage('builder-track-timeline', 5);
                                         }
                                         if (currentTask.targetId === 'builder-skills-principles') {
-                                            setComponentStage('builder-skills-principles', 4);
+                                            cb.setComponentStage('builder-skills-principles', 4);
                                         }
-                                        // Release temporary inline dimensions so responsive layouts adapt
                                         if (currentTask.action === 'resize') {
-                                            setElementDimension(currentTask.targetId, null);
+                                            cb.setElementDimension(currentTask.targetId, null);
+                                            handleCacheRef.current.clear();
                                         }
                                         if (currentTask.action === 'spacing') {
-                                            setTimeout(() => setSpacingGuide(currentTask.targetId, null), 900);
+                                            setTimeout(() => cb.setSpacingGuide(currentTask.targetId, null), 800);
                                         }
                                         if (currentTask.action === 'interact') {
-                                            setTesting(currentTask.targetId, false);
+                                            cb.setTesting(currentTask.targetId, false);
                                         }
                                         if (currentTask.action === 'review') {
-                                            setReviewed(currentTask.targetId, true);
+                                            cb.setReviewed(currentTask.targetId, true);
                                         }
                                         if (currentTask.action === 'motion') {
-                                            setMotionTest(currentTask.targetId, 0);
+                                            const targetEl = document.getElementById(currentTask.targetId);
+                                            if (targetEl) targetEl.style.transform = '';
+                                            cb.setMotionTest(currentTask.targetId, 0);
                                         }
                                         if (currentTask.action === 'style') {
-                                            setActiveStyle(currentTask.targetId, { active: true, progress: 1 });
+                                            cb.setActiveStyle(currentTask.targetId, { active: true, progress: 1 });
                                         }
                                         if (currentTask.action === 'media') {
-                                            setActiveMedia(currentTask.targetId, { mounted: true, progress: 1 });
+                                            cb.setActiveMedia(currentTask.targetId, { mounted: true, progress: 1 });
                                         }
 
-                                        updateTaskStatus(currentTask.id, 'completed');
+                                        cb.updateTaskStatus(currentTask.id, 'completed');
 
                                         agent.labelExtra = `${currentTask.action} ✓`;
                                         agent.currentTaskId = null;
+                                        agent.cachedHandle = null;
                                         agent.isCarrying = false;
+                                        agent.dragOrigin = null;
                                         agent.state = 'idle';
 
                                         setTimeout(() => {
                                             if (!agent.currentTaskId) {
                                                 agent.labelExtra = '';
                                             }
-                                        }, 1100);
-                                    } else if (agent.stateTimer >= 0.65) {
-                                        // Graceful fallback: Never lock down the website if an asset verification misses
+                                        }, 900);
+                                    } else if (agent.stateTimer >= 0.55) {
                                         agent.labelExtra = 'fallback ✓';
-                                        updateTaskStatus(currentTask.id, 'failed');
-                                        if (setPresentationFallback) {
-                                            setPresentationFallback(currentTask.targetId, true);
-                                        }
+                                        cb.updateTaskStatus(currentTask.id, 'failed');
+                                        cb.setPresentationFallback(currentTask.targetId, true);
                                         agent.currentTaskId = null;
+                                        agent.cachedHandle = null;
                                         agent.isCarrying = false;
+                                        agent.dragOrigin = null;
                                         agent.state = 'idle';
                                     }
                                 }
                             }
                         }
                     } else {
-                        // Issue F Fix: Calm standby station micro-floating (No chaotic aimless wandering)
-                        const t = currentTime * 0.0018 + agent.homePhase;
-                        agent.targetX = agent.homeX + Math.sin(t) * 4;
-                        agent.targetY = agent.homeY + Math.cos(t * 1.3) * 3;
+                        // Calm standby micro-float
+                        const t = currentTime * 0.0016 + agent.homePhase;
+                        agent.targetX = agent.homeX + Math.sin(t) * 3;
+                        agent.targetY = agent.homeY + Math.cos(t * 1.2) * 2.5;
                     }
 
-                    // Physics motion calculation (Smooth easing)
+                    // Delta-time physics motion with arrival damping (Zero jitter)
                     const dx = agent.targetX - agent.x;
                     const dy = agent.targetY - agent.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
 
-                    const accel = agent.isCarrying ? 12.0 : 4.0;
-                    const maxSpeed = agent.isCarrying ? 820 : 280;
-                    const baseSpeed = Math.min(dist * 5.2, maxSpeed) * agent.speedMod * speedMultiplier;
+                    if (dist <= 1.5) {
+                        agent.vx = 0;
+                        agent.vy = 0;
+                        agent.x = agent.targetX;
+                        agent.y = agent.targetY;
+                        agent.angle = 0;
+                    } else {
+                        const accel = agent.isCarrying ? 14.0 : 4.5;
+                        const maxSpeed = agent.isCarrying ? 850 : 300;
+                        const baseSpeed = Math.min(dist * 6.0, maxSpeed) * agent.speedMod * currentSpeed;
 
-                    if (dist > 1) {
                         agent.vx += ((dx / (dist + 0.1)) * baseSpeed - agent.vx) * accel * dt;
                         agent.vy += ((dy / (dist + 0.1)) * baseSpeed - agent.vy) * accel * dt;
                         agent.x += agent.vx * dt;
                         agent.y += agent.vy * dt;
-                        agent.angle = Math.max(-14, Math.min(14, agent.vx / 35));
+                        agent.angle = prefersReducedMotion ? 0 : Math.max(-12, Math.min(12, agent.vx / 42));
                     }
                 });
 
-                // Update DOM transforms directly for smooth 60fps rendering
-                if (containerRef.current) {
-                    const cursorDoms = containerRef.current.querySelectorAll('.agent-cursor-wrapper');
-                    cursorDoms.forEach((dom, i) => {
-                        const agent = agentsRef.current[i];
-                        if (agent) {
-                            dom.style.transform = `translate3d(${agent.x}px, ${agent.y}px, 0) rotate(${agent.angle}deg)`;
-                            const labelEl = dom.querySelector('.agent-badge-name');
-                            if (labelEl) {
-                                const fullLabel = `${agent.name}${agent.labelExtra ? ` • ${agent.labelExtra}` : ''}`;
-                                if (labelEl.textContent !== fullLabel) {
-                                    labelEl.textContent = fullLabel;
-                                }
+                // Batch write direct DOM transforms (Zero React re-render overhead)
+                const doms = cursorDomsRef.current;
+                const len = agentsRef.current.length;
+                for (let i = 0; i < len; i++) {
+                    const dom = doms[i];
+                    const agent = agentsRef.current[i];
+                    if (dom && agent) {
+                        dom.style.transform = `translate3d(${agent.x.toFixed(1)}px, ${agent.y.toFixed(1)}px, 0) rotate(${agent.angle.toFixed(1)}deg)`;
+                        const labelEl = dom.lastElementChild?.lastElementChild;
+                        if (labelEl) {
+                            const fullLabel = `${agent.name}${agent.labelExtra ? ` • ${agent.labelExtra}` : ''}`;
+                            if (labelEl.textContent !== fullLabel) {
+                                labelEl.textContent = fullLabel;
                             }
                         }
-                    });
+                    }
                 }
             }
 
@@ -505,40 +642,28 @@ export default function MultiAgentEngine() {
         };
 
         animFrameRef.current = requestAnimationFrame(updateSimulation);
+
         return () => {
+            document.removeEventListener('visibilitychange', onVisibilityChange);
             if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
         };
-    }, [
-        agentsActive, isBuilding, isBooted, isPaused, speedMultiplier,
-        tasks, activeSections, updateTaskStatus, getHandle, addRipple,
-        setInspection, setElementTypedText, setElementDimension,
-        setSpacingGuide, setReviewed, setTesting,
-        setActiveStyle, setActiveMedia, setMotionTest,
-        setComponentStage, setNavVerifiedLink
-    ]);
+    }, [addRipple, getHandle]);
 
     return (
         <>
-            {/* Multi-Agent Overlay Canvas (Visible only when agents are active) */}
+            {/* Multi-Agent Overlay Canvas */}
             {agentsActive && (
                 <div ref={containerRef} className="multi-agent-overlay" aria-hidden="true">
-                    {/* Click / Delivery Ripples */}
-                    {ripples.map(r => (
-                        <span
-                            key={r.id}
-                            className="agent-click-ripple"
-                            style={{
-                                left: `${r.x}px`,
-                                top: `${r.y}px`,
-                                borderColor: r.color,
-                                boxShadow: `0 0 16px ${r.color}`
-                            }}
-                        />
-                    ))}
+                    {/* Direct DOM Click / Delivery Ripples Container */}
+                    <div ref={ripplesContainerRef} className="agent-ripples-layer" />
 
                     {/* 12 Live Cursor Elements (Pointer arrow + robot badge) */}
-                    {AGENT_ROSTER.map(agent => (
-                        <div key={agent.id} className="agent-cursor-wrapper">
+                    {AGENT_ROSTER.map((agent, index) => (
+                        <div
+                            key={agent.id}
+                            ref={el => { cursorDomsRef.current[index] = el; }}
+                            className="agent-cursor-wrapper"
+                        >
                             <svg className="agent-pointer-svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path
                                     d="M3 3L10.07 19.97L12.58 12.58L19.97 10.07L3 3Z"
@@ -553,8 +678,7 @@ export default function MultiAgentEngine() {
                                 className="agent-badge-tag"
                                 style={{
                                     backgroundColor: agent.color,
-                                    color: agent.textColor,
-                                    boxShadow: `0 3px 10px rgba(0, 0, 0, 0.5), 0 0 10px ${agent.color}55`
+                                    color: agent.textColor
                                 }}
                             >
                                 <span className="agent-bot-icon">

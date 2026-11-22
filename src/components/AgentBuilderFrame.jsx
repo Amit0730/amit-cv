@@ -1,8 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, memo } from 'react';
 import { useBuildEngine } from '../context/BuildEngineContext';
 import './AgentBuilderFrame.css';
 
-const AgentBuilderFrame = ({
+const AgentBuilderFrame = memo(({
     id,
     agentName = 'Agent',
     action = 'placing',
@@ -37,24 +37,29 @@ const AgentBuilderFrame = ({
     const liveMedia = activeMedia[id];
     const liveMotionOffset = motionTests[id];
 
-    // Measure live DOM dimensions for tags
-    useEffect(() => {
-        if (!frameRef.current) return;
-        const updateDims = () => {
-            if (frameRef.current) {
-                const rect = frameRef.current.getBoundingClientRect();
-                setMeasuredDims({ w: Math.round(rect.width), h: Math.round(rect.height) });
-            }
-        };
-        updateDims();
-        window.addEventListener('resize', updateDims, { passive: true });
-        return () => window.removeEventListener('resize', updateDims);
-    }, [isBuilding, isDelivered]);
-
-    // Issue H Fix: Only show the active blueprint selection outline, 8 handles and spec tag
-    // on the element CURRENTLY being actively selected/manipulated by an agent.
+    // Issue H & Performance Fix: Only inspect & measure when actively targeted by an agent
     const hasActiveAgent = Boolean(liveInspection);
     const showActiveSelection = agentsActive && !isDelivered && hasActiveAgent;
+
+    useEffect(() => {
+        if (!showActiveSelection || !frameRef.current) return;
+        const el = frameRef.current;
+        setMeasuredDims({
+            w: el.offsetWidth || Math.round(el.getBoundingClientRect().width),
+            h: el.offsetHeight || Math.round(el.getBoundingClientRect().height)
+        });
+    }, [showActiveSelection]);
+
+    // Fast-path: When element is completely delivered, render clean final markup
+    if (isDelivered) {
+        return (
+            <div id={id} ref={frameRef} className={`agent-builder-frame delivered-active ${className}`}>
+                <div className="builder-content-slot">
+                    {children}
+                </div>
+            </div>
+        );
+    }
 
     const activeColor = liveInspection?.color || color;
     const activeAgentName = liveInspection?.agentName || agentName;
@@ -63,19 +68,18 @@ const AgentBuilderFrame = ({
     const activeHeight = liveDims?.h || measuredDims.h;
 
     // Dynamic sizing and motion styles
-    // Issue G Fix: maxWidth: 100% ensures responsive layout is never broken on mobile
     const dynamicStyle = {
         '--frame-color': activeColor,
         ...(liveDims?.w ? { width: `${liveDims.w}px`, maxWidth: '100%' } : {}),
         ...(liveDims?.h ? { height: `${liveDims.h}px` } : {}),
-        ...(liveMotionOffset !== undefined ? { transform: `translateY(${liveMotionOffset}px)` } : {})
+        ...(liveMotionOffset !== undefined ? { transform: `translate3d(0, ${liveMotionOffset}px, 0)` } : {})
     };
 
     return (
         <div
             id={id}
             ref={frameRef}
-            className={`agent-builder-frame ${showActiveSelection ? 'blueprint-active' : ''} ${isDelivered ? 'delivered-active' : 'unbuilt-state'} ${isTestingHover ? 'agent-testing-hover' : ''} ${liveStyle ? 'agent-style-active' : ''} ${liveMedia ? 'agent-media-active' : ''} ${className}`}
+            className={`agent-builder-frame ${showActiveSelection ? 'blueprint-active' : ''} unbuilt-state ${isTestingHover ? 'agent-testing-hover' : ''} ${liveStyle ? 'agent-style-active' : ''} ${liveMedia ? 'agent-media-active' : ''} ${className}`}
             style={dynamicStyle}
         >
             {/* The Blueprint Wireframe Overlay with Handles (Active ONLY when assigned agent is working on it) */}
@@ -125,6 +129,6 @@ const AgentBuilderFrame = ({
             </div>
         </div>
     );
-};
+});
 
 export default AgentBuilderFrame;
