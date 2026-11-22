@@ -30,8 +30,12 @@ const Projects = () => {
                         transition={{ duration: 0.5, ease: "easeOut" }}
                     >
                         <div className="section-eyebrow-red">SELECTED WORK</div>
-                        <h2 className="section-title-impact">
-                            {typedText['builder-projects-header'] !== undefined ? typedText['builder-projects-header'] : "WORK THAT SHIPS."}
+                        <h2 className="section-title-impact" style={{ minHeight: '1.2em' }}>
+                            {projectsDelivered.header || !agentsActive ? (
+                                "WORK THAT SHIPS."
+                            ) : (
+                                typedText['builder-projects-header'] !== undefined ? typedText['builder-projects-header'] : ""
+                            )}
                             {!projectsDelivered.header && agentsActive && <span className="typing-cursor-blink">|</span>}
                         </h2>
                         <p className="section-subtitle-muted">

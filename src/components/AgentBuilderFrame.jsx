@@ -22,6 +22,9 @@ const AgentBuilderFrame = ({
         spacingGuides = {},
         reviewedElements = {},
         interactiveTesting = {},
+        activeStyles = {},
+        activeMedia = {},
+        motionTests = {},
         agentsActive = true
     } = useBuildEngine() || {};
 
@@ -30,6 +33,9 @@ const AgentBuilderFrame = ({
     const liveSpacing = spacingGuides[id];
     const isReviewed = reviewedElements[id];
     const isTestingHover = interactiveTesting[id];
+    const liveStyle = activeStyles[id];
+    const liveMedia = activeMedia[id];
+    const liveMotionOffset = motionTests[id];
 
     // Measure live DOM dimensions for tags
     useEffect(() => {
@@ -54,17 +60,20 @@ const AgentBuilderFrame = ({
     const activeWidth = liveDims?.w || measuredDims.w;
     const activeHeight = liveDims?.h || measuredDims.h;
 
-    // Optional dynamic sizing style if actively being resized
+    // Dynamic sizing and motion styles
+    // Problem 4 Fix: applies both width and height when resizing
     const dynamicStyle = {
         '--frame-color': activeColor,
-        ...(liveDims?.w ? { maxWidth: `${liveDims.w}px` } : {})
+        ...(liveDims?.w ? { width: `${liveDims.w}px`, maxWidth: '100%' } : {}),
+        ...(liveDims?.h ? { height: `${liveDims.h}px`, minHeight: `${liveDims.h}px` } : {}),
+        ...(liveMotionOffset !== undefined ? { transform: `translateY(${liveMotionOffset}px)` } : {})
     };
 
     return (
         <div
             id={id}
             ref={frameRef}
-            className={`agent-builder-frame ${showBlueprint ? 'blueprint-active' : ''} ${isDelivered ? 'delivered-active' : ''} ${isTestingHover ? 'agent-testing-hover' : ''} ${className}`}
+            className={`agent-builder-frame ${showBlueprint ? 'blueprint-active' : ''} ${isDelivered ? 'delivered-active' : 'unbuilt-state'} ${isTestingHover ? 'agent-testing-hover' : ''} ${liveStyle ? 'agent-style-active' : ''} ${liveMedia ? 'agent-media-active' : ''} ${className}`}
             style={dynamicStyle}
         >
             {/* The Blueprint Wireframe Overlay with Handles (Active during assembly) */}

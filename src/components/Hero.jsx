@@ -43,8 +43,12 @@ const Hero = () => {
                         className="hero-subframe"
                     >
                         <p className="hero-greeting-sub">Hello, I'm</p>
-                        <h1 className="hero-name-giant">
-                            {typedText['builder-hero-name'] !== undefined ? typedText['builder-hero-name'] : "AMIT KUMAR SINGH."}
+                        <h1 className="hero-name-giant" style={{ minHeight: '1.15em' }}>
+                            {heroDelivered.name || !agentsActive ? (
+                                "AMIT KUMAR SINGH."
+                            ) : (
+                                typedText['builder-hero-name'] !== undefined ? typedText['builder-hero-name'] : ""
+                            )}
                             {!heroDelivered.name && agentsActive && <span className="typing-cursor-blink">|</span>}
                         </h1>
                     </AgentBuilderFrame>
@@ -60,8 +64,12 @@ const Hero = () => {
                         isDelivered={heroDelivered.role}
                         className="hero-subframe"
                     >
-                        <h2 className="hero-role-headline">
-                            {typedText['builder-hero-role'] !== undefined ? typedText['builder-hero-role'] : "SOFTWARE ENGINEER & AI BUILDER"}
+                        <h2 className="hero-role-headline" style={{ minHeight: '1.2em' }}>
+                            {heroDelivered.role || !agentsActive ? (
+                                "SOFTWARE ENGINEER & AI BUILDER"
+                            ) : (
+                                typedText['builder-hero-role'] !== undefined ? typedText['builder-hero-role'] : ""
+                            )}
                             {!heroDelivered.role && agentsActive && <span className="typing-cursor-blink">|</span>}
                         </h2>
                     </AgentBuilderFrame>
@@ -95,9 +103,11 @@ const Hero = () => {
                             />
                         </div>
 
-                        <p className="hero-pitch-text">
-                            {typedText['builder-hero-pitch'] !== undefined ? typedText['builder-hero-pitch'] : (
+                        <p className="hero-pitch-text" style={{ minHeight: '3.4em' }}>
+                            {heroDelivered.pitch || !agentsActive ? (
                                 "I build intelligent systems, mobile applications, and AI-assisted workflows that actually ship. Engineering student at LPU with proven experience building production-ready architectures from brief to live deployment."
+                            ) : (
+                                typedText['builder-hero-pitch'] !== undefined ? typedText['builder-hero-pitch'] : ""
                             )}
                             {!heroDelivered.pitch && agentsActive && <span className="typing-cursor-blink">|</span>}
                         </p>

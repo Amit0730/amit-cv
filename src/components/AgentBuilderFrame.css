@@ -155,6 +155,23 @@
     transition: all 0.2s ease !important;
 }
 
+/* Style Agent active effect (glow & border pulse) */
+.agent-style-active {
+    box-shadow: 0 0 0 2px #EAB308, 0 0 25px rgba(234, 179, 8, 0.45) !important;
+    transition: box-shadow 0.25s ease !important;
+}
+
+/* Media Agent active effect (laser sweep) */
+.agent-media-active {
+    box-shadow: 0 0 0 2px #F97316, 0 0 30px rgba(249, 115, 22, 0.5) !important;
+    transition: box-shadow 0.25s ease !important;
+}
+
+/* Unbuilt state before agent arrives and delivers */
+.agent-builder-frame.unbuilt-state:not(.blueprint-active) {
+    opacity: 0.85;
+}
+
 /* Typing Caret Animation */
 .typing-cursor-blink {
     display: inline-block;

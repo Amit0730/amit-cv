@@ -24,7 +24,10 @@ export default function MultiAgentEngine() {
         setElementDimension,
         setSpacingGuide,
         setReviewed,
-        setTesting
+        setTesting,
+        setActiveStyle,
+        setActiveMedia,
+        setMotionTest
     } = useBuildEngine();
 
     const [ripples, setRipples] = useState([]);
@@ -48,6 +51,8 @@ export default function MultiAgentEngine() {
                 vy: 0,
                 angle: 0,
                 currentTaskId: null,
+                state: 'idle', // 'idle' | 'moving' | 'selecting' | 'executing' | 'verifying'
+                stateTimer: 0,
                 taskTime: 0,
                 labelExtra: '',
                 wanderTimer: 0.2 + index * 0.2,
@@ -149,32 +154,24 @@ export default function MultiAgentEngine() {
                 // A. Task Assignment to Matching Idle Agents
                 // -------------------------------------------------------------
                 readyTasks.forEach(task => {
-                    // Check if an agent is already handling this task
                     const existingAgent = agentsRef.current.find(a => a.currentTaskId === task.id);
                     if (existingAgent) return;
 
-                    // Find designated agent
                     const agent = agentsRef.current.find(a => a.id === task.agentId && !a.currentTaskId);
                     if (agent) {
                         agent.currentTaskId = task.id;
+                        agent.state = 'moving';
+                        agent.stateTimer = 0;
                         agent.taskTime = 0;
                         agent.isCarrying = true;
-                        agent.labelExtra = task.label;
+                        agent.labelExtra = `-> ${task.label || task.action}`;
 
-                        updateTaskStatus(task.id, 'running');
-
-                        // Set live selection outline on target element
-                        setInspection(task.targetId, {
-                            agentName: agent.name,
-                            action: task.action,
-                            color: agent.color,
-                            label: task.label
-                        });
+                        updateTaskStatus(task.id, 'assigned');
                     }
                 });
 
                 // -------------------------------------------------------------
-                // B. Agent Physics, Movement & Progressive Task Execution
+                // B. Deterministic State Machine & Action Execution
                 // -------------------------------------------------------------
                 agentsRef.current.forEach((agent) => {
                     if (agent.currentTaskId) {
@@ -182,11 +179,12 @@ export default function MultiAgentEngine() {
                         if (!currentTask) {
                             agent.currentTaskId = null;
                             agent.isCarrying = false;
+                            agent.state = 'idle';
                             return;
                         }
 
                         // Target handle coordinates
-                        const handle = getHandle(currentTask.targetId, currentTask.corner || 'br');
+                        let handle = getHandle(currentTask.targetId, currentTask.corner || 'br');
 
                         if (handle) {
                             agent.targetX = handle.x;
@@ -196,61 +194,172 @@ export default function MultiAgentEngine() {
                             const dy = agent.targetY - agent.y;
                             const dist = Math.sqrt(dx * dx + dy * dy);
 
-                            // Progress through task
-                            agent.taskTime += dt * speedMultiplier;
-                            const duration = Math.max(currentTask.duration || 1.2, 0.4);
-                            const progress = Math.min(agent.taskTime / duration, 1);
+                            // --- STATE 1: MOVING TO TARGET ---
+                            // Problem 1 Fix: Task progress does NOT advance while moving.
+                            // Only advances after cursor reaches handle (threshold <= 18px).
+                            if (agent.state === 'moving') {
+                                if (dist <= 18) {
+                                    agent.state = 'selecting';
+                                    agent.stateTimer = 0;
+                                    agent.labelExtra = 'selecting...';
 
-                            // Execute real progressive changes on element
-                            if (currentTask.action === 'type' || currentTask.action === 'copy') {
-                                if (currentTask.text) {
-                                    const charLen = Math.floor(progress * currentTask.text.length);
-                                    setElementTypedText(currentTask.targetId, currentTask.text.slice(0, charLen));
+                                    // Latch Figma selection outline
+                                    setInspection(currentTask.targetId, {
+                                        agentName: agent.name,
+                                        action: currentTask.action,
+                                        color: agent.color,
+                                        label: currentTask.label
+                                    });
+                                    updateTaskStatus(currentTask.id, 'selecting');
                                 }
-                            } else if (currentTask.action === 'resize') {
-                                if (currentTask.startDims && currentTask.targetDims) {
-                                    const curW = Math.round(currentTask.startDims.w + (currentTask.targetDims.w - currentTask.startDims.w) * progress);
-                                    const curH = Math.round(currentTask.startDims.h + (currentTask.targetDims.h - currentTask.startDims.h) * progress);
-                                    setElementDimension(currentTask.targetId, { w: curW, h: curH });
-                                }
-                            } else if (currentTask.action === 'spacing') {
-                                setSpacingGuide(currentTask.targetId, currentTask.spacingLabel);
-                            } else if (currentTask.action === 'interact') {
-                                setTesting(currentTask.targetId, progress < 0.85);
-                            } else if (currentTask.action === 'review') {
-                                setReviewed(currentTask.targetId, true);
                             }
-
-                            // TASK COMPLETION MOMENT
-                            if (progress >= 1) {
-                                addRipple(handle.x, handle.y, agent.color);
-
-                                // Release inspection and finalize element state
-                                setInspection(currentTask.targetId, null);
-                                if (currentTask.text) {
-                                    setElementTypedText(currentTask.targetId, currentTask.text);
+                            // --- STATE 2: SELECTING ELEMENT (Brief inspection pause) ---
+                            else if (agent.state === 'selecting') {
+                                agent.stateTimer += dt * speedMultiplier;
+                                if (agent.stateTimer >= 0.2) {
+                                    agent.state = 'executing';
+                                    agent.stateTimer = 0;
+                                    agent.taskTime = 0;
+                                    agent.labelExtra = currentTask.label;
+                                    updateTaskStatus(currentTask.id, 'executing');
                                 }
-                                if (currentTask.action === 'spacing') {
-                                    setTimeout(() => setSpacingGuide(currentTask.targetId, null), 800);
-                                }
-                                if (currentTask.action === 'interact') {
-                                    setTesting(currentTask.targetId, false);
-                                }
-                                if (currentTask.action === 'resize') {
-                                    setElementDimension(currentTask.targetId, null);
-                                }
+                            }
+                            // --- STATE 3: EXECUTING CONCRETE ACTION ---
+                            // Problem 2 Fix: Full implementation of all 12 agent actions.
+                            else if (agent.state === 'executing') {
+                                agent.taskTime += dt * speedMultiplier;
+                                const duration = Math.max(currentTask.duration || 1.2, 0.4);
+                                const progress = Math.min(agent.taskTime / duration, 1);
 
-                                updateTaskStatus(currentTask.id, 'completed');
-
-                                agent.labelExtra = `${currentTask.action} ✓`;
-                                agent.currentTaskId = null;
-                                agent.isCarrying = false;
-
-                                setTimeout(() => {
-                                    if (!agent.currentTaskId) {
-                                        agent.labelExtra = '';
+                                // 1 & 2. Typography & Copy: Progressive text typing
+                                if (currentTask.action === 'type' || currentTask.action === 'copy') {
+                                    if (currentTask.text) {
+                                        const charLen = Math.max(1, Math.floor(progress * currentTask.text.length));
+                                        setElementTypedText(currentTask.targetId, currentTask.text.slice(0, charLen));
                                     }
-                                }, 900);
+                                }
+                                // 3. Resize: Drag handle with both width and height
+                                // Cursor dynamically stays glued to the moving handle
+                                else if (currentTask.action === 'resize') {
+                                    if (currentTask.startDims && currentTask.targetDims) {
+                                        const curW = Math.round(currentTask.startDims.w + (currentTask.targetDims.w - currentTask.startDims.w) * progress);
+                                        const curH = Math.round(currentTask.startDims.h + (currentTask.targetDims.h - currentTask.startDims.h) * progress);
+                                        setElementDimension(currentTask.targetId, { w: curW, h: curH });
+
+                                        // Update handle location so cursor moves with dragging handle
+                                        const liveHandle = getHandle(currentTask.targetId, currentTask.corner || 'br');
+                                        if (liveHandle) {
+                                            agent.targetX = liveHandle.x;
+                                            agent.targetY = liveHandle.y;
+                                        }
+                                    }
+                                }
+                                // 4. Spacing: Temporary Figma measurement guide
+                                else if (currentTask.action === 'spacing') {
+                                    setSpacingGuide(currentTask.targetId, currentTask.spacingLabel || 'gap: 24px');
+                                }
+                                // 5. Interaction: Simulated button hover / click testing
+                                else if (currentTask.action === 'interact') {
+                                    setTesting(currentTask.targetId, progress < 0.88);
+                                }
+                                // 6. Style: Glow, shadow and theme coloring
+                                else if (currentTask.action === 'style') {
+                                    setActiveStyle(currentTask.targetId, { progress, active: true });
+                                }
+                                // 7. Media: Image mounting & laser burst
+                                else if (currentTask.action === 'media') {
+                                    setActiveMedia(currentTask.targetId, { progress, mounted: true });
+                                }
+                                // 8. Motion: Spring physics displacement test
+                                else if (currentTask.action === 'motion') {
+                                    const motionY = Math.sin(progress * Math.PI * 2) * -6;
+                                    setMotionTest(currentTask.targetId, motionY);
+                                }
+                                // 9. Navigation: Link verification & snapping
+                                else if (currentTask.action === 'navigation') {
+                                    agent.labelExtra = `route check: ok`;
+                                }
+                                // 10. Component / Layout: Card & structure assembly
+                                else if (currentTask.action === 'component' || currentTask.action === 'layout') {
+                                    agent.labelExtra = `${currentTask.label} (${Math.round(progress * 100)}%)`;
+                                }
+                                // 11. Review: Spec audit pass
+                                else if (currentTask.action === 'review') {
+                                    agent.labelExtra = `auditing specs...`;
+                                }
+
+                                // Transition to Verifying when progress reaches 100%
+                                if (progress >= 1) {
+                                    agent.state = 'verifying';
+                                    agent.stateTimer = 0;
+                                    agent.labelExtra = 'verifying...';
+                                    updateTaskStatus(currentTask.id, 'verifying');
+                                }
+                            }
+                            // --- STATE 4: VERIFYING (Problem 5 Fix: Real DOM & Dependency Verification) ---
+                            else if (agent.state === 'verifying') {
+                                agent.stateTimer += dt * speedMultiplier;
+
+                                // Real inspection: check DOM element geometry and dependency completion
+                                const el = document.getElementById(currentTask.targetId);
+                                const rect = el ? el.getBoundingClientRect() : null;
+                                const domValid = Boolean(rect && (rect.width > 5 || rect.height > 5));
+                                const depsValid = currentTask.dependencies.every(d => completedTaskMap.has(d));
+                                const isVerified = domValid && depsValid;
+
+                                if (agent.stateTimer >= 0.22) {
+                                    if (isVerified) {
+                                        addRipple(agent.x, agent.y, agent.color);
+
+                                        // Finalize element state
+                                        setInspection(currentTask.targetId, null);
+                                        if (currentTask.text) {
+                                            setElementTypedText(currentTask.targetId, currentTask.text);
+                                        }
+                                        // Problem 4 Fix: Keep target dimensions permanently (do not reset!)
+                                        if (currentTask.action === 'resize' && currentTask.targetDims) {
+                                            setElementDimension(currentTask.targetId, currentTask.targetDims);
+                                        }
+                                        if (currentTask.action === 'spacing') {
+                                            setTimeout(() => setSpacingGuide(currentTask.targetId, null), 900);
+                                        }
+                                        if (currentTask.action === 'interact') {
+                                            setTesting(currentTask.targetId, false);
+                                        }
+                                        if (currentTask.action === 'review') {
+                                            setReviewed(currentTask.targetId, true);
+                                        }
+                                        if (currentTask.action === 'motion') {
+                                            setMotionTest(currentTask.targetId, 0);
+                                        }
+                                        if (currentTask.action === 'style') {
+                                            setActiveStyle(currentTask.targetId, null);
+                                        }
+                                        if (currentTask.action === 'media') {
+                                            setActiveMedia(currentTask.targetId, null);
+                                        }
+
+                                        updateTaskStatus(currentTask.id, 'completed');
+
+                                        agent.labelExtra = `${currentTask.action} ✓`;
+                                        agent.currentTaskId = null;
+                                        agent.isCarrying = false;
+                                        agent.state = 'idle';
+
+                                        setTimeout(() => {
+                                            if (!agent.currentTaskId) {
+                                                agent.labelExtra = '';
+                                            }
+                                        }, 1100);
+                                    } else {
+                                        // Graceful failure if DOM element missing
+                                        agent.labelExtra = 'verify ✕';
+                                        updateTaskStatus(currentTask.id, 'failed');
+                                        agent.currentTaskId = null;
+                                        agent.isCarrying = false;
+                                        agent.state = 'idle';
+                                    }
+                                }
                             }
                         }
                     } else {
@@ -265,14 +374,14 @@ export default function MultiAgentEngine() {
                         }
                     }
 
-                    // Physics motion calculation
+                    // Physics motion calculation (Smooth easing)
                     const dx = agent.targetX - agent.x;
                     const dy = agent.targetY - agent.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
 
                     const accel = agent.isCarrying ? 12.0 : 4.5;
-                    const maxSpeed = agent.isCarrying ? 800 : 320;
-                    const baseSpeed = Math.min(dist * 5.0, maxSpeed) * agent.speedMod * speedMultiplier;
+                    const maxSpeed = agent.isCarrying ? 820 : 320;
+                    const baseSpeed = Math.min(dist * 5.2, maxSpeed) * agent.speedMod * speedMultiplier;
 
                     if (dist > 1) {
                         agent.vx += ((dx / (dist + 0.1)) * baseSpeed - agent.vx) * accel * dt;
@@ -313,7 +422,8 @@ export default function MultiAgentEngine() {
         agentsActive, isBuilding, isBooted, isPaused, speedMultiplier,
         tasks, activeSections, updateTaskStatus, getHandle, addRipple,
         setInspection, setElementTypedText, setElementDimension,
-        setSpacingGuide, setReviewed, setTesting
+        setSpacingGuide, setReviewed, setTesting,
+        setActiveStyle, setActiveMedia, setMotionTest
     ]);
 
     return (

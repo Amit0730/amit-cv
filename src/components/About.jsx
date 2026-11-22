@@ -37,11 +37,11 @@ const About = () => {
                         transition={{ type: 'spring', damping: 18, stiffness: 120 }}
                     >
                         <div className="section-eyebrow-red">ABOUT</div>
-                        <h2 className="section-title-impact">
-                            {typedText['builder-about-title'] !== undefined ? (
-                                typedText['builder-about-title']
-                            ) : (
+                        <h2 className="section-title-impact" style={{ minHeight: '1.8em' }}>
+                            {aboutDelivered?.title || !agentsActive ? (
                                 <>NOT JUST CODE.<br /><span style={{ color: '#EF4444' }}>CODE THAT SHIPS.</span></>
+                            ) : (
+                                typedText['builder-about-title'] !== undefined ? typedText['builder-about-title'] : ""
                             )}
                             {!aboutDelivered?.title && agentsActive && <span className="typing-cursor-blink">|</span>}
                         </h2>

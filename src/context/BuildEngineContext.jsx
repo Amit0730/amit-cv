@@ -40,6 +40,9 @@ export const BuildEngineProvider = ({ children }) => {
     const [spacingGuides, setSpacingGuides] = useState({});
     const [reviewedElements, setReviewedElements] = useState({});
     const [interactiveTesting, setInteractiveTesting] = useState({});
+    const [activeStyles, setActiveStyles] = useState({});
+    const [activeMedia, setActiveMedia] = useState({});
+    const [motionTests, setMotionTests] = useState({});
 
     // Section delivery flags (for final resting states & fallback)
     const [heroDelivered, setHeroDelivered] = useState({
@@ -198,24 +201,54 @@ export const BuildEngineProvider = ({ children }) => {
         });
     }, []);
 
+    // Set dynamic style effect for a target
+    const setActiveStyle = useCallback((targetId, styleData) => {
+        setActiveStyles(prev => {
+            if (!styleData) {
+                const next = { ...prev };
+                delete next[targetId];
+                return next;
+            }
+            return { ...prev, [targetId]: styleData };
+        });
+    }, []);
+
+    // Set dynamic media mounting effect for a target
+    const setActiveMediaState = useCallback((targetId, mediaData) => {
+        setActiveMedia(prev => {
+            if (!mediaData) {
+                const next = { ...prev };
+                delete next[targetId];
+                return next;
+            }
+            return { ...prev, [targetId]: mediaData };
+        });
+    }, []);
+
+    // Set dynamic motion spring test displacement for a target
+    const setMotionTest = useCallback((targetId, offsetY) => {
+        setMotionTests(prev => {
+            if (offsetY === 0 || offsetY === null || offsetY === undefined) {
+                const next = { ...prev };
+                delete next[targetId];
+                return next;
+            }
+            return { ...prev, [targetId]: offsetY };
+        });
+    }, []);
+
     // Power toggle: AGENTS ON / AGENTS OFF
+    // Problem 3 Fix: When AGENTS OFF, presentation renders cleanly without faking task completions!
     const setAgentsActive = useCallback((active) => {
         setAgentsActiveState(active);
         if (!active) {
-            // Instantly mark everything complete so user has a 100% usable website
-            setTasks(prev => prev.map(t => ({ ...t, status: 'completed' })));
+            // Clear temporary guides and overlays for clean browsing, without falsifying task status
             setActiveInspections({});
             setSpacingGuides({});
-            setReviewedElements({});
             setInteractiveTesting({});
-            setHeroDelivered({
-                nav: true, name: true, role: true, pitch: true, cta: true, location: true, photo: true, stats: true, bg: true
-            });
-            setTrackDelivered({ title: true, stat40: true, timeline: true });
-            setProjectsDelivered({ header: true, card1: true, card2: true, card3: true, card4: true });
-            setSkillsDelivered({ skills: true, principles: true, manifesto: true });
-            setAboutDelivered({ title: true, photo2: true, bio: true });
-            setBuildingStates({ hero: false, track: false, projects: false, skills: false, about: false });
+            setActiveStyles({});
+            setActiveMedia({});
+            setMotionTests({});
         }
     }, []);
 
@@ -238,6 +271,9 @@ export const BuildEngineProvider = ({ children }) => {
         setSpacingGuides({});
         setReviewedElements({});
         setInteractiveTesting({});
+        setActiveStyles({});
+        setActiveMedia({});
+        setMotionTests({});
 
         setHeroDelivered({
             nav: false, name: false, role: false, pitch: false, cta: false, location: false, photo: false, stats: false, bg: false
@@ -286,6 +322,9 @@ export const BuildEngineProvider = ({ children }) => {
             spacingGuides, setSpacingGuide,
             reviewedElements, setReviewed,
             interactiveTesting, setTesting,
+            activeStyles, setActiveStyle,
+            activeMedia, setActiveMedia: setActiveMediaState,
+            motionTests, setMotionTest,
 
             // Section delivery states
             heroDelivered, setHeroDelivered,

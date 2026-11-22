@@ -62,11 +62,11 @@ export default function TrackRecord() {
                         >
                             <div className="track-header-box">
                                 <span className="track-eyebrow">TRACK RECORD</span>
-                                <h2 className="track-headline-impact">
-                                    {typedText['builder-track-title'] !== undefined ? (
-                                        typedText['builder-track-title']
-                                    ) : (
+                                <h2 className="track-headline-impact" style={{ minHeight: '1.8em' }}>
+                                    {trackDelivered.title || !agentsActive ? (
                                         <>BUILT FAST.<br /><span className="text-red-accent">SHIPPED REAL.</span></>
+                                    ) : (
+                                        typedText['builder-track-title'] !== undefined ? typedText['builder-track-title'] : ""
                                     )}
                                     {!trackDelivered.title && agentsActive && <span className="typing-cursor-blink">|</span>}
                                 </h2>
