@@ -167,6 +167,29 @@
     font-family: 'JetBrains Mono', monospace, ui-monospace, sans-serif;
 }
 
+/* Progress Counter */
+.dock-progress-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace, ui-monospace, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: #94A3B8;
+}
+
+.dock-progress-tag {
+    color: #38BDF8;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.28);
+    padding: 2px 7px;
+    border-radius: 9999px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
 .dock-divider {
     width: 1px;
     height: 14px;

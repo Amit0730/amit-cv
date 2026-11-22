@@ -9,7 +9,7 @@ import AgentBuilderFrame from './AgentBuilderFrame';
 import './Hero.css';
 
 const Hero = () => {
-    const { heroDelivered, buildingStates } = useBuildEngine();
+    const { heroDelivered, buildingStates, typedText = {}, agentsActive = true } = useBuildEngine();
 
     return (
         <section id="home" className="hero-section section">
@@ -31,11 +31,11 @@ const Hero = () => {
             <div className="container hero-container-cinematic">
                 {/* 1. Left Column: Multi-Agent Typography, Copy, CTA & Meta */}
                 <div className="hero-left-col">
-                    {/* A. Name & Greeting - Built by Typeset */}
+                    {/* A. Name & Greeting - Built by Typography */}
                     <AgentBuilderFrame
                         id="builder-hero-name"
-                        agentName="Typeset"
-                        action="composing"
+                        agentName="Typography"
+                        action="typing"
                         color="#22C55E"
                         label="540×120"
                         isBuilding={buildingStates.hero}
@@ -43,7 +43,10 @@ const Hero = () => {
                         className="hero-subframe"
                     >
                         <p className="hero-greeting-sub">Hello, I'm</p>
-                        <h1 className="hero-name-giant">AMIT KUMAR SINGH.</h1>
+                        <h1 className="hero-name-giant">
+                            {typedText['builder-hero-name'] !== undefined ? typedText['builder-hero-name'] : "AMIT KUMAR SINGH."}
+                            {!heroDelivered.name && agentsActive && <span className="typing-cursor-blink">|</span>}
+                        </h1>
                     </AgentBuilderFrame>
 
                     {/* B. Role Subtitle - Built by Copy */}
@@ -57,15 +60,18 @@ const Hero = () => {
                         isDelivered={heroDelivered.role}
                         className="hero-subframe"
                     >
-                        <h2 className="hero-role-headline">SOFTWARE ENGINEER & AI BUILDER</h2>
+                        <h2 className="hero-role-headline">
+                            {typedText['builder-hero-role'] !== undefined ? typedText['builder-hero-role'] : "SOFTWARE ENGINEER & AI BUILDER"}
+                            {!heroDelivered.role && agentsActive && <span className="typing-cursor-blink">|</span>}
+                        </h2>
                     </AgentBuilderFrame>
 
-                    {/* C. Pitch & Capabilities - Built by Lint */}
+                    {/* C. Pitch & Capabilities - Built by Copy */}
                     <AgentBuilderFrame
                         id="builder-hero-pitch"
-                        agentName="Lint"
-                        action="typing"
-                        color="#94A3B8"
+                        agentName="Copy"
+                        action="authoring"
+                        color="#06B6D4"
                         label="bio: 520×140"
                         isBuilding={buildingStates.hero}
                         isDelivered={heroDelivered.pitch}
@@ -90,17 +96,19 @@ const Hero = () => {
                         </div>
 
                         <p className="hero-pitch-text">
-                            I build intelligent systems, mobile applications, and AI-assisted workflows that actually ship.
-                            Engineering student at LPU with proven experience building production-ready architectures from brief to live deployment.
+                            {typedText['builder-hero-pitch'] !== undefined ? typedText['builder-hero-pitch'] : (
+                                "I build intelligent systems, mobile applications, and AI-assisted workflows that actually ship. Engineering student at LPU with proven experience building production-ready architectures from brief to live deployment."
+                            )}
+                            {!heroDelivered.pitch && agentsActive && <span className="typing-cursor-blink">|</span>}
                         </p>
                     </AgentBuilderFrame>
 
-                    {/* D. CTA Action Buttons - Placed by Index */}
+                    {/* D. CTA Action Buttons - Placed by Layout */}
                     <AgentBuilderFrame
                         id="builder-hero-cta"
-                        agentName="Index"
+                        agentName="Layout"
                         action="placing"
-                        color="#84CC16"
+                        color="#F59E0B"
                         label="cta: 320×48"
                         isBuilding={buildingStates.hero}
                         isDelivered={heroDelivered.cta}
@@ -156,12 +164,12 @@ const Hero = () => {
                     </AgentBuilderFrame>
                 </div>
 
-                {/* 2. Center Column: Built by Agent Deploy */}
+                {/* 2. Center Column: Built by Resize & Media */}
                 <AgentBuilderFrame
                     id="builder-hero-photo"
-                    agentName="Deploy"
-                    action="framing"
-                    color="#F97316"
+                    agentName="Resize"
+                    action="resizing"
+                    color="#84CC16"
                     label="portrait: 340×430"
                     isBuilding={buildingStates.hero}
                     isDelivered={heroDelivered.photo}
@@ -191,11 +199,11 @@ const Hero = () => {
                     </motion.div>
                 </AgentBuilderFrame>
 
-                {/* 3. Right Column: Built by Agent Code */}
+                {/* 3. Right Column: Built by Component Agent */}
                 <AgentBuilderFrame
                     id="builder-hero-stats"
-                    agentName="Code"
-                    action="compiling"
+                    agentName="Component"
+                    action="assembling"
                     color="#3B82F6"
                     label="stats: 210×260"
                     isBuilding={buildingStates.hero}

@@ -9,7 +9,7 @@ import './Navigation.css';
 const Navigation = () => {
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
-    const { heroDelivered, buildingStates } = useBuildEngine();
+    const { heroDelivered, buildingStates, agentsActive = true } = useBuildEngine();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -23,9 +23,9 @@ const Navigation = () => {
         <header className="nav-fixed-wrapper">
             <AgentBuilderFrame
                 id="builder-hero-nav"
-                agentName="Layout"
+                agentName="Navigation"
                 action="snapping"
-                color="#FACC15"
+                color="#8B5CF6"
                 label="nav: 460×48"
                 isBuilding={buildingStates.hero}
                 isDelivered={heroDelivered.nav}
@@ -39,7 +39,7 @@ const Navigation = () => {
                         scale: 1
                     }}
                     transition={{ type: 'spring', damping: 18, stiffness: 130 }}
-                    style={{ pointerEvents: heroDelivered.nav ? 'auto' : 'none' }}
+                    style={{ pointerEvents: (heroDelivered.nav || !agentsActive) ? 'auto' : 'none' }}
                 >
                     {/* Monogram Brand Avatar */}
                     <Link to="/new" className="nav-monogram-circle" title="Amit Kumar Singh (AI Agent V2)">

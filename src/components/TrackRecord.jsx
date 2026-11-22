@@ -43,7 +43,7 @@ const TRACK_RECORDS = [
 ];
 
 export default function TrackRecord() {
-    const { trackDelivered, buildingStates } = useBuildEngine();
+    const { trackDelivered, buildingStates, typedText = {}, agentsActive = true } = useBuildEngine();
 
     return (
         <section id="track-record" className="section track-section">
@@ -53,7 +53,7 @@ export default function TrackRecord() {
                     <div className="track-left-col">
                         <AgentBuilderFrame
                             id="builder-track-title"
-                            agentName="Typeset"
+                            agentName="Typography"
                             action="typing"
                             color="#22C55E"
                             label="headline"
@@ -63,16 +63,20 @@ export default function TrackRecord() {
                             <div className="track-header-box">
                                 <span className="track-eyebrow">TRACK RECORD</span>
                                 <h2 className="track-headline-impact">
-                                    BUILT FAST.<br />
-                                    <span className="text-red-accent">SHIPPED REAL.</span>
+                                    {typedText['builder-track-title'] !== undefined ? (
+                                        typedText['builder-track-title']
+                                    ) : (
+                                        <>BUILT FAST.<br /><span className="text-red-accent">SHIPPED REAL.</span></>
+                                    )}
+                                    {!trackDelivered.title && agentsActive && <span className="typing-cursor-blink">|</span>}
                                 </h2>
                             </div>
                         </AgentBuilderFrame>
 
                         <AgentBuilderFrame
                             id="builder-track-stat"
-                            agentName="QA"
-                            action="typing"
+                            agentName="Component"
+                            action="mounting"
                             color="#3B82F6"
                             label="unit tests note"
                             isBuilding={buildingStates.track}

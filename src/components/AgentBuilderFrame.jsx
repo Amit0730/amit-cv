@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { useBuildEngine } from '../context/BuildEngineContext';
 import './AgentBuilderFrame.css';
 
 const AgentBuilderFrame = ({
@@ -13,14 +14,30 @@ const AgentBuilderFrame = ({
     className = ''
 }) => {
     const frameRef = useRef(null);
-    const [dimensions, setDimensions] = useState({ w: 0, h: 0 });
+    const [measuredDims, setMeasuredDims] = useState({ w: 0, h: 0 });
 
+    const {
+        activeInspections = {},
+        elementDimensions = {},
+        spacingGuides = {},
+        reviewedElements = {},
+        interactiveTesting = {},
+        agentsActive = true
+    } = useBuildEngine() || {};
+
+    const liveInspection = activeInspections[id];
+    const liveDims = elementDimensions[id];
+    const liveSpacing = spacingGuides[id];
+    const isReviewed = reviewedElements[id];
+    const isTestingHover = interactiveTesting[id];
+
+    // Measure live DOM dimensions for tags
     useEffect(() => {
         if (!frameRef.current) return;
         const updateDims = () => {
             if (frameRef.current) {
                 const rect = frameRef.current.getBoundingClientRect();
-                setDimensions({ w: Math.round(rect.width), h: Math.round(rect.height) });
+                setMeasuredDims({ w: Math.round(rect.width), h: Math.round(rect.height) });
             }
         };
         updateDims();
@@ -28,14 +45,27 @@ const AgentBuilderFrame = ({
         return () => window.removeEventListener('resize', updateDims);
     }, [isBuilding, isDelivered]);
 
-    const showBlueprint = isBuilding && !isDelivered;
+    // Show blueprint when element is actively under inspection or building and not delivered
+    const showBlueprint = agentsActive && !isDelivered && (Boolean(liveInspection) || isBuilding);
+
+    const activeColor = liveInspection?.color || color;
+    const activeAgentName = liveInspection?.agentName || agentName;
+    const activeAction = liveInspection?.action || action;
+    const activeWidth = liveDims?.w || measuredDims.w;
+    const activeHeight = liveDims?.h || measuredDims.h;
+
+    // Optional dynamic sizing style if actively being resized
+    const dynamicStyle = {
+        '--frame-color': activeColor,
+        ...(liveDims?.w ? { maxWidth: `${liveDims.w}px` } : {})
+    };
 
     return (
         <div
             id={id}
             ref={frameRef}
-            className={`agent-builder-frame ${showBlueprint ? 'blueprint-active' : ''} ${isDelivered ? 'delivered-active' : ''} ${className}`}
-            style={{ '--frame-color': color }}
+            className={`agent-builder-frame ${showBlueprint ? 'blueprint-active' : ''} ${isDelivered ? 'delivered-active' : ''} ${isTestingHover ? 'agent-testing-hover' : ''} ${className}`}
+            style={dynamicStyle}
         >
             {/* The Blueprint Wireframe Overlay with Handles (Active during assembly) */}
             {showBlueprint && (
@@ -52,16 +82,30 @@ const AgentBuilderFrame = ({
                     <span className="builder-handle handle-bc" />
                     <span className="builder-handle handle-br" />
 
-                    {/* Blue / Agent Spec Tag at Top Left (Exact match to video crop) */}
+                    {/* Spec Tag at Top Left */}
                     <div className="builder-spec-tag">
-                        <span className="spec-agent-tag">{agentName} {action}</span>
-                        {dimensions.w > 0 && (
+                        <span className="spec-agent-tag">{activeAgentName} {activeAction}</span>
+                        {activeWidth > 0 && (
                             <span className="spec-dims-tag">
-                                {dimensions.w} × {dimensions.h}
+                                {activeWidth} × {activeHeight}
                             </span>
                         )}
                     </div>
                 </>
+            )}
+
+            {/* Temporary Spacing Measurement Guides (Figma-style) */}
+            {agentsActive && liveSpacing && (
+                <span className="builder-spacing-guide">
+                    {liveSpacing}
+                </span>
+            )}
+
+            {/* Temporary QA Review Pass Badge */}
+            {agentsActive && isReviewed && (
+                <span className="builder-review-badge">
+                    QA PASS ✓
+                </span>
             )}
 
             {/* Content Slot */}

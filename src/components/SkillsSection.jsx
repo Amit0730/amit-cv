@@ -47,9 +47,9 @@ export default function SkillsSection() {
                     <div className="skills-col-edu">
                         <AgentBuilderFrame
                             id="builder-skills-edu"
-                            agentName="Lint"
-                            action="typing"
-                            color="#94A3B8"
+                            agentName="Layout"
+                            action="placing"
+                            color="#F59E0B"
                             label="education & skills"
                             isBuilding={buildingStates.skills}
                             isDelivered={skillsDelivered.skills}
@@ -105,7 +105,7 @@ export default function SkillsSection() {
                     <div className="skills-col-manifesto">
                         <AgentBuilderFrame
                             id="builder-skills-manifesto"
-                            agentName="Palette"
+                            agentName="Style"
                             action="coloring"
                             color="#EAB308"
                             label="manifesto card"

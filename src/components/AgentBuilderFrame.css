@@ -5,7 +5,7 @@
 
 .agent-builder-frame {
     position: relative;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.15s ease-out;
 }
 
 .agent-builder-frame.blueprint-active {
@@ -59,7 +59,7 @@
 /* Floating Spec Tag at top left (matches exact blue tag from video) */
 .builder-spec-tag {
     position: absolute;
-    top: -20px;
+    top: -22px;
     left: -1px;
     z-index: 60;
     display: inline-flex;
@@ -70,8 +70,8 @@
     font-size: 10px;
     font-weight: 700;
     color: #ffffff;
-    background: #0284c7;
-    border: 1px solid #38bdf8;
+    background: var(--frame-color, #0284c7);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 3px;
     pointer-events: none;
     letter-spacing: 0.3px;
@@ -90,6 +90,83 @@
     font-weight: 500;
     padding-left: 4px;
     border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Temporary Spacing Measurement Guides (Figma-style) */
+.builder-spacing-guide {
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'JetBrains Mono', monospace, ui-monospace, sans-serif;
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #10B981;
+    background: rgba(16, 185, 129, 0.18);
+    border: 1px dashed #10B981;
+    padding: 1px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 65;
+    pointer-events: none;
+    animation: spacingPulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes spacingPulse {
+    0% { opacity: 0.8; transform: translateX(-50%) scale(0.98); }
+    100% { opacity: 1; transform: translateX(-50%) scale(1.02); }
+}
+
+/* Green Review Audit Pass Badge */
+.builder-review-badge {
+    position: absolute;
+    top: -22px;
+    right: -1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'JetBrains Mono', monospace, ui-monospace, sans-serif;
+    font-size: 9.5px;
+    font-weight: 800;
+    color: #FFFFFF;
+    background: #16A34A;
+    border: 1px solid #4ADE80;
+    padding: 1px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 65;
+    pointer-events: none;
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
+    animation: reviewBadgePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes reviewBadgePop {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Simulated Interaction Hover State */
+.agent-testing-hover {
+    box-shadow: 0 0 0 2px #3B82F6, 0 0 20px rgba(59, 130, 246, 0.5) !important;
+    transform: translateY(-2px) scale(1.02) !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Typing Caret Animation */
+.typing-cursor-blink {
+    display: inline-block;
+    color: #22C55E;
+    font-weight: 300;
+    margin-left: 2px;
+    animation: cursorBlink 0.7s infinite alternate;
+}
+
+@keyframes cursorBlink {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
 }
 
 .builder-content-slot {

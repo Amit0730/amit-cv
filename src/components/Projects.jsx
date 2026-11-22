@@ -8,34 +8,47 @@ import AgentBuilderFrame from './AgentBuilderFrame';
 import './Projects.css';
 
 const Projects = () => {
-    const { projectsDelivered, buildingStates } = useBuildEngine();
+    const { projectsDelivered, buildingStates, typedText = {}, agentsActive = true } = useBuildEngine();
 
     return (
         <section id="projects" className="section projects-section">
             <div className="container">
-                <motion.div
-                    className="section-header"
-                    initial={{ opacity: 0.7, scale: 0.98 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
+                <AgentBuilderFrame
+                    id="builder-projects-header"
+                    agentName="Typography"
+                    action="typing"
+                    color="#22C55E"
+                    label="headline"
+                    isBuilding={buildingStates.projects}
+                    isDelivered={projectsDelivered.header}
                 >
-                    <div className="section-eyebrow-red">SELECTED WORK</div>
-                    <h2 className="section-title-impact">WORK THAT SHIPS.</h2>
-                    <p className="section-subtitle-muted">
-                        Production apps, hackathon projects, and client workflows. Every project went from a brief to something real people open and use.
-                    </p>
-                </motion.div>
+                    <motion.div
+                        className="section-header"
+                        initial={{ opacity: 0.7, scale: 0.98 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                    >
+                        <div className="section-eyebrow-red">SELECTED WORK</div>
+                        <h2 className="section-title-impact">
+                            {typedText['builder-projects-header'] !== undefined ? typedText['builder-projects-header'] : "WORK THAT SHIPS."}
+                            {!projectsDelivered.header && agentsActive && <span className="typing-cursor-blink">|</span>}
+                        </h2>
+                        <p className="section-subtitle-muted">
+                            Production apps, hackathon projects, and client workflows. Every project went from a brief to something real people open and use.
+                        </p>
+                    </motion.div>
+                </AgentBuilderFrame>
 
                 {/* 2-Column Grid: 3 Featured Projects + 1 "More" Card */}
                 <div className="projects-grid">
-                    {/* Card 01 - Built by Agent Dev */}
+                    {/* Card 01 - Built by Resize Agent */}
                     {projectsData[0] && (
                         <AgentBuilderFrame
                             id="builder-project-card-0"
-                            agentName="Dev"
-                            action="placing"
-                            color="#A855F7"
+                            agentName="Resize"
+                            action="resizing"
+                            color="#84CC16"
                             label="card 01: expensy"
                             isBuilding={buildingStates.projects}
                             isDelivered={projectsDelivered.card1}
@@ -48,13 +61,13 @@ const Projects = () => {
                         </AgentBuilderFrame>
                     )}
 
-                    {/* Card 02 - Built by Agent Scout */}
+                    {/* Card 02 - Built by Component Agent */}
                     {projectsData[1] && (
                         <AgentBuilderFrame
                             id="builder-project-card-1"
-                            agentName="Scout"
-                            action="sizing"
-                            color="#38BDF8"
+                            agentName="Component"
+                            action="mounting"
+                            color="#3B82F6"
                             label="card 02: aesthetic clock"
                             isBuilding={buildingStates.projects}
                             isDelivered={projectsDelivered.card2}
@@ -67,13 +80,13 @@ const Projects = () => {
                         </AgentBuilderFrame>
                     )}
 
-                    {/* Card 03 - Built by Agent Lint */}
+                    {/* Card 03 - Built by Component Agent */}
                     {projectsData[2] && (
                         <AgentBuilderFrame
                             id="builder-project-card-2"
-                            agentName="Lint"
-                            action="typing"
-                            color="#94A3B8"
+                            agentName="Component"
+                            action="mounting"
+                            color="#3B82F6"
                             label="card 03: hospital sys"
                             isBuilding={buildingStates.projects}
                             isDelivered={projectsDelivered.card3}
@@ -86,12 +99,12 @@ const Projects = () => {
                         </AgentBuilderFrame>
                     )}
 
-                    {/* 4th Card: More Card near 3rd Project - Built by Agent Layout */}
+                    {/* 4th Card: More Card near 3rd Project - Built by Style Agent */}
                     <AgentBuilderFrame
                         id="builder-project-card-3"
-                        agentName="Layout"
-                        action="grid"
-                        color="#FACC15"
+                        agentName="Style"
+                        action="styling"
+                        color="#EAB308"
                         label="card 04: more vault"
                         isBuilding={buildingStates.projects}
                         isDelivered={projectsDelivered.card4}

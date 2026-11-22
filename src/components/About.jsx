@@ -7,16 +7,22 @@ import AgentBuilderFrame from './AgentBuilderFrame';
 import './About.css';
 
 const About = () => {
-    const { aboutDelivered = { title: true, photo2: true, bio: true }, buildingStates = {} } = useBuildEngine() || {};
+    const {
+        aboutDelivered = { title: true, photo2: true, bio: true },
+        buildingStates = {},
+        typedText = {},
+        agentsActive = true
+    } = useBuildEngine() || {};
 
     return (
         <section id="about" className="section about-section">
             <div className="container">
-                {/* 1. Section Header: Built by Agent Motion */}
+                {/* 1. Section Header: Built by Typography */}
                 <AgentBuilderFrame
                     id="builder-about-title"
-                    agentName="Motion"
-                    color="#EC4899"
+                    agentName="Typography"
+                    action="typing"
+                    color="#22C55E"
                     label="headline: 640×120"
                     isBuilding={buildingStates?.about}
                     isDelivered={aboutDelivered?.title}
@@ -32,18 +38,23 @@ const About = () => {
                     >
                         <div className="section-eyebrow-red">ABOUT</div>
                         <h2 className="section-title-impact">
-                            NOT JUST CODE.<br />
-                            <span style={{ color: '#EF4444' }}>CODE THAT SHIPS.</span>
+                            {typedText['builder-about-title'] !== undefined ? (
+                                typedText['builder-about-title']
+                            ) : (
+                                <>NOT JUST CODE.<br /><span style={{ color: '#EF4444' }}>CODE THAT SHIPS.</span></>
+                            )}
+                            {!aboutDelivered?.title && agentsActive && <span className="typing-cursor-blink">|</span>}
                         </h2>
                     </motion.div>
                 </AgentBuilderFrame>
 
                 <div className="about-grid">
-                    {/* 2. Photo 2: Built by Agent Palette */}
+                    {/* 2. Photo 2: Built by Media Agent */}
                     <AgentBuilderFrame
                         id="builder-about-photo"
-                        agentName="Palette"
-                        color="#EAB308"
+                        agentName="Media"
+                        action="mounting"
+                        color="#F97316"
                         label="photo: 340×430"
                         isBuilding={buildingStates?.about}
                         isDelivered={aboutDelivered?.photo2}
@@ -66,10 +77,11 @@ const About = () => {
                         </motion.div>
                     </AgentBuilderFrame>
 
-                    {/* 3. Bio Story: Built by Agent Copy */}
+                    {/* 3. Bio Story: Built by Copy Agent */}
                     <AgentBuilderFrame
                         id="builder-about-bio"
                         agentName="Copy"
+                        action="authoring"
                         color="#06B6D4"
                         label="editorial: 580×420"
                         isBuilding={buildingStates?.about}
