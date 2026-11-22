@@ -368,7 +368,72 @@ export default function MultiAgentEngine() {
             const skillsEl = document.getElementById('skills');
 
             // -----------------------------------------------------------------
-            // A. SCROLL INTO PROJECTS: Dev, Scout, Lint, Layout build Cards!
+            // A. SCROLL INTO TRACK RECORD: QA, Typeset & Review assemble!
+            // -----------------------------------------------------------------
+            if (trackEl && !trackDelivered.title && !trackBuildingRef.current) {
+                const rect = trackEl.getBoundingClientRect();
+                if (rect.top <= window.innerHeight * 0.90) {
+                    trackBuildingRef.current = true;
+                    setBuildingStates(prev => ({ ...prev, track: true }));
+
+                    let trackTimer = 0;
+                    const trackInterval = setInterval(() => {
+                        trackTimer += 0.05 * speedMultiplier;
+
+                        const titleH = getHandle('builder-track-title', 'br');
+                        const statH = getHandle('builder-track-stat', 'br');
+                        const timelineH = getHandle('builder-track-timeline', 'tr');
+
+                        if (titleH) {
+                            agentsRef.current[1].isCarrying = true;
+                            agentsRef.current[1].targetX = titleH.x;
+                            agentsRef.current[1].targetY = titleH.y;
+                            agentsRef.current[1].labelExtra = 'typesetting ✍️';
+                        }
+                        if (statH) {
+                            agentsRef.current[9].isCarrying = true;
+                            agentsRef.current[9].targetX = statH.x;
+                            agentsRef.current[9].targetY = statH.y;
+                            agentsRef.current[9].labelExtra = 'typing 40 tests 🧪';
+                        }
+                        if (timelineH) {
+                            agentsRef.current[10].isCarrying = true;
+                            agentsRef.current[10].targetX = timelineH.x;
+                            agentsRef.current[10].targetY = timelineH.y;
+                            agentsRef.current[10].labelExtra = 'auditing timeline 📋';
+                        }
+
+                        if (trackTimer >= 1.0) {
+                            if (titleH) addRipple(titleH.x, titleH.y, '#22C55E');
+                            if (statH) addRipple(statH.x, statH.y, '#2563EB');
+                            if (timelineH) addRipple(timelineH.x, timelineH.y, '#F43F5E');
+
+                            setTrackDelivered({
+                                title: true,
+                                stat40: true,
+                                timeline: true
+                            });
+
+                            setBuildingStates(prev => ({ ...prev, track: false }));
+
+                            agentsRef.current[1].labelExtra = 'typeset ✓';
+                            agentsRef.current[9].labelExtra = 'tested ✓';
+                            agentsRef.current[10].labelExtra = 'audited ✓';
+
+                            setTimeout(() => {
+                                agentsRef.current[1].isCarrying = false;
+                                agentsRef.current[9].isCarrying = false;
+                                agentsRef.current[10].isCarrying = false;
+                            }, 600);
+
+                            clearInterval(trackInterval);
+                        }
+                    }, 40);
+                }
+            }
+
+            // -----------------------------------------------------------------
+            // B. SCROLL INTO PROJECTS: Dev, Scout, Lint, Layout build Cards!
             // -----------------------------------------------------------------
             if (projectsEl && !projectsDelivered.card1 && !projectsBuildingRef.current) {
                 const rect = projectsEl.getBoundingClientRect();
@@ -439,71 +504,6 @@ export default function MultiAgentEngine() {
                             }, 700);
 
                             clearInterval(projInterval);
-                        }
-                    }, 40);
-                }
-            }
-
-            // -----------------------------------------------------------------
-            // B. SCROLL INTO TRACK RECORD: QA, Typeset & Review assemble!
-            // -----------------------------------------------------------------
-            if (trackEl && !trackDelivered.title && !trackBuildingRef.current) {
-                const rect = trackEl.getBoundingClientRect();
-                if (rect.top <= window.innerHeight * 0.85) {
-                    trackBuildingRef.current = true;
-                    setBuildingStates(prev => ({ ...prev, track: true }));
-
-                    let trackTimer = 0;
-                    const trackInterval = setInterval(() => {
-                        trackTimer += 0.05 * speedMultiplier;
-
-                        const titleH = getHandle('builder-track-title', 'br');
-                        const statH = getHandle('builder-track-stat', 'br');
-                        const timelineH = getHandle('builder-track-timeline', 'tr');
-
-                        if (titleH) {
-                            agentsRef.current[1].isCarrying = true;
-                            agentsRef.current[1].targetX = titleH.x;
-                            agentsRef.current[1].targetY = titleH.y;
-                            agentsRef.current[1].labelExtra = 'typesetting ✍️';
-                        }
-                        if (statH) {
-                            agentsRef.current[9].isCarrying = true;
-                            agentsRef.current[9].targetX = statH.x;
-                            agentsRef.current[9].targetY = statH.y;
-                            agentsRef.current[9].labelExtra = 'typing 40 tests 🧪';
-                        }
-                        if (timelineH) {
-                            agentsRef.current[10].isCarrying = true;
-                            agentsRef.current[10].targetX = timelineH.x;
-                            agentsRef.current[10].targetY = timelineH.y;
-                            agentsRef.current[10].labelExtra = 'auditing timeline 📋';
-                        }
-
-                        if (trackTimer >= 1.15) {
-                            if (titleH) addRipple(titleH.x, titleH.y, '#22C55E');
-                            if (statH) addRipple(statH.x, statH.y, '#2563EB');
-                            if (timelineH) addRipple(timelineH.x, timelineH.y, '#F43F5E');
-
-                            setTrackDelivered({
-                                title: true,
-                                stat40: true,
-                                timeline: true
-                            });
-
-                            setBuildingStates(prev => ({ ...prev, track: false }));
-
-                            agentsRef.current[1].labelExtra = 'typeset ✓';
-                            agentsRef.current[9].labelExtra = 'tested ✓';
-                            agentsRef.current[10].labelExtra = 'audited ✓';
-
-                            setTimeout(() => {
-                                agentsRef.current[1].isCarrying = false;
-                                agentsRef.current[9].isCarrying = false;
-                                agentsRef.current[10].isCarrying = false;
-                            }, 700);
-
-                            clearInterval(trackInterval);
                         }
                     }, 40);
                 }

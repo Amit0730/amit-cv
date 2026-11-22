@@ -48,6 +48,7 @@ const Navigation = () => {
 
                     <div className="nav-pill-links">
                         <a href="#home" className="nav-item">Home</a>
+                        <a href="#track-record" className="nav-item">Track</a>
                         <a href="#projects" className="nav-item">Work</a>
                         <a href="#about" className="nav-item">About</a>
                         <a href="#contact" className="nav-item">Contact</a>

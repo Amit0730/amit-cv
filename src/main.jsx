@@ -40,8 +40,8 @@ const NewAgentWebsite = () => (
             <Navigation />
             <main>
                 <Hero />
-                <Projects />
                 <TrackRecord />
+                <Projects />
                 <SkillsSection />
                 <About />
             </main>
