@@ -8,7 +8,13 @@ import AgentBuilderFrame from './AgentBuilderFrame';
 import './Projects.css';
 
 const Projects = () => {
-    const { projectsDelivered, buildingStates, typedText = {}, agentsActive = true } = useBuildEngine();
+    const {
+        projectsDelivered,
+        buildingStates,
+        typedText = {},
+        presentationFallbacks = {},
+        agentsActive = true
+    } = useBuildEngine();
 
     return (
         <section id="projects" className="section projects-section">
@@ -128,11 +134,12 @@ const Projects = () => {
 };
 
 const ProjectCard = ({ frameId, project, index, isDelivered }) => {
-    const { componentStages = {}, agentsActive = true } = useBuildEngine();
-    const stage = isDelivered || !agentsActive ? 4 : (componentStages[frameId] || 0);
+    const { componentStages = {}, presentationFallbacks = {}, agentsActive = true } = useBuildEngine();
+    const stage = isDelivered || !agentsActive || presentationFallbacks[frameId] || presentationFallbacks['projects'] ? 4 : (componentStages[frameId] || 0);
 
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
+    const cardGradient = useMotionTemplate`radial-gradient(350px circle at ${mouseX}px ${mouseY}px, rgba(220, 38, 38, 0.15), transparent 80%)`;
 
     function handleMouseMove({ currentTarget, clientX, clientY }) {
         const { left, top } = currentTarget.getBoundingClientRect();
@@ -140,7 +147,6 @@ const ProjectCard = ({ frameId, project, index, isDelivered }) => {
         mouseY.set(clientY - top);
     }
 
-    // Issue A Fix: Staged Component Assembly
     // Stage 0: Clean unfinished wireframe container (matching reference video wireframe)
     if (stage === 0) {
         return (
@@ -179,13 +185,7 @@ const ProjectCard = ({ frameId, project, index, isDelivered }) => {
                 <motion.div
                     className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
                     style={{
-                        background: useMotionTemplate`
-                            radial-gradient(
-                                350px circle at ${mouseX}px ${mouseY}px,
-                                rgba(220, 38, 38, 0.15),
-                                transparent 80%
-                            )
-                        `,
+                        background: cardGradient,
                         position: 'absolute',
                         inset: 0,
                         zIndex: 0,
@@ -239,6 +239,7 @@ const ProjectCard = ({ frameId, project, index, isDelivered }) => {
 const MoreCard = ({ totalCount, isDelivered }) => {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
+    const moreGradient = useMotionTemplate`radial-gradient(380px circle at ${mouseX}px ${mouseY}px, rgba(139, 92, 246, 0.25), transparent 80%)`;
 
     function handleMouseMove({ currentTarget, clientX, clientY }) {
         const { left, top } = currentTarget.getBoundingClientRect();
@@ -263,13 +264,7 @@ const MoreCard = ({ totalCount, isDelivered }) => {
                 <motion.div
                     className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300"
                     style={{
-                        background: useMotionTemplate`
-                            radial-gradient(
-                                380px circle at ${mouseX}px ${mouseY}px,
-                                rgba(139, 92, 246, 0.25),
-                                transparent 80%
-                            )
-                        `,
+                        background: moreGradient,
                         position: 'absolute',
                         inset: 0,
                         zIndex: 0,

@@ -43,8 +43,15 @@ const TRACK_RECORDS = [
 ];
 
 export default function TrackRecord() {
-    const { trackDelivered, buildingStates, typedText = {}, componentStages = {}, agentsActive = true } = useBuildEngine();
-    const timelineStage = trackDelivered.timeline || !agentsActive ? 5 : (componentStages['builder-track-timeline'] || 0);
+    const {
+        trackDelivered,
+        buildingStates,
+        typedText = {},
+        componentStages = {},
+        presentationFallbacks = {},
+        agentsActive = true
+    } = useBuildEngine();
+    const timelineStage = trackDelivered.timeline || !agentsActive || presentationFallbacks['builder-track-timeline'] || presentationFallbacks['track'] ? 5 : (componentStages['builder-track-timeline'] || 0);
 
     return (
         <section id="track-record" className="section track-section">
@@ -64,12 +71,12 @@ export default function TrackRecord() {
                             <div className="track-header-box">
                                 <span className="track-eyebrow">TRACK RECORD</span>
                                 <h2 className="track-headline-impact" style={{ minHeight: '1.8em' }}>
-                                    {trackDelivered.title || !agentsActive ? (
+                                    {trackDelivered.title || !agentsActive || presentationFallbacks['builder-track-title'] || presentationFallbacks['track'] ? (
                                         <>BUILT FAST.<br /><span className="text-red-accent">SHIPPED REAL.</span></>
                                     ) : (
                                         typedText['builder-track-title'] !== undefined ? typedText['builder-track-title'] : ""
                                     )}
-                                    {!trackDelivered.title && agentsActive && <span className="typing-cursor-blink">|</span>}
+                                    {!trackDelivered.title && agentsActive && !presentationFallbacks['builder-track-title'] && <span className="typing-cursor-blink">|</span>}
                                 </h2>
                             </div>
                         </AgentBuilderFrame>

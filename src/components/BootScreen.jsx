@@ -23,11 +23,19 @@ export default function BootScreen() {
                 clearInterval(interval);
                 setTimeout(() => {
                     setIsBooted(true);
-                }, 350);
+                }, 150);
             }
-        }, 120);
+        }, 40);
 
-        return () => clearInterval(interval);
+        // Safety fallback: Never allow boot screen to block screen indefinitely
+        const safety = setTimeout(() => {
+            setIsBooted(true);
+        }, 1100);
+
+        return () => {
+            clearInterval(interval);
+            clearTimeout(safety);
+        };
     }, [isBooted, setIsBooted, setBootCount]);
 
     if (isBooted) return null;

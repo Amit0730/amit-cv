@@ -273,7 +273,7 @@ export const INITIAL_TASKS = [
         text: 'BUILT FAST. SHIPPED REAL.',
         label: 'typesetting track record',
         corner: 'br',
-        duration: 1.2,
+        duration: 1.0,
         dependencies: []
     },
     {
@@ -284,8 +284,8 @@ export const INITIAL_TASKS = [
         action: 'component',
         label: 'mounting stat (40. tests)',
         corner: 'tr',
-        duration: 1.1,
-        dependencies: ['task-track-title']
+        duration: 0.9,
+        dependencies: []
     },
     {
         id: 'task-track-timeline',
@@ -295,8 +295,8 @@ export const INITIAL_TASKS = [
         action: 'copy',
         label: 'assembling 5 experiences',
         corner: 'tr',
-        duration: 1.2,
-        dependencies: ['task-track-title']
+        duration: 1.1,
+        dependencies: []
     },
     {
         id: 'task-track-motion',
@@ -306,7 +306,7 @@ export const INITIAL_TASKS = [
         action: 'motion',
         label: 'motion test (spring: 130)',
         corner: 'tl',
-        duration: 0.9,
+        duration: 0.8,
         dependencies: ['task-track-timeline']
     },
     {
@@ -318,7 +318,7 @@ export const INITIAL_TASKS = [
         spacingLabel: 'grid gap: 4.5rem',
         label: 'measuring column gap',
         corner: 'bl',
-        duration: 0.8,
+        duration: 0.7,
         dependencies: ['task-track-stat']
     },
     {
@@ -329,7 +329,7 @@ export const INITIAL_TASKS = [
         action: 'review',
         label: 'QA audit (Track PASS ✓)',
         corner: 'tr',
-        duration: 1.0,
+        duration: 0.9,
         dependencies: ['task-track-title', 'task-track-stat', 'task-track-timeline']
     },
 
@@ -345,7 +345,7 @@ export const INITIAL_TASKS = [
         text: 'WORK THAT SHIPS.',
         label: 'typesetting WORK THAT SHIPS',
         corner: 'br',
-        duration: 1.2,
+        duration: 1.0,
         dependencies: []
     },
     {
@@ -358,8 +358,8 @@ export const INITIAL_TASKS = [
         targetDims: { w: 360, h: 440 },
         label: 'resizing Expensy card',
         corner: 'br',
-        duration: 1.2,
-        dependencies: ['task-projects-header']
+        duration: 1.0,
+        dependencies: []
     },
     {
         id: 'task-project-card-0-comp',
@@ -369,7 +369,7 @@ export const INITIAL_TASKS = [
         action: 'component',
         label: 'snapping Expensy tags',
         corner: 'tr',
-        duration: 1.1,
+        duration: 0.9,
         dependencies: ['task-project-card-0-resize']
     },
     {
@@ -380,8 +380,8 @@ export const INITIAL_TASKS = [
         action: 'component',
         label: 'mounting Aesthetic Clock',
         corner: 'tr',
-        duration: 1.1,
-        dependencies: ['task-projects-header']
+        duration: 1.0,
+        dependencies: []
     },
     {
         id: 'task-project-card-2-comp',
@@ -391,8 +391,8 @@ export const INITIAL_TASKS = [
         action: 'component',
         label: 'mounting MediCore System',
         corner: 'tr',
-        duration: 1.1,
-        dependencies: ['task-projects-header']
+        duration: 1.0,
+        dependencies: []
     },
     {
         id: 'task-project-card-3-style',
@@ -402,8 +402,8 @@ export const INITIAL_TASKS = [
         action: 'style',
         label: 'styling More Projects card',
         corner: 'center',
-        duration: 1.0,
-        dependencies: ['task-projects-header']
+        duration: 0.9,
+        dependencies: []
     },
     {
         id: 'task-projects-interact',
@@ -413,7 +413,7 @@ export const INITIAL_TASKS = [
         action: 'interact',
         label: 'card hover test',
         corner: 'tl',
-        duration: 0.9,
+        duration: 0.8,
         dependencies: ['task-project-card-0-comp']
     },
     {
@@ -424,7 +424,7 @@ export const INITIAL_TASKS = [
         action: 'review',
         label: 'QA audit (Projects PASS ✓)',
         corner: 'tr',
-        duration: 1.1,
+        duration: 0.9,
         dependencies: ['task-project-card-0-comp', 'task-project-card-1-comp', 'task-project-card-2-comp']
     },
 
@@ -488,7 +488,7 @@ export const INITIAL_TASKS = [
         text: 'NOT JUST CODE. CODE THAT SHIPS.',
         label: 'typesetting about headline',
         corner: 'br',
-        duration: 1.2,
+        duration: 1.0,
         dependencies: []
     },
     {
@@ -499,8 +499,8 @@ export const INITIAL_TASKS = [
         action: 'media',
         label: 'mounting LPU portrait',
         corner: 'br',
-        duration: 1.2,
-        dependencies: ['task-about-title']
+        duration: 1.0,
+        dependencies: []
     },
     {
         id: 'task-about-bio',
@@ -511,8 +511,8 @@ export const INITIAL_TASKS = [
         text: 'I am Amit Kumar Singh, a passionate engineering student at Lovely Professional University (LPU), India. My academic journey is deeply rooted in Artificial Intelligence and Software Development. I thrive on the intersection of logical problem solving and creative engineering.',
         label: 'authoring bio narrative',
         corner: 'tr',
-        duration: 1.4,
-        dependencies: ['task-about-title']
+        duration: 1.1,
+        dependencies: []
     },
     {
         id: 'task-about-review',
@@ -522,7 +522,7 @@ export const INITIAL_TASKS = [
         action: 'review',
         label: 'QA audit (About PASS ✓)',
         corner: 'tr',
-        duration: 1.0,
+        duration: 0.9,
         dependencies: ['task-about-title', 'task-about-photo', 'task-about-bio']
     },
 

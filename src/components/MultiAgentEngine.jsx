@@ -29,7 +29,12 @@ export default function MultiAgentEngine() {
         setActiveMedia,
         setMotionTest,
         setComponentStage,
-        setNavVerifiedLink
+        setNavVerifiedLink,
+
+        preloadedAssets,
+        presentationFallbacks,
+        setPresentationFallback,
+        catchUpSection
     } = useBuildEngine();
 
     const [ripples, setRipples] = useState([]);
@@ -113,22 +118,26 @@ export default function MultiAgentEngine() {
             }
             if (projectsEl && projectsEl.getBoundingClientRect().top <= vh * 0.88) {
                 activateSection('projects');
+                if (catchUpSection) catchUpSection('hero');
             }
             if (skillsEl && skillsEl.getBoundingClientRect().top <= vh * 0.88) {
                 activateSection('skills');
+                if (catchUpSection) catchUpSection('track');
             }
             if (aboutEl && aboutEl.getBoundingClientRect().top <= vh * 0.88) {
                 activateSection('about');
+                if (catchUpSection) catchUpSection('projects');
             }
             if (footerEl && footerEl.getBoundingClientRect().top <= vh * 0.92) {
                 activateSection('footer');
+                if (catchUpSection) catchUpSection('skills');
             }
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         handleScroll();
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [activateSection, agentsActive]);
+    }, [activateSection, agentsActive, catchUpSection]);
 
     // =========================================================================
     // 2. ORCHESTRATION ENGINE LOOP (60FPS Task Dispatcher & Physics)
@@ -152,7 +161,11 @@ export default function MultiAgentEngine() {
                 const readyTasks = tasks.filter(task => {
                     if (task.status !== 'pending') return false;
                     if (!activeSections[task.section]) return false;
-                    return task.dependencies.every(depId => completedTaskMap.has(depId));
+                    // Phase 9 Fix: Never deadlock on failed tasks; allow downstream tasks to run
+                    return task.dependencies.every(depId => {
+                        const dep = tasks.find(t => t.id === depId);
+                        return dep && (dep.status === 'completed' || dep.status === 'failed');
+                    });
                 });
 
                 // -------------------------------------------------------------
@@ -346,7 +359,10 @@ export default function MultiAgentEngine() {
                                 const el = document.getElementById(currentTask.targetId);
                                 const rect = el ? el.getBoundingClientRect() : null;
                                 const hasGeometry = Boolean(rect && (rect.width > 0 || rect.height > 0));
-                                const depsDone = currentTask.dependencies.every(d => completedTaskMap.has(d));
+                                const depsDone = currentTask.dependencies.every(d => {
+                                    const dep = tasks.find(t => t.id === d);
+                                    return dep && (dep.status === 'completed' || dep.status === 'failed');
+                                });
 
                                 let isVerified = false;
                                 if (el && hasGeometry && depsDone) {
@@ -355,8 +371,11 @@ export default function MultiAgentEngine() {
                                         const expected = (currentTask.text || '').slice(0, 8).trim();
                                         isVerified = !expected || text.includes(expected);
                                     } else if (currentTask.action === 'media') {
+                                        // Phase 1 Fix: Verify actual image render or preloaded asset
                                         const img = el.querySelector('img');
-                                        isVerified = Boolean(img && (img.complete || img.naturalWidth > 0));
+                                        const isImgReady = Boolean(img && (img.complete && img.naturalWidth > 0));
+                                        const isPreloaded = Boolean(preloadedAssets?.[currentTask.targetId]?.ready);
+                                        isVerified = isImgReady || isPreloaded;
                                     } else if (currentTask.action === 'navigation') {
                                         const links = el.querySelectorAll('a[href]');
                                         isVerified = links.length > 0;
@@ -364,7 +383,7 @@ export default function MultiAgentEngine() {
                                         isVerified = el.children.length > 0 || (el.innerText || '').trim().length > 0;
                                     } else if (currentTask.action === 'review') {
                                         const otherTasks = tasks.filter(t => t.section === currentTask.section && t.id !== currentTask.id);
-                                        isVerified = otherTasks.every(t => completedTaskMap.has(t.id));
+                                        isVerified = otherTasks.every(t => t.status === 'completed' || t.status === 'failed');
                                     } else {
                                         isVerified = true;
                                     }
@@ -424,10 +443,13 @@ export default function MultiAgentEngine() {
                                                 agent.labelExtra = '';
                                             }
                                         }, 1100);
-                                    } else {
-                                        // Graceful failure if verification failed
-                                        agent.labelExtra = 'verify ✕';
+                                    } else if (agent.stateTimer >= 0.65) {
+                                        // Graceful fallback: Never lock down the website if an asset verification misses
+                                        agent.labelExtra = 'fallback ✓';
                                         updateTaskStatus(currentTask.id, 'failed');
+                                        if (setPresentationFallback) {
+                                            setPresentationFallback(currentTask.targetId, true);
+                                        }
                                         agent.currentTaskId = null;
                                         agent.isCarrying = false;
                                         agent.state = 'idle';

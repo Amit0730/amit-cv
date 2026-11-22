@@ -11,8 +11,12 @@ const About = () => {
         aboutDelivered = { title: true, photo2: true, bio: true },
         buildingStates = {},
         typedText = {},
+        activeMedia = {},
+        presentationFallbacks = {},
         agentsActive = true
     } = useBuildEngine() || {};
+
+    const isPhotoRevealed = aboutDelivered?.photo2 || activeMedia['builder-about-photo']?.mounted || presentationFallbacks['builder-about-photo'] || !agentsActive;
 
     return (
         <section id="about" className="section about-section">
@@ -38,12 +42,12 @@ const About = () => {
                     >
                         <div className="section-eyebrow-red">ABOUT</div>
                         <h2 className="section-title-impact" style={{ minHeight: '1.8em' }}>
-                            {aboutDelivered?.title || !agentsActive ? (
+                            {aboutDelivered?.title || !agentsActive || presentationFallbacks['builder-about-title'] ? (
                                 <>NOT JUST CODE.<br /><span style={{ color: '#EF4444' }}>CODE THAT SHIPS.</span></>
                             ) : (
                                 typedText['builder-about-title'] !== undefined ? typedText['builder-about-title'] : ""
                             )}
-                            {!aboutDelivered?.title && agentsActive && <span className="typing-cursor-blink">|</span>}
+                            {!aboutDelivered?.title && agentsActive && !presentationFallbacks['builder-about-title'] && <span className="typing-cursor-blink">|</span>}
                         </h2>
                     </motion.div>
                 </AgentBuilderFrame>
@@ -63,18 +67,26 @@ const About = () => {
                             className="about-image-container"
                             initial={{ opacity: 0.5, scale: 0.92 }}
                             animate={{ 
-                                opacity: aboutDelivered?.photo2 ? 1 : 0.85, 
+                                opacity: isPhotoRevealed ? 1 : 0.85, 
                                 scale: 1
                             }}
                             transition={{ type: 'spring', damping: 20, stiffness: 110 }}
                         >
-                            {aboutDelivered?.photo2 && <ClashingLaserBorder />}
+                            {isPhotoRevealed && <ClashingLaserBorder />}
 
-                            <div className="about-image-wrapper glass-panel">
-                                {aboutDelivered?.photo2 || !agentsActive ? (
-                                    <img src={`${import.meta.env.BASE_URL}images/profile2.jpg`} alt="Amit at LPU" className="about-image" />
-                                ) : (
-                                    <div className="portrait-wireframe-slot" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '340px', background: 'rgba(255, 255, 255, 0.02)', border: '1px dashed rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
+                            <div className="about-image-wrapper glass-panel" style={{ position: 'relative' }}>
+                                <img
+                                    src={`${import.meta.env.BASE_URL}images/profile2.jpg`}
+                                    alt="Amit at LPU"
+                                    className="about-image"
+                                    style={{
+                                        opacity: isPhotoRevealed ? 1 : 0,
+                                        transform: isPhotoRevealed ? 'scale(1)' : 'scale(0.96)',
+                                        transition: 'opacity 0.4s ease, transform 0.4s ease'
+                                    }}
+                                />
+                                {!isPhotoRevealed && (
+                                    <div className="portrait-wireframe-slot" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.02)', border: '1px dashed rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
                                         <span className="wireframe-pill" style={{ padding: '6px 14px', borderRadius: '999px', background: 'rgba(255, 255, 255, 0.05)', fontSize: '11px', color: '#71717A', fontFamily: 'monospace' }}>
                                             [LPU CAMPUS PORTRAIT WIREFRAME]
                                         </span>
@@ -105,7 +117,7 @@ const About = () => {
                         >
                             <h3 className="about-heading text-gradient">Driven by logic, guided by innovation.</h3>
 
-                            {aboutDelivered?.bio || !agentsActive ? (
+                            {aboutDelivered?.bio || !agentsActive || presentationFallbacks['builder-about-bio'] ? (
                                 <>
                                     <p className="about-text">
                                         I am Amit Kumar Singh, a passionate {calculateAge()}-year-old engineering student at Lovely Professional University (LPU), India. My academic journey is deeply rooted in <strong>Artificial Intelligence and Software Development</strong>. I thrive on the intersection of logical problem solving and creative engineering.

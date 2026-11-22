@@ -9,7 +9,17 @@ import AgentBuilderFrame from './AgentBuilderFrame';
 import './Hero.css';
 
 const Hero = () => {
-    const { heroDelivered, buildingStates, typedText = {}, componentStages = {}, agentsActive = true } = useBuildEngine();
+    const {
+        heroDelivered,
+        buildingStates,
+        typedText = {},
+        componentStages = {},
+        activeMedia = {},
+        presentationFallbacks = {},
+        agentsActive = true
+    } = useBuildEngine();
+
+    const isPhotoRevealed = heroDelivered.photo || activeMedia['builder-hero-photo']?.mounted || presentationFallbacks['builder-hero-photo'] || !agentsActive;
 
     return (
         <section id="home" className="hero-section section">
@@ -44,12 +54,12 @@ const Hero = () => {
                     >
                         <p className="hero-greeting-sub">Hello, I'm</p>
                         <h1 className="hero-name-giant" style={{ minHeight: '1.15em' }}>
-                            {heroDelivered.name || !agentsActive ? (
+                            {heroDelivered.name || !agentsActive || presentationFallbacks['builder-hero-name'] ? (
                                 "AMIT KUMAR SINGH."
                             ) : (
                                 typedText['builder-hero-name'] !== undefined ? typedText['builder-hero-name'] : ""
                             )}
-                            {!heroDelivered.name && agentsActive && <span className="typing-cursor-blink">|</span>}
+                            {!heroDelivered.name && agentsActive && !presentationFallbacks['builder-hero-name'] && <span className="typing-cursor-blink">|</span>}
                         </h1>
                     </AgentBuilderFrame>
 
@@ -65,12 +75,12 @@ const Hero = () => {
                         className="hero-subframe"
                     >
                         <h2 className="hero-role-headline" style={{ minHeight: '1.2em' }}>
-                            {heroDelivered.role || !agentsActive ? (
+                            {heroDelivered.role || !agentsActive || presentationFallbacks['builder-hero-role'] ? (
                                 "SOFTWARE ENGINEER & AI BUILDER"
                             ) : (
                                 typedText['builder-hero-role'] !== undefined ? typedText['builder-hero-role'] : ""
                             )}
-                            {!heroDelivered.role && agentsActive && <span className="typing-cursor-blink">|</span>}
+                            {!heroDelivered.role && agentsActive && !presentationFallbacks['builder-hero-role'] && <span className="typing-cursor-blink">|</span>}
                         </h2>
                     </AgentBuilderFrame>
 
@@ -104,12 +114,12 @@ const Hero = () => {
                         </div>
 
                         <p className="hero-pitch-text" style={{ minHeight: '3.4em' }}>
-                            {heroDelivered.pitch || !agentsActive ? (
+                            {heroDelivered.pitch || !agentsActive || presentationFallbacks['builder-hero-pitch'] ? (
                                 "I build intelligent systems, mobile applications, and AI-assisted workflows that actually ship. Engineering student at LPU with proven experience building production-ready architectures from brief to live deployment."
                             ) : (
                                 typedText['builder-hero-pitch'] !== undefined ? typedText['builder-hero-pitch'] : ""
                             )}
-                            {!heroDelivered.pitch && agentsActive && <span className="typing-cursor-blink">|</span>}
+                            {!heroDelivered.pitch && agentsActive && !presentationFallbacks['builder-hero-pitch'] && <span className="typing-cursor-blink">|</span>}
                         </p>
                     </AgentBuilderFrame>
 
@@ -124,13 +134,13 @@ const Hero = () => {
                         isDelivered={heroDelivered.cta}
                         className="hero-subframe"
                     >
-                        {heroDelivered.cta || !agentsActive || (componentStages['builder-hero-cta'] || 0) >= 1 ? (
+                        {heroDelivered.cta || !agentsActive || presentationFallbacks['builder-hero-cta'] || (componentStages['builder-hero-cta'] || 0) >= 1 ? (
                             <div className="hero-cta-group">
                                 <a href="#projects" className="btn-hero-red">
                                     <span>VIEW WORK</span>
                                     <ArrowUpRight size={18} />
                                 </a>
-                                {(heroDelivered.cta || !agentsActive || (componentStages['builder-hero-cta'] || 0) >= 2) && (
+                                {(heroDelivered.cta || !agentsActive || presentationFallbacks['builder-hero-cta'] || (componentStages['builder-hero-cta'] || 0) >= 2) && (
                                     <Link to="/cv" className="btn-hero-glass">
                                         <FileText size={17} />
                                         <span>VIEW CV</span>
@@ -204,25 +214,27 @@ const Hero = () => {
                         transition={{ type: 'spring', damping: 20, stiffness: 120 }}
                     >
                         <div className="hero-portrait-stage">
-                            {heroDelivered.photo && <ClashingLaserBorder />}
+                            {isPhotoRevealed && <ClashingLaserBorder />}
 
-                            <div className="hero-portrait-wrapper glass-panel">
-                                {heroDelivered.photo || !agentsActive ? (
-                                    <>
-                                        <img
-                                            src={`${import.meta.env.BASE_URL}images/profile1.jpg`}
-                                            alt="Amit Kumar Singh"
-                                            className="hero-portrait-img"
-                                        />
-                                        <div className="hero-portrait-ambient-glow" />
-                                    </>
-                                ) : (
-                                    <div className="portrait-wireframe-slot" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '320px', background: 'rgba(255, 255, 255, 0.02)', border: '1px dashed rgba(255, 255, 255, 0.15)', borderRadius: '20px' }}>
+                            <div className="hero-portrait-wrapper glass-panel" style={{ position: 'relative' }}>
+                                <img
+                                    src={`${import.meta.env.BASE_URL}images/profile1.jpg`}
+                                    alt="Amit Kumar Singh"
+                                    className="hero-portrait-img"
+                                    style={{
+                                        opacity: isPhotoRevealed ? 1 : 0,
+                                        transform: isPhotoRevealed ? 'scale(1)' : 'scale(0.96)',
+                                        transition: 'opacity 0.4s ease, transform 0.4s ease'
+                                    }}
+                                />
+                                {!isPhotoRevealed && (
+                                    <div className="portrait-wireframe-slot" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.02)', border: '1px dashed rgba(255, 255, 255, 0.15)', borderRadius: '20px' }}>
                                         <span className="wireframe-pill" style={{ padding: '6px 14px', borderRadius: '999px', background: 'rgba(255, 255, 255, 0.05)', fontSize: '11px', color: '#71717A', fontFamily: 'monospace' }}>
                                             [PORTRAIT ASSET WIREFRAME]
                                         </span>
                                     </div>
                                 )}
+                                <div className="hero-portrait-ambient-glow" style={{ opacity: isPhotoRevealed ? 1 : 0 }} />
                             </div>
                         </div>
                     </motion.div>

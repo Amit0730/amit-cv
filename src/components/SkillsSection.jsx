@@ -37,11 +37,18 @@ const PRINCIPLES = [
 ];
 
 export default function SkillsSection() {
-    const { skillsDelivered, buildingStates, componentStages, activeStyles, agentsActive } = useBuildEngine();
+    const {
+        skillsDelivered,
+        buildingStates,
+        componentStages,
+        activeStyles,
+        presentationFallbacks = {},
+        agentsActive
+    } = useBuildEngine();
 
-    const eduStage = skillsDelivered.skills || !agentsActive ? 4 : (componentStages['builder-skills-edu'] || 0);
-    const principlesStage = skillsDelivered.principles || !agentsActive ? 4 : (componentStages['builder-skills-principles'] || 0);
-    const manifestoStyled = skillsDelivered.manifesto || !agentsActive || Boolean(activeStyles['builder-skills-manifesto']?.active);
+    const eduStage = skillsDelivered.skills || !agentsActive || presentationFallbacks['builder-skills-edu'] || presentationFallbacks['skills'] ? 4 : (componentStages['builder-skills-edu'] || 0);
+    const principlesStage = skillsDelivered.principles || !agentsActive || presentationFallbacks['builder-skills-principles'] || presentationFallbacks['skills'] ? 4 : (componentStages['builder-skills-principles'] || 0);
+    const manifestoStyled = skillsDelivered.manifesto || !agentsActive || presentationFallbacks['builder-skills-manifesto'] || presentationFallbacks['skills'] || Boolean(activeStyles['builder-skills-manifesto']?.active);
 
     return (
         <section id="skills" className="section skills-section">

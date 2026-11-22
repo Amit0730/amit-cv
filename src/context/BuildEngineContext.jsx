@@ -3,6 +3,25 @@ import { INITIAL_TASKS, AGENT_ROSTER } from '../engine/agentTasks';
 
 const BuildEngineContext = createContext(null);
 
+class AgentErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+    componentDidCatch(error, errorInfo) {
+        console.error("[AgentEngine ErrorBoundary caught]", error, errorInfo);
+    }
+    render() {
+        if (this.state.hasError) {
+            return this.props.fallback || null;
+        }
+        return this.props.children;
+    }
+}
+
 export const FULL_HEADLINE = "AMIT KUMAR SINGH.";
 export const FULL_ROLE = "SOFTWARE ENGINEER & AI BUILDER";
 
@@ -19,6 +38,45 @@ export const BuildEngineProvider = ({ children }) => {
 
     // Task queue system
     const [tasks, setTasks] = useState(() => INITIAL_TASKS.map(t => ({ ...t, status: 'pending' })));
+
+    // Asset preloading & Presentation Fallbacks (Phase 1 & Phase 2 Fixes)
+    const [preloadedAssets, setPreloadedAssets] = useState({
+        'builder-hero-photo': false,
+        'builder-about-photo': false
+    });
+    const [presentationFallbacks, setPresentationFallbacks] = useState({});
+    const [taskDiagnostics, setTaskDiagnostics] = useState({});
+
+    // Preload critical assets immediately on mount
+    useEffect(() => {
+        const heroImg = new Image();
+        heroImg.src = `${import.meta.env.BASE_URL}images/profile1.jpg`;
+        heroImg.onload = () => {
+            setPreloadedAssets(prev => ({
+                ...prev,
+                'builder-hero-photo': { ready: true, naturalWidth: heroImg.naturalWidth, naturalHeight: heroImg.naturalHeight }
+            }));
+        };
+        heroImg.onerror = () => {
+            console.warn('[BuildEngine] Hero portrait load error, fallback ready');
+            setPreloadedAssets(prev => ({ ...prev, 'builder-hero-photo': { ready: false, error: true } }));
+            setPresentationFallbacks(prev => ({ ...prev, 'builder-hero-photo': true }));
+        };
+
+        const aboutImg = new Image();
+        aboutImg.src = `${import.meta.env.BASE_URL}images/profile2.jpg`;
+        aboutImg.onload = () => {
+            setPreloadedAssets(prev => ({
+                ...prev,
+                'builder-about-photo': { ready: true, naturalWidth: aboutImg.naturalWidth, naturalHeight: aboutImg.naturalHeight }
+            }));
+        };
+        aboutImg.onerror = () => {
+            console.warn('[BuildEngine] About portrait load error, fallback ready');
+            setPreloadedAssets(prev => ({ ...prev, 'builder-about-photo': { ready: false, error: true } }));
+            setPresentationFallbacks(prev => ({ ...prev, 'builder-about-photo': true }));
+        };
+    }, []);
 
     // Active sections (unlocked on boot or as visitor scrolls into view)
     const [activeSections, setActiveSections] = useState({
@@ -142,6 +200,49 @@ export const BuildEngineProvider = ({ children }) => {
             if (taskId === 'task-about-photo') setAboutDelivered(a => ({ ...a, photo2: true }));
             if (taskId === 'task-about-bio') setAboutDelivered(a => ({ ...a, bio: true }));
             if (taskId === 'task-about-review') setBuildingStates(b => ({ ...b, about: false }));
+        } else if (status === 'failed') {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                setTaskDiagnostics(prev => ({
+                    ...prev,
+                    [taskId]: {
+                        agentId: task.agentId,
+                        targetId: task.targetId,
+                        timestamp: Date.now(),
+                        reason: 'Verification condition unmet'
+                    }
+                }));
+                // Phase 2 Fix: Presentation fallback ensures website never remains permanently broken
+                setPresentationFallbacks(prev => ({ ...prev, [task.targetId]: true }));
+                console.warn(`[BuildEngine] Task ${taskId} failed verification - presentation fallback enabled for ${task.targetId}`);
+            }
+        }
+    }, [tasks]);
+
+    const setPresentationFallback = useCallback((targetId, value = true) => {
+        setPresentationFallbacks(prev => ({ ...prev, [targetId]: value }));
+    }, []);
+
+    // Phase 6 Fix: Graceful catch-up for sections when scrolled past
+    const catchUpSection = useCallback((sectionName) => {
+        setPresentationFallbacks(prev => ({ ...prev, [sectionName]: true }));
+        if (sectionName === 'hero') {
+            setHeroDelivered({
+                nav: true, name: true, role: true, pitch: true, cta: true, location: true, photo: true, stats: true, bg: true
+            });
+            setBuildingStates(b => ({ ...b, hero: false }));
+        } else if (sectionName === 'track') {
+            setTrackDelivered({ title: true, stat40: true, timeline: true });
+            setBuildingStates(b => ({ ...b, track: false }));
+        } else if (sectionName === 'projects') {
+            setProjectsDelivered({ header: true, card1: true, card2: true, card3: true, card4: true });
+            setBuildingStates(b => ({ ...b, projects: false }));
+        } else if (sectionName === 'skills') {
+            setSkillsDelivered({ skills: true, principles: true, manifesto: true });
+            setBuildingStates(b => ({ ...b, skills: false }));
+        } else if (sectionName === 'about') {
+            setAboutDelivered({ title: true, photo2: true, bio: true });
+            setBuildingStates(b => ({ ...b, about: false }));
         }
     }, []);
 
@@ -296,6 +397,8 @@ export const BuildEngineProvider = ({ children }) => {
         setMotionTests({});
         setComponentStages({});
         setNavVerifiedLinks({});
+        setPresentationFallbacks({});
+        setTaskDiagnostics({});
 
         setHeroDelivered({
             nav: false, name: false, role: false, pitch: false, cta: false, location: false, photo: false, stats: false, bg: false
@@ -356,9 +459,18 @@ export const BuildEngineProvider = ({ children }) => {
             projectsDelivered, setProjectsDelivered,
             skillsDelivered, setSkillsDelivered,
             aboutDelivered, setAboutDelivered,
-            buildingStates, setBuildingStates
+            buildingStates, setBuildingStates,
+
+            // Decoupled presentation & asset readiness (Phases 1, 2, 6)
+            preloadedAssets,
+            presentationFallbacks,
+            setPresentationFallback,
+            catchUpSection,
+            taskDiagnostics
         }}>
-            {children}
+            <AgentErrorBoundary>
+                {children}
+            </AgentErrorBoundary>
         </BuildEngineContext.Provider>
     );
 };
